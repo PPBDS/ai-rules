@@ -19,7 +19,7 @@ The base guide is the source of truth for everything common to all such tutorial
 
 This file covers only what is **specific to the Primer**: the Cardinal Virtues structure, the EMH progression, predictive/causal pairing, Preceptor and Population Tables, the canonical definitions, the knowledge-drop library, the master exercise list, and the per-tutorial seed specs.
 
-**Precedence.** On workflow and shared conventions, the base guide wins. On Primer-specific pedagogy, this file wins. Anywhere the Primer departs from the base guide, that departure must be an **explicit, on-the-record override** — called out as such at the point it occurs — never a silent difference. (The legacy learnr-native workflow this file once assumed — students building objects in exercise/hint chunks, "type `fit_n` and hit Run Code", rendering with `Cmd/Ctrl+Shift+K` — is **superseded** by the base guide's `analysis.qmd` + Live Server model. Sections below have been migrated; any lingering exercise-chunk / keystroke phrasing is a known cleanup item, not a live override.)
+**Precedence.** On workflow and shared conventions, the base guide wins. On Primer-specific pedagogy, this file wins. Anywhere the Primer departs from the base guide, that departure must be an **explicit, on-the-record override** — called out as such at the point it occurs — never a silent difference. (The legacy learnr-native workflow this file once assumed — students building objects in exercise/hint chunks, "type `fit_n` and hit Run Code", rendering with `Cmd/Ctrl+Shift+K` — is **superseded** by the base guide's `analysis.qmd` + Live Server model. All sections below, including §13's master exercise list, have been migrated to that model: code work happens in `analysis.qmd` and renders; interactive one-off commands run in the **R Terminal**; the render keystroke is gone.)
 
 ## Contents
 
@@ -419,7 +419,7 @@ library(tutorial.helpers)
 library(gt)
 
 # Packages below are what we want students to load themselves at the
-# R prompt / in the QMD. They are listed in the tutorial so that (a) we have access
+# R Terminal / in the QMD. They are listed in the tutorial so that (a) we have access
 # to their functions for rendering, and (b) students get a knowledge drop
 # for each.
 
@@ -764,7 +764,7 @@ These apply to both tables, and the same `gt` pipeline + chunk-output wrapping i
   The spanner-ID lists in the left and right calls vary per table: left-aligned spanners cover text/identifier columns (unit, text covariates, treatment when text-valued, `Source` in Population Tables); right-aligned spanners cover numeric columns, almost always just `outcome_span`. When a spanner covers mixed-type columns (e.g., `Unit/Time` in the Population Table spans a text unit + a numeric year), align left by convention. This styling block is mandatory for every Preceptor and Population Table.
 - **Spanner labels singularize when only one column sits under them.** `Covariate` (one) vs. `Covariates` (two or more). `Outcome` (predictive, one) vs. `Potential Outcomes` (causal, two or more). `Unit` stays singular — there is always exactly one unit column.
 - **Spanner IDs are fixed** regardless of label: `"unit_span"`, `"outcome_span"`, `"treatment_span"`, `"covariates_span"`. The covariates ID stays `"covariates_span"` even when the label is the singular `Covariate`. Footnotes attach to IDs, so don't rename.
-- **Code blocks are copy-paste runnable.** Every `gt` code block Claude produces must run top-to-bottom if pasted at an R prompt: `tibble::tribble()` definition, footnote string assignments, and the complete `gt::gt(...) |> ...` pipeline ending at the final `tab_footnote()`. Do not include `library()` calls — `gt` and `tibble` are assumed already loaded.
+- **Code blocks are copy-paste runnable.** Every `gt` code block Claude produces must run top-to-bottom if pasted in the R Terminal: `tibble::tribble()` definition, footnote string assignments, and the complete `gt::gt(...) |> ...` pipeline ending at the final `tab_footnote()`. Do not include `library()` calls — `gt` and `tibble` are assumed already loaded.
 - **Footnotes commit; they do not narrate the choice-making.** Write *"Each row represents one US adult in 2026,"* not *"The question leaves the population unspecified, so this table takes it to mean US adults."* Claude's best guess is often right; when it isn't, David will say so and the table gets fixed. Either way, the draft is ready to use.
 
 - **Rendering gotchas we already hit** (don't rediscover). Multiple attempts to narrow the table failed before we landed on the pattern above. For the next future you wondering "why is this so elaborate":
@@ -1359,7 +1359,7 @@ Short prose fragments — typically one or two sentences — that go in the End 
 
 Knowledge drops are deliberately short. Students won't read more than two sentences.
 
-**Reduce repetition across tutorials.** A common authoring failure is to use identical knowledge drops in every tutorial — the same tidyverse blurb after `library(tidyverse)`, the same QMD/R-World speech after every `Cmd/Ctrl + Enter` exercise. Students notice, and stop reading. The fix is **progressive themes**: pick a concept (how QMD talks to R, what a package namespace is, what the tidyverse ecosystem covers, what `broom` does, how caching works) and plan a ladder of knowledge drops that deepen across the curriculum. Each appearance builds on the previous one rather than restating it. §12.6 below catalogs the themes and the intended progression. When drafting a tutorial, consult §12.6 to see which theme-level each recurring exercise should use, rather than reaching for the same knowledge drop each time.
+**Reduce repetition across tutorials.** A common authoring failure is to use identical knowledge drops in every tutorial — the same tidyverse blurb after `library(tidyverse)`, the same QMD/R-World speech after every library-loading exercise. Students notice, and stop reading. The fix is **progressive themes**: pick a concept (how QMD talks to R, what a package namespace is, what the tidyverse ecosystem covers, what `broom` does, how caching works) and plan a ladder of knowledge drops that deepen across the curriculum. Each appearance builds on the previous one rather than restating it. §12.6 below catalogs the themes and the intended progression. When drafting a tutorial, consult §12.6 to see which theme-level each recurring exercise should use, rather than reaching for the same knowledge drop each time.
 
 ### 12.1 Introduction
 
@@ -1504,7 +1504,7 @@ Canonical definitions appropriate here (see Key Concepts): Courage, Data Generat
 > *In data science, we deal with words, math, and code, but the most important of these is code. We created the mathematical structure of the model and then wrote a model formula in order to estimate the unknown parameters.*
 
 **On workspace awareness.**
-> *Just because something exists in the tutorial (or in the QMD) does not mean that it is at the R prompt. You should be aware of what exists in R World, which is generally called your "workspace."*
+> *Just because something exists in the tutorial (or in the QMD) does not mean that it is in your R Terminal. You should be aware of what exists in R World, which is generally called your "workspace."*
 
 **On why easystats isn't in the QMD.**
 > *We don't add easystats to the QMD because we are only using it for an interactive check of our fitted model. However, the [easystats ecosystem](https://easystats.github.io/easystats/) has a variety of interesting functions and packages which you might want to explore.*
@@ -1579,7 +1579,7 @@ Canonical definitions appropriate here (see Key Concepts): Temperance, Preceptor
 > *Numeric variables are harder to use in comparisons than binary variables because there are no longer two well-defined groups. We must create those two groups ourselves. As long as there are no interaction terms, we can pick two groups with any values. The most common two groups differ by one unit of the variable.*
 
 **On back-and-forth in data science.**
-> *Data science often involves back-and-forth work. First, make a single chunk of code — say, a new plot — work well. This requires interactive work between the QMD and the R prompt. Second, ensure that the entire QMD runs correctly on its own.*
+> *Data science often involves back-and-forth work. First, make a single chunk of code — say, a new plot — work well. This requires interactive work between the QMD and the R Terminal. Second, ensure that the entire QMD runs correctly on its own.*
 
 **On the map and the territory.**
 > *Always remember: the map is not the territory. A beautiful graphic tells a story, but that story is always an imperfect representation of reality. Our models depend on assumptions that are never completely true.*
@@ -1611,20 +1611,20 @@ Rather than repeating the same knowledge drop every tutorial, we plan **themes**
 
 Two themes are fully sketched here. Authors should propose new themes whenever they find themselves repeating the same drop across tutorials; add the new theme to this subsection with a ladder of levels.
 
-**Theme 1: QMD World vs R World.** Attached to an early `Cmd/Ctrl + Enter` exercise. From Level 2 onward, each drop opens with the fixed sentence *"QMD World and R World are not the same."*
+**Theme 1: QMD World vs R World.** Attached to an early R-Terminal exercise (Intro Exercise 5, where the student first loads libraries in the R Terminal alongside the QMD). From Level 2 onward, each drop opens with the fixed sentence *"QMD World and R World are not the same."* *(Reframed for the `analysis.qmd` model: the old ladder taught this distinction through `Cmd/Ctrl + Enter`, which is retired. The distinction itself is unchanged and arguably more important now — the render and the R Terminal are genuinely separate sessions.)*
 
 | Level | Where it appears | Focus |
 |---|---|---|
-| L1 | First Easy tutorial (06) | The two worlds exist; `Cmd/Ctrl + Enter` moves a line from QMD World into R World. Students will do this hundreds of times. |
-| L2 | Easy, next appearance | *QMD World and R World are not the same.* Rendering runs in a fresh session — packages loaded at the R prompt are invisible to the render. |
-| L3 | Easy, third appearance | *QMD World and R World are not the same.* Several R sessions can run simultaneously (interactive, tutorial, render), each with its own workspace. |
+| L1 | First Easy tutorial (06) | The two worlds exist. Rendering runs in its own R session; the R Terminal is a different session. A library or object you set up in one is not present in the other. Students rely on this separation constantly. |
+| L2 | Easy, next appearance | *QMD World and R World are not the same.* Rendering runs in a fresh session — packages loaded in the R Terminal are invisible to the render, which is why every library the document needs must be in the QMD's setup chunk. |
+| L3 | Easy, third appearance | *QMD World and R World are not the same.* Several R sessions can run simultaneously (R Terminal, render, AI agent), each with its own workspace. |
 | L4 | Medium, first mention | *QMD World and R World are not the same.* The isolation is usually a feature: renders start from known-clean state, so results don't depend on whatever is loaded in an interactive session. |
 | L5 | Medium, later mention | *QMD World and R World are not the same.* The rare failure mode is when they do share state — writing to the same file, reading a cache another process is updating — and those are almost always bugs. |
 | L6 | Hard, last tutorial (17) | *QMD World and R World are not the same.* In modern workflows, neither is a single instance: many R sessions run in parallel (students on shared Codespaces, `Rscript` jobs, AI agents spawning their own sessions). Parallelism is the norm now; non-interaction is what makes it work; when they do interact, expect trouble. |
 
 Do not reuse the same level across tutorials — each appearance advances the ladder. Skipped levels are fine (authors choose which ones fit); what must not happen is two tutorials shipping the same level.
 
-**Theme 2: `library(tidyverse)` and package ecosystems.** Attached to the `Cmd/Ctrl + Enter` exercise that loads tidyverse (or to the operational exercise whose output is the tidyverse attach message). The theme grows from "what tidyverse is" through "why the conflicts matter" to "what a namespace is."
+**Theme 2: `library(tidyverse)` and package ecosystems.** Attached to the exercise that loads `library(tidyverse)` — Intro Exercise 3 (adds it to the QMD and renders) or Intro Exercise 4 (loads it in the R Terminal), whichever exercise's output is the tidyverse attach message. The theme grows from "what tidyverse is" through "why the conflicts matter" to "what a namespace is."
 
 | Level | Where it appears | Focus |
 |---|---|---|
@@ -1663,7 +1663,7 @@ The core observation: a tutorial's QoI is almost always an expected value (*"the
 
 Chapters get more room for this topic than tutorials can afford, and should include concrete simulation code (not just prose) where feasible.
 
-**Structural note.** Themes can require rearranging which exercise a knowledge drop attaches to. For example, if both the QMD/R-World theme and the tidyverse theme naturally attach to the first `Cmd/Ctrl + Enter library(tidyverse)` exercise, split them: put the QMD/R-World drop on the `Cmd/Ctrl + Enter` exercise, and the tidyverse drop on the exercise immediately after (whose output is the tidyverse attach message). Each theme gets its own place to breathe.
+**Structural note.** Themes can require rearranging which exercise a knowledge drop attaches to. For example, the tidyverse theme (Theme 2) and the QMD/R-World theme (Theme 1) both have natural homes in the Introduction's library-loading exercises; split them so each gets its own place to breathe — put the tidyverse drop on the exercise whose output is the tidyverse attach message (Intro Exercise 3 or 4), and the QMD/R-World drop on the next R-Terminal exercise (Intro Exercise 5).
 
 ---
 
@@ -1725,9 +1725,9 @@ If a tutorial is being drafted without a pre-flight tier check, the default is M
 
 A good Imagine paragraph reads like a sketch of a real person doing a real job, with a boss who has goals, decisions to make, and a budget that doesn't stretch to all of them. A bad Imagine paragraph reads like a homework prompt that names a topic and a question. See §5.4 for the section-header formatting convention that determines where `###` Continue buttons sit around the preamble; the three paragraphs above run directly into `### Exercise 1` with no trailing `###` between them.
 
-**Pacing across the EMH tiers.** The Introduction is mostly operational — repo setup, adding libraries to the QMD, turning off code echo, sending commands to the R prompt, etc. The exercise list below is pitched at **Medium** pace: concise, one operational step per exercise, assuming the student has been through this workflow once before. The pace changes with tier:
+**Pacing across the EMH tiers.** The Introduction is mostly operational — repo setup, adding libraries to the QMD, turning off code echo, rendering, running diagnostic commands in the R Terminal, etc. The exercise list below is pitched at **Medium** pace: concise, one operational step per exercise, assuming the student has been through this workflow once before. The pace changes with tier:
 
-- **Easy** (positions 1–4, tutorials 05–08). Slower. Expand each operational exercise with more explanatory prose *before* the step — what a `.gitignore` does and why we need one; what `echo: false` does to the rendered document and why we care; what `Cmd/Ctrl + Enter` does and why we want code in the QMD rather than at the R prompt. Split a long exercise into two or three short ones if the student would otherwise have to track multiple unfamiliar steps at once. Add knowledge drops that teach the *concept* behind each mechanic (why QMD World and R World must stay in sync, what "rendering" actually does). Students at this stage have never done this before — silence is not a feature.
+- **Easy** (positions 1–4, tutorials 05–08). Slower. Expand each operational exercise with more explanatory prose *before* the step — what a `.gitignore` does and why we need one; what `echo: false` does to the rendered document and why we care; what rendering does and why our work lives in `analysis.qmd` rather than typed straight into the R Terminal. Split a long exercise into two or three short ones if the student would otherwise have to track multiple unfamiliar steps at once. Add knowledge drops that teach the *concept* behind each mechanic (how the rendered document and the R Terminal are separate sessions, what "rendering" actually does). Students at this stage have never done this before — silence is not a feature.
 - **Medium** (positions 5–8, tutorials 09–12). Current pace. The exercise list below is calibrated here: one step per exercise, minimal lead-in prose, concepts assumed.
 - **Hard** (positions 9–12, tutorials 13–16). Faster. Collapse sequences of related operational exercises into a single exercise (e.g. "add libraries, turn off echo, and commit the QMD — paste the result"). Drop explanatory knowledge drops that at Easy and Medium we kept for their own sake. Students at this stage have been through the setup six or more times and do not need it re-explained; keep the operational scaffold, but shrink it.
 
@@ -1740,7 +1740,7 @@ This progression applies to every Introduction exercise below unless the exercis
 
 **Exercise 2.** [operational] Confirm working repo and set up the QMD.
 - The primary assumed environment is **VS Code on GitHub Codespaces**, started from the [`PPBDS/codespace-starter`](https://github.com/PPBDS/codespace-starter) devcontainer. The repo — named after the tutorial (e.g. `nhanes`) and initially empty — is expected to already exist, since the student must have created it to launch the Codespace. Positron-local and VS-Code-local are supported alternatives documented in the `primer.tutorials` package README, not in the tutorial text.
-- Prompt: *You should be working inside a GitHub repo named `XX`, opened in a Codespace from the [`PPBDS/codespace-starter`](https://github.com/PPBDS/codespace-starter) template. If you are not there yet, please create that repo and open it in a Codespace now — see the [package README](https://github.com/PPBDS/primer/tree/main/primer.tutorials#working-environments-and-repo-setup) if you need setup instructions or are working locally instead. Once you're inside the `XX` repo, create a new Quarto document titled `"XX"` with yourself as the author, render it, and save it as `analysis.qmd`. Create a `.gitignore` file with `analysis_files` on the first line followed by a blank line. Save and push. At the R prompt, run `show_file(".gitignore")`. If that fails, it's probably because you haven't loaded `library(tutorial.helpers)` at the R prompt. CP/CR.*
+- Prompt: *You should be working inside a GitHub repo named `XX`, opened in a Codespace from the [`PPBDS/codespace-starter`](https://github.com/PPBDS/codespace-starter) template. If you are not there yet, please create that repo and open it in a Codespace now — see the [package README](https://github.com/PPBDS/primer/tree/main/primer.tutorials#working-environments-and-repo-setup) if you need setup instructions or are working locally instead. Once you're inside the `XX` repo, create a new Quarto document titled `"XX"` with yourself as the author, render it, save it as `analysis.qmd`, and open it with Live Server so the rendered HTML auto-refreshes on every later render. Create a `.gitignore` file with `analysis_files` on the first line followed by a blank line. Save and push. In the R Terminal, run `show_file(".gitignore")`. If that fails, it's probably because you haven't loaded `library(tutorial.helpers)` in the R Terminal. CP/CR.*
 - The prompt does **not** spell out the IDE-specific mechanics for creating a new Quarto document — no "File → New File → ..." menu path, no mention of a specific pane or button. Assume students know how to create a new document in whatever IDE they are using. The Codespaces-primary / locally-supported framing handles environment differences; mechanics that vary by IDE do not belong here.
 - The QMD's filename is `analysis.qmd` by default in all tutorials (earlier tutorials used per-topic filenames like `immigration.qmd`; new tutorials should stick with `analysis.qmd` for consistency).
 - In the **first** tutorial, spell out CP/CR as *"copy/paste the command you sent to R along with the response R gave back"* on first use. Keep it concise — no "you will see this throughout" filler.
@@ -1752,19 +1752,19 @@ This progression applies to every Introduction exercise below unless the exercis
   execute:
     echo: false
   ```
-- *At the R prompt, run `show_file("XX.qmd", chunk = "Last")`. CP/CR.*
-- End: *Render again. Everything looks nice, albeit empty, because we have added code to make the file look better and more professional.*
+- *In the R Terminal, run `show_file("XX.qmd", chunk = "Last")`. CP/CR.*
+- End: *Render again. Everything looks nice, albeit empty, because we have added code to make the file look better and more professional.* Theme 2 (tidyverse / package ecosystems, §12.6) may also attach here, since this is the exercise that first puts `library(tidyverse)` into the QMD.
 
-**Exercise 4.** [operational] `library(tidyverse)` via `Cmd/Ctrl + Enter`.
-- Prompt: *Place your cursor in the QMD file on the `library(tidyverse)` line. Use `Cmd/Ctrl + Enter` to execute that line. Note that this sends the line to the R prompt and runs it. CP/CR.*
-- (No End before next exercise; this runs into the next one naturally.)
+**Exercise 4.** [operational] Open an R Terminal and load tidyverse.
+- Prompt: *We will use the R Terminal for quick diagnostic commands as we work — checking a file, reading a help page, glancing at a model. Open an R Terminal and run `library(tidyverse)` there. CP/CR.*
+- End: Theme 2 (tidyverse / package ecosystems, §12.6) — the attach message and its conflicts, at the level this tutorial is due. (If Theme 2 was attached to Exercise 3, use Theme 1 here instead.)
 
-**Exercise 5.** [operational] Next `library()` via `Cmd/Ctrl + Enter`.
-- Prompt: *Place your cursor in the QMD file on the next `library()` line. Use `Cmd/Ctrl + Enter` to execute that line. This workflow — writing things in the QMD so you have a permanent copy, and then executing them at the R prompt with `Cmd/Ctrl + Enter` — is the most common approach to data science. There is QMD World and R World. It is your responsibility to keep them in sync. CP/CR.*
-- End: introduce the data: "A version of the data from XX is available in the `XX` tibble."
+**Exercise 5.** [operational] Load the data package in the R Terminal.
+- Prompt: *In the R Terminal, run `library(<data package>)`. CP/CR.*
+- End: Theme 1 (QMD World vs R World, §12.6) — the R Terminal you just loaded these libraries into is a *separate session* from the one that runs when you render; loading a package here does not load it for the render, and vice versa. Then introduce the data: "A version of the data from XX is available in the `XX` tibble."
 
 **Exercise 6.** [operational] Read the `?<tibble>` help.
-- Prompt: *At the R prompt, type `?XX`, and paste the Description below.*
+- Prompt: *In the R Terminal, run `?XX`, and paste the Description below.*
 - Only include if the tibble has a help page. Delete if not.
 - End: short paragraph of context about the data (paper abstract, source website quote).
 
@@ -1997,7 +1997,7 @@ These patterns appear in roughly this order across the tutorials — slice-sampl
 **Exercise 10.** [per-tutorial, written-with-answer] First two sentences of the summary paragraph.
 - Prompt: *We will be creating a summary paragraph over the course of this tutorial. Write the first two sentences. The first sentence is a general statement about the overall topic, mentioning the general class of outcome and at least one covariate. The second introduces the data source and the specific question — when/where gathered, how many observations, who collected it.*
 - Message: an excellent two-sentence opener.
-- End: *Read our answer. It will not be the same as yours. You can change your answer to incorporate some of our ideas, but do not copy/paste our answer exactly. Add your two sentences to your QMD, `Cmd/Ctrl + Shift + K`, and commit/push.*
+- End: *Read our answer. It will not be the same as yours. You can change your answer to incorporate some of our ideas, but do not copy/paste our answer exactly. Add your two sentences to your QMD, render, and commit/push.*
 
 ### 13.3 Justice
 
@@ -2096,7 +2096,7 @@ Parts 1 and 2 are deliberately repetitive with Wisdom — same Preceptor Table, 
 - End: the randomization-failing knowledge drop (§12.3).
 
 **Exercise 13.** [operational] Load the modeling package.
-- Prompt: *A statistical model consists of two parts: the probability family and the link function. The probability family is the probability distribution which generates the randomness in our data. The link function is the mathematical formula which links our data to the unknown parameters. Add `library(tidymodels)` to the QMD file. Place your cursor on that line. Use `Cmd/Ctrl + Enter` to execute. Note that this sends the line to the R prompt. CP/CR.*
+- Prompt: *A statistical model consists of two parts: the probability family and the link function. The probability family is the probability distribution which generates the randomness in our data. The link function is the mathematical formula which links our data to the unknown parameters. Add `library(tidymodels)` to the setup chunk in `analysis.qmd` and render. Then load it in your R Terminal too — `library(tidymodels)` — so the interactive model commands later in Courage will work. CP/CR.*
 - End: the probability family is determined by the outcome variable $Y$. Pick the relevant one:
   - Continuous → Normal: $Y \sim N(\mu, \sigma^2)$
   - Binary → Bernoulli: $Y \sim \text{Bernoulli}(\rho)$
@@ -2105,7 +2105,7 @@ Parts 1 and 2 are deliberately repetitive with Wisdom — same Preceptor Table, 
   Full LaTeX for each lives in the template; migrate as needed.
 
 **Exercise 14.** [operational] Add `library(broom)`.
-- Prompt: *Add `library(broom)` to the QMD file. Place your cursor on that line. Use `Cmd/Ctrl + Enter`. CP/CR.*
+- Prompt: *Add `library(broom)` to the setup chunk in `analysis.qmd` and render. Load it in your R Terminal as well. CP/CR.*
 - In later tutorials, shrink the prompt verbiage.
 - End: the link function depends on the outcome variable type. Pick the relevant functional form:
   - Continuous → linear: $\mu = \beta_0 + \beta_1 X_1 + \ldots$
@@ -2116,7 +2116,7 @@ Parts 1 and 2 are deliberately repetitive with Wisdom — same Preceptor Table, 
 **Exercise 15.** [per-tutorial, written-with-answer] Add a weakness sentence to the summary.
 - Prompt: *Write one sentence highlighting a potential weakness in your model. Derive it from possible problems with the assumptions above. We will add this to our summary paragraph. So far our version of the summary paragraph looks like this:* (paste our first two sentences). *Your version will be somewhat different.*
 - Message: per-tutorial.
-- End: *Add a weakness sentence to the summary paragraph in your QMD. You can modify your paragraph, but don't copy/paste our answer exactly. `Cmd/Ctrl + Shift + K`, then commit/push.*
+- End: *Add a weakness sentence to the summary paragraph in your QMD. You can modify your paragraph, but don't copy/paste our answer exactly. Render, then commit/push.*
 
 ### 13.4 Courage
 
@@ -2222,12 +2222,12 @@ The interpretation questions are concentrated in Courage so the parameter-table-
 
 **Numbering for two-fit and three-fit blocks.** Three-fit Courage (most predictive tutorials with both categorical and continuous covariates) uses Exercises 3–8 as the parameter block; the operational exercises that follow start at Ex 9. Two-fit Courage (tutorials whose dataset has limited covariate variety) uses Exercises 3–6; the operational exercises start at Ex 7. The exercise numbers below assume the three-fit pattern (operational from Ex 9); subtract 2 throughout for two-fit tutorials.
 
-**Exercise 9.** [per-tutorial, code] Display the fit object.
-- Prompt: *Behind the scenes, an object called `fit_<n>` has been created (the final model from the previous exercise). Type `fit_<n>` and hit "Run Code."*
+**Exercise 9.** [per-tutorial] Confirm the fitted model.
+- Prompt: *The final model from the previous exercise lives in a code chunk in your `analysis.qmd`, assigned to `fit_<n>`. Render and confirm it is there.*
 - End: the code-being-primary knowledge drop (§12.4).
 
-**Exercise 10.** [operational] Bring `fit_<n>` into R World.
-- Prompt: *We need `fit_<n>` to exist in R World. Copy/paste this code to the R prompt and execute it:*
+**Exercise 10.** [operational] Bring `fit_<n>` into your R Terminal.
+- Prompt: *The render runs in its own session, so `fit_<n>` does not yet exist in your R Terminal. To run the interactive checks that follow, run the fit code in the R Terminal so `fit_<n>` exists there:*
   ```
   fit_<n> <- <model spec> |>
     fit(<final formula>, data = <tibble>)
@@ -2235,14 +2235,14 @@ The interpretation questions are concentrated in Courage so the parameter-table-
 - *CP/CR.*
 - End: the workspace-awareness knowledge drop (§12.4).
 
-**Exercise 11.** [operational] Load easystats at the R prompt.
+**Exercise 11.** [operational] Load easystats in the R Terminal.
 - **Tier:** Medium only. **Omit entirely** in positions 1–2 (target tutorials 05 Recruits, 06 Trains). In the remaining Easy positions 3–4 (target tutorials 07 Colleges, 08 SPS), replace both Exercises 11 and 12 with a single author-rendered side-by-side plot of outcome distribution vs. fitted-value distribution — the student views it and hits Continue (a bare `###`, no question chunk per §6.5); no package loaded, no terminology introduced. In Hard positions 9–10 (target tutorials 13 CES, 14 Governors), keep Exercises 11–12 and add a follow-up exercise that uses the check to drive a model revision. In Hard positions 11–12 (random forest tutorials), drop the model-checking block entirely per §14.8. Full progression in §1.3 *Worked example: model checking across three levels*.
-- Prompt: *At the R prompt, load the [easystats](https://easystats.github.io/easystats/) package. CP/CR.*
+- Prompt: *In the R Terminal, load the [easystats](https://easystats.github.io/easystats/) package. CP/CR.*
 - End: the why-easystats-isn't-in-the-QMD knowledge drop (§12.4).
 
 **Exercise 12.** [operational] Run `check_predictions()`.
 - **Tier:** Medium only. See Exercise 11's tier note above — same rules.
-- Prompt: *At the R prompt, run `check_predictions(extract_fit_engine(fit_<n>))`. CP/CR.*
+- Prompt: *In the R Terminal, run `check_predictions(extract_fit_engine(fit_<n>))`. CP/CR.*
 - End: the `check_predictions()` knowledge drop (§12.4). Add a sentence noting whether the simulated data looks like the actual data for this problem.
 
 **Exercise 13.** [author-shown block in Easy and Medium; optional student exercise in Difficult tutorials with simple models only] Concrete LaTeX DGM.
@@ -2252,25 +2252,25 @@ The interpretation questions are concentrated in Courage so the parameter-table-
 - The concrete LaTeX DGM is also referenced in the §13.5 Temperance preamble as the fourth way to describe a model.
 
 **Exercise 14.** [operational] Cache the fit in the QMD.
-- Prompt: *Create a new code chunk in your QMD. Add the chunk option `#| cache: true`. Copy/paste the R code for the final model into the chunk, assigning the result to `fit_<n>`. (This includes `fit()` but not `tidy()`.) Place your cursor on the `fit_<n>` line and use `Cmd/Ctrl + Enter`. (This is technically unnecessary since we already have `fit_<n>` in the workspace, but ensuring everything in the QMD is also at the R prompt is good habit.) `Cmd/Ctrl + Shift + K`. Rendering may be slow the first time but cached thereafter. At the R prompt, run `tutorial.helpers::show_file("XX.qmd", chunk = "Last")`. CP/CR.*
-- End: the caching knowledge drop (§12.4). *To confirm, `Cmd/Ctrl + Shift + K` again. It should be quick.*
+- Prompt: *Create a new code chunk in your QMD. Add the chunk option `#| cache: true`. Put the R code for the final model into the chunk, assigning the result to `fit_<n>`. (This includes `fit()` but not `tidy()`.) Render with `quarto render analysis.qmd`. Rendering may be slow the first time but is cached thereafter. In the R Terminal, run `tutorial.helpers::show_file("XX.qmd", chunk = "Last")`. CP/CR.*
+- End: the caching knowledge drop (§12.4). *To confirm, render again. It should be quick.*
 
 **Exercise 15.** [operational] Add `*_cache` to `.gitignore`.
-- Prompt: *Add `*_cache` to `.gitignore`. Cached objects are often large and don't belong on GitHub. At the R prompt, run `tutorial.helpers::show_file(".gitignore")`. CP/CR.*
+- Prompt: *Add `*_cache` to `.gitignore`. Cached objects are often large and don't belong on GitHub. In the R Terminal, run `tutorial.helpers::show_file(".gitignore")`. CP/CR.*
 - End: *Because of the change in your `.gitignore` (assuming you saved it), the cache directory should not appear in the Source Control panel because Git is ignoring it. Commit and push.*
 
 **Exercise 16.** [per-tutorial, code] Run `tidy(fit_<n>, conf.int = TRUE)`.
-- Prompt: *At the R prompt, run `tidy()` on `fit_<n>` with `conf.int = TRUE`. This returns 95% intervals for all the parameters of the final model.*
+- Prompt: *In the R Terminal, run `tidy()` on `fit_<n>` with `conf.int = TRUE`. This returns 95% intervals for all the parameters of the final model.*
 - End: the `broom` knowledge drop (§12.4).
 
 **Exercise 17.** [per-tutorial, written-without-answer] Make a nice table from `tidy()`.
-- Prompt: *Create a new code chunk in your QMD. Ask AI to make a nice-looking table from the tibble returned by `tidy()`. You don't need all the columns — estimate and confidence intervals is typical. You may need to load [tinytable](https://vincentarelbundock.github.io/tinytable/), [knitr](https://yihui.org/knitr/), [gt](https://gt.rstudio.com/), [kableExtra](https://haozhu233.github.io/kableExtra/), [flextable](https://davidgohel.github.io/flextable/), or [modelsummary](https://modelsummary.com/) in the setup chunk. Insert your table code. `Cmd/Ctrl + Shift + K`. At the R prompt, `tutorial.helpers::show_file("XX.qmd", chunk = "Last")`. CP/CR.*
+- Prompt: *Create a new code chunk in your QMD. Ask AI to make a nice-looking table from the tibble returned by `tidy()`. You don't need all the columns — estimate and confidence intervals is typical. You may need to load [tinytable](https://vincentarelbundock.github.io/tinytable/), [knitr](https://yihui.org/knitr/), [gt](https://gt.rstudio.com/), [kableExtra](https://haozhu233.github.io/kableExtra/), [flextable](https://davidgohel.github.io/flextable/), or [modelsummary](https://modelsummary.com/) in the setup chunk. Insert your table code. Render. In the R Terminal, run `tutorial.helpers::show_file("XX.qmd", chunk = "Last")`. CP/CR.*
 - End: show our table and our code. Closing knowledge drop: *At the very least, your table should include a title and a caption with the data source. The more you use AI, the better you will get at doing so.*
 
 **Exercise 18.** [per-tutorial, written-with-answer] Model-structure sentence.
 - Prompt: *Add a sentence to your project summary explaining the structure of the model. Something like: "I/we model XX [concept of outcome, not variable name] as a [normally distributed / Bernoulli / multinomial / ordinal] variable which is a [linear/logistic/multinomial/ordinal] function of XX [and maybe other covariates]." Name the outcome's distributional family before the functional-form clause — Justice's choice of probability family is part of the model, not just the link function. Recall the beginning of our summary: [paste what we suggested at the end of Justice].*
 - Message: per-tutorial.
-- End: *Read our answer. Do not copy/paste exactly. Add your two sentences to the summary paragraph. `Cmd/Ctrl + Shift + K`, then commit/push.*
+- End: *Read our answer. Do not copy/paste exactly. Add your two sentences to the summary paragraph. Render, then commit/push.*
 
 ### 13.5 Temperance
 
@@ -2352,7 +2352,7 @@ This ordering determines how much real estate the Courage parameter block consum
 - **Hard** (positions 9–12, target tutorials 13–16). Cumulative logit (CES at position 9), RDD causal identification (Governors at position 10), and non-parametric models (random forests at positions 11 and 12). Non-parametric models replace the three-fit Courage block with a single "why parameters don't help" exercise per §14.8. Where the multi-fit block remains, keep at least one fit whose interpretation question requires the student to articulate *why* the parameter is opaque — the failure to interpret is itself the lesson, and it sets up the Temperance `marginaleffects` work that follows.
 
 **Exercise 2.** [operational] Load `marginaleffects`.
-- Prompt: *In the end, we don't really care about parameters. Parameters are imaginary, like unicorns. We care about answers to our questions. In the modern world, all parameters are nuisance parameters. Add `library(marginaleffects)` to the QMD. Place your cursor on that line. Use `Cmd/Ctrl + Enter`. CP/CR.*
+- Prompt: *In the end, we don't really care about parameters. Parameters are imaginary, like unicorns. We care about answers to our questions. In the modern world, all parameters are nuisance parameters. Add `library(marginaleffects)` to the setup chunk in `analysis.qmd` and render. Load it in your R Terminal as well. CP/CR.*
 - End: the humility knowledge drop (§12.5).
 
 **Exercise 3.** [per-tutorial, written-with-answer] The specific question.
@@ -2361,11 +2361,11 @@ This ordering determines how much real estate the Courage parameter block consum
 - End: the data-science-projects-begin-with-decisions knowledge drop (§12.5).
 
 **Exercise 4.** [per-tutorial, written-without-answer] Run `predictions()`.
-- Prompt: *At the R prompt, run `predictions()` on `fit_<n>`. CP/CR.*
+- Prompt: *In the R Terminal, run `predictions()` on `fit_<n>`. CP/CR.*
 - End: the `predictions()` knowledge drop (§12.5), noting actual row count. Add a second sentence specific to what's interesting about this output.
 
 **Exercise 5.** [per-tutorial, written-without-answer] Run `plot_predictions()` (first version).
-- Prompt: *At the R prompt, run `plot_predictions()` on `fit_<n>` with [specific arguments]. CP/CR.*
+- Prompt: *In the R Terminal, run `plot_predictions()` on `fit_<n>` with [specific arguments]. CP/CR.*
 - End: discuss the estimate and uncertainty the plot shows. Explain how to read the estimate and confidence interval from the plot.
 
 Insert additional `plot_predictions()` exercises as needed — different arguments, options like `points`, or `draw = FALSE` to return a tibble. `plot_comparisons()` belongs here when the question calls for differences rather than level estimates (see §12.5).
@@ -2383,17 +2383,17 @@ Insert additional `plot_predictions()` exercises as needed — different argumen
 - End: *Because `plot_predictions()` returns a ggplot object, you can continue with ggplot commands like `labs()`. But it can be useful to see the underlying values in the tibble and build your own plot directly.*
 
 **Exercise 8.** [per-tutorial, written-without-answer] Build a beautiful plot.
-- Prompt: *Work with AI to create a beautiful plot starting from the output of `plot_predictions(..., draw = FALSE)`. Do this in your QMD (much easier than the R prompt). Title: key variables. Subtitle: important takeaway. Caption: data source. Axis labels: nice. This plot is not directly connected to your question — it answers lots of questions. Paste the plot code below.*
+- Prompt: *Work with AI to create a beautiful plot starting from the output of `plot_predictions(..., draw = FALSE)`. Do this in your `analysis.qmd` (much easier than the R Terminal). Title: key variables. Subtitle: important takeaway. Caption: data source. Axis labels: nice. This plot is not directly connected to your question — it answers lots of questions. Paste the plot code below.*
 - End: show our plot and our code. Closing knowledge drop: the back-and-forth knowledge drop (§12.5).
 
 **Exercise 9.** [operational] Finalize the plot chunk.
-- Prompt: *Finalize the new graphics chunk in your QMD. `Cmd/Ctrl + Shift + K` to ensure it all works. At the R prompt, `tutorial.helpers::show_file("XX.qmd", chunk = "Last")`. CP/CR.*
+- Prompt: *Finalize the new graphics chunk in your QMD. Render with `quarto render analysis.qmd` to ensure it all works. In the R Terminal, run `tutorial.helpers::show_file("XX.qmd", chunk = "Last")`. CP/CR.*
 - End: the map-is-not-the-territory knowledge drop (§12.5).
 
 **Exercise 10.** [per-tutorial, written-with-answer] Last sentence of the summary paragraph.
 - Prompt: *Write the last sentence of your summary paragraph. It describes at least one Quantity of Interest and a measure of uncertainty. It is OK if this QoI differs from the one you began with. It is OK to discuss more than one QoI.*
 - Message: per-tutorial.
-- End: *Add a final sentence to your summary paragraph, but don't copy/paste our answer exactly. `Cmd/Ctrl + Shift + K`.*
+- End: *Add a final sentence to your summary paragraph, but don't copy/paste our answer exactly. Render.*
 
 **Exercise 11.** [per-tutorial, written-with-answer] Why the estimate might be wrong.
 - Prompt: *Write a few sentences explaining why the estimates for the quantities of interest, and the uncertainty, might be wrong. Suggest alternative estimates and confidence interval if warranted.*
@@ -2401,11 +2401,11 @@ Insert additional `plot_predictions()` exercises as needed — different argumen
 - End: the go-back-to-the-Preceptor-Table knowledge drop (§12.5).
 
 **Exercise 12.** [operational] Reorder and render final QMD.
-- Prompt: *Rearrange the material in your QMD so the order is graphic, then paragraph. The chunk that creates the fitted model must occur before the chunk that creates the graphic. You can keep or discard the math at your discretion. `Cmd/Ctrl + Shift + K`. At the R prompt, `tutorial.helpers::show_file("XX.qmd")`. CP/CR.*
+- Prompt: *Rearrange the material in your QMD so the order is graphic, then paragraph. The chunk that creates the fitted model must occur before the chunk that creates the graphic. You can keep or discard the math at your discretion. Render with `quarto render analysis.qmd`. In the R Terminal, run `tutorial.helpers::show_file("XX.qmd")`. CP/CR.*
 - End: the published-version knowledge drop (§12.5).
 
 **Exercise 13.** [operational] Publish to GitHub Pages.
-- Prompt: *Publish your rendered QMD to GitHub Pages. In the Terminal (not the R prompt!), run `quarto publish gh-pages XX.qmd`. Copy/paste the resulting URL below.*
+- Prompt: *Publish your rendered QMD to GitHub Pages. In the bash terminal (not the R Terminal!), run `quarto publish gh-pages XX.qmd`. Copy/paste the resulting URL below.*
 - End: *Commit/push everything.*
 
 **Exercise 14.** [operational] Paste the repo URL.
@@ -2522,7 +2522,7 @@ The summary paragraph is built up across the tutorial:
 - Courage Exercise 16: add a model-structure sentence.
 - Temperance Exercise 13: add the final sentence with a QoI and uncertainty.
 
-After each addition, the student updates their QMD, renders with `Cmd/Ctrl + Shift + K`, and commits/pushes.
+After each addition, the student updates their QMD, renders, and commits/pushes.
 
 ### 14.5 Test chunks for marginaleffects calls
 
@@ -2713,14 +2713,14 @@ A formula with three or fewer terms (e.g. NHANES `height ~ sex` has just two par
 
 The tutorial setup chunk (§5.2) loads the full package stack. For chapters, setup is simpler: load the packages, fit the model, move on.
 
-**Packages loaded for rendering only** (not expected at the student's R prompt): `learnr`, `tutorial.helpers`, `gt`.
+**Packages loaded for rendering only** (not expected in the student's R Terminal): `learnr`, `tutorial.helpers`, `gt`.
 
 **Packages students are expected to load themselves** (and appear in the setup chunk for the tutorial to work):
 - `tidyverse` — always.
 - `tidymodels` — for most models. Replace with `ordinal` or another package if that model framework doesn't fit.
 - `broom` — for tidying model output. `broom.mixed` for mixed models.
 - `marginaleffects` — for `predictions()`, `plot_predictions()`, `plot_comparisons()`.
-- `easystats` — for `check_predictions()`. Not added to student QMDs; used interactively at the R prompt.
+- `easystats` — for `check_predictions()`. Not added to student QMDs; used interactively in the R Terminal.
 
 **Data package**: whichever one holds the tutorial's dataset (`primer.data` most of the time).
 
@@ -3062,7 +3062,7 @@ Preceptor Table and Population Table columns are listed by spanner in order. Pop
 - **Preceptor Table:** Unit (Polling Station) | Potential Outcomes (six columns: Reg Rate if Control, if SMS, if Local, if Canvass, if Local+SMS, if Local+Canvass) | Treatment (Intervention) | Covariates (Poverty, Distance, Density, Mean Age)
 - **Population Table:** Source | Unit/Time (Polling Station, Year) | Potential Outcomes (six columns) | Treatment | Covariates
 - **Authoring notes:**
-  - **Setup cost.** `grf::multi_arm_causal_forest` with `num.trees = 2000` takes longer than the "few seconds" setup budget in §5.2. Fit once in setup with `#| cache: true` in the tutorial body; if still too slow, reduce `num.trees` for the tutorial (e.g. 500) and note the tradeoff in a knowledge drop. Do not fit the forest at the R prompt interactively in an exercise — cache it.
+  - **Setup cost.** `grf::multi_arm_causal_forest` with `num.trees = 2000` takes longer than the "few seconds" setup budget in §5.2. Fit once in setup with `#| cache: true` in the tutorial body; if still too slow, reduce `num.trees` for the tutorial (e.g. 500) and note the tradeoff in a knowledge drop. Do not fit the forest in the R Terminal interactively in an exercise — cache it.
   - **Fallback if `grf` is too heavy.** A lighter non-parametric path: fit a random-forest *predictive* model on `reg_byrv13 ~ treatment * (covariates)` with `ranger`, then use `marginaleffects` to extract arm-by-covariate conditional predictions and compute contrasts. Loses the formal causal-forest machinery but keeps the heterogeneous-effect story visible.
   - **Parameter-block handling.** Per §13.4 + §14.8: random forests have no interpretable parameter table, so Courage's three-fit interpretation block (Exercises 3–8) collapses to a single exercise whose only job is to make the student articulate *why* the forest does not have directly interpretable parameters. All answering happens downstream via `marginaleffects` on the forest's predictions in Temperance.
   - **Canonical-definition retention check.** Per §13 pre-flight rotation, this is the very last tutorial in the 12-example sequence, so Exercise 1 in each virtue section asks **all four** canonical definitions (Wisdom, Justice, Courage, Temperance) as a retention test. No preamble reminders — the exercises return in force.
