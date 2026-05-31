@@ -2,6 +2,8 @@
 
 This is the authoring guide for **"normal" tutorials**: the data science tutorials students do *after* they have learned the basic mechanics of their tools. It is not specific to any one package. The same guidance applies to any **learnr** tutorial that teaches a data science topic to students who already know how to work in their environment — across `vscode.tutorials`, the Primer, and any other tutorial package in this ecosystem.
 
+**This guide is the default contract for every such tutorial.** Unless a tutorial is one of the explicit exceptions below, it follows everything here by default. A project may override a rule — but the override must be **explicit**: stated in that project's own guide, named as a departure from this base, and justified. Silent divergence is a bug. Project guides (e.g. the Primer's) read in and accept this file first, then add only what is specific to them or override it on the record.
+
 These tutorials assume students already understand the foundational skills: Git, GitHub, `.gitignore`, `_files` directories, terminals, Codespaces, and Quarto rendering. Tutorials written under this guide do **not** re-teach those mechanics.
 
 **The exception is the core/infrastructure tutorials.** In the `vscode.tutorials` package, `01-code` through `09-infrastructure` are the first tutorials students do, and they exist precisely to teach those foundational skills. They do *not* follow this guidance — they teach mechanics directly and may repeat core lessons about terminals, GitHub, Codespaces, Quarto, files, and warnings. Everything in this file is about the tutorials that come *after* them, once Git, GitHub, `.gitignore`, `_files`, and the like can be taken for granted.

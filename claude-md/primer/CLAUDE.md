@@ -4,7 +4,22 @@
 
 This file is the working reference for creating data science education artifacts.  The first artifact is a chapter in the textbook *Preceptor's Primer for Bayesian Data Science: Using the Cardinal Virtues for Inference*. The second artifact is a matching learnr tutorial. Every chapter has an associated tutorial and vice versea. The third artifact is a class exercise which covers similar material. The file is addressed to Claude. David Kane is the author; Claude is the co-author he collaborates with to produce new material.
 
-The goal is that this file is the only reference either of us needs when starting work on a new chapter/tutorial pair or new class exercise. If any other document in the project conflicts with what's written here, this file wins.
+The goal is that this file, **together with the base tutorial guide**, is the reference either of us needs when starting work on a new chapter/tutorial pair or new class exercise.
+
+## Base tutorial guide (read this first)
+
+Primer tutorials are "normal" tutorials, so they inherit the **base tutorial guide** — the default contract for authoring any data science tutorial in this ecosystem, at `claude-md/tutorials/CLAUDE.md` in the PPBDS/ai-rules repo. **Before writing any Primer tutorial, read in and accept that guide.** It is the default; this file does not repeat it.
+
+The base guide is the source of truth for everything common to all such tutorials:
+
+- the AI-era philosophy — students create artifacts by prompting an AI agent, not by typing code into learnr exercise chunks;
+- the workflow — student work lives in `analysis.qmd`; they render with `quarto render` in a bash terminal and view the result via **Live Server**;
+- exercise rhythm, the `question_text()` question types, knowledge-drop discipline, CP/CR and `show_file()` evidence;
+- `echo = FALSE`, test-chunk discipline, code-chunk labeling, the setup-chunk skeleton, data handling, and formatting (package names bold+linked, function names with `()`, sentence case).
+
+This file covers only what is **specific to the Primer**: the Cardinal Virtues structure, the EMH progression, predictive/causal pairing, Preceptor and Population Tables, the canonical definitions, the knowledge-drop library, the master exercise list, and the per-tutorial seed specs.
+
+**Precedence.** On workflow and shared conventions, the base guide wins. On Primer-specific pedagogy, this file wins. Anywhere the Primer departs from the base guide, that departure must be an **explicit, on-the-record override** — called out as such at the point it occurs — never a silent difference. (The legacy learnr-native workflow this file once assumed — students building objects in exercise/hint chunks, "type `fit_n` and hit Run Code", rendering with `Cmd/Ctrl+Shift+K` — is **superseded** by the base guide's `analysis.qmd` + Live Server model. Sections below have been migrated; any lingering exercise-chunk / keystroke phrasing is a known cleanup item, not a live override.)
 
 ## Contents
 
@@ -540,7 +555,7 @@ Tutorials without this flag should not have an `.rds` file. Authors reviewing ex
 
 ## 6. Question flow
 
-Within a section, each `### Exercise N` has three parts: **Start**, **exercise code chunk(s)**, and **End**. Every exercise ends with at least one Continue button (triple hash, `###`) before the next one begins.
+Within a section, each `### Exercise N` has three parts: **Start**, the **task** (a written question, or an instruction to edit `analysis.qmd` and render), and **End**. Every exercise ends with at least one Continue button (triple hash, `###`) before the next one begins. The base guide's *Exercise rhythm* governs the overall loop — prompt AI / edit `analysis.qmd` → render → inspect the HTML → submit evidence → expected output → knowledge drop; this section adds only the Primer's Start/End conventions.
 
 ### 6.1 Start
 
@@ -551,17 +566,14 @@ The Start is one or two sentences of framing and then the question itself. Two r
 
 Students tend to click Continue until they see a question. They then read the sentence or two *immediately before* the question closely, because they don't know whether that text is needed to answer. That is your best place to teach.
 
-### 6.2 Exercise code chunk(s)
+### 6.2 The task: code lives in `analysis.qmd`, not in exercise chunks
 
-Follow the `tutorial.helpers` conventions:
+Per the base guide (*Philosophy*, *Student workflow*), students do **not** write R in learnr exercise chunks. Code work happens in their own `analysis.qmd`: the exercise states a goal, the student prompts an AI agent to make the edit, renders with `quarto render`, and inspects the rendered HTML. The tutorial `.Rmd` carries only two kinds of chunk:
 
-- **Exercise chunk.** Label it `{section}-{N}` (e.g., `wisdom-3`). This is where the student's answer goes.
-- **Hint chunk.** Label `{section}-{N}-hint-1`. Include `eval = FALSE` because the hint is often not legal R code. Almost always only one hint.
-- **Test chunk.** Label `{section}-{N}-test`. Include `include = FALSE`. Contains the code that the exercise expects to work — the canonical answer. We never show this to students; it exists so we can verify our own examples still run.
+- **Written question chunks** (`question_text()`, §7.2/§7.3) — for definitions, interpretation, and evidence submission (CP/CR, paste-from-HTML, `show_file()` output).
+- **Test chunks** — labeled `{section}-{N}-test`, `include = FALSE`. These are *author-only*: they hold the canonical code that produces the example output we show students after they submit, and they let us verify our own examples still run. They are not student exercises; there is no `exercise = TRUE` chunk and no `-hint` chunk.
 
-Hint and test chunks are only for code exercises. Written-answer exercises don't have them.
-
-Most of the time there is **no** `###` immediately before the exercise code chunk — the Start runs directly into the code.
+This is the migrated model. The legacy `{section}-{N}` exercise chunk + `-hint-1` hint chunk pattern is **retired** — do not author new exercises with it.
 
 ### 6.3 End
 
@@ -601,21 +613,15 @@ If the *only* thing the student needs to do is read an author-shown table or plo
 
 Three types, used in roughly this mix:
 
-### 7.1 Code exercise
+### 7.1 Code exercise (work in `analysis.qmd`)
 
-Student writes R code in the exercise chunk. Has a hint chunk and a test chunk. The test chunk contains the canonical answer; the exercise chunk is empty (or has scaffolding). With AI-mediated authoring (§9), most code exercises are now single-shot: state the goal, let the student prompt AI, paste and run.
+The student produces code by prompting an AI agent and editing their `analysis.qmd`, then renders and inspects the result — never by typing into a learnr exercise chunk (base guide, *Philosophy* and *Authoring student prompts to AI*; §9). State the **goal**, not the implementation — *"Add a chunk to `analysis.qmd` that fits `att_end ~ treatment` on `trains`, assigns it to `fit_attitude`, render, and confirm it appears"* — and let the AI choose the functions.
+
+Authoring: there is no `exercise = TRUE` chunk and no `-hint` chunk. When we want to show students the canonical result after they submit, the code goes in an author-only `{section}-{N}-test` chunk (`include = FALSE`; see §6.2). With AI-mediated authoring (§9), most code tasks are single-shot: state the goal, the student prompts AI, edits `analysis.qmd`, renders, submits evidence.
 
 ```r
-```{r courage-3, exercise = TRUE}
-
-```
-
-```{r courage-3-hint-1, eval = FALSE}
-linear_reg(engine = "lm") |>
-  fit(...)
-```
-
 ```{r courage-3-test, include = FALSE}
+# author-only: produces the example output shown after the student submits
 linear_reg(engine = "lm") |>
   fit(att_end ~ treatment, data = trains)
 ```
@@ -623,45 +629,22 @@ linear_reg(engine = "lm") |>
 
 ### 7.2 Written exercise with model answer
 
-A `question_text()` with `message = "..."` containing the canonical answer, `allow_retry = FALSE`, `incorrect = NULL`. Used for questions that have a correct answer — definitions, conceptual framings, recall. Students see our answer after submitting theirs.
+Same `question_text()` shape as the base guide's *Question types* (yes-answer form: `message = "..."` with the canonical answer, `allow_retry = FALSE`, `incorrect = NULL`). Used for questions that have a correct answer — definitions, conceptual framings, recall; students see our answer after submitting theirs. The chunk skeleton is in the base guide and is not repeated here.
 
-```r
-```{r wisdom-2}
-question_text(NULL,
-    message = "A Preceptor Table is the smallest possible table of data with rows and columns such that, if there is no missing data, we can easily calculate the quantity of interest.",
-    answer(NULL, correct = TRUE),
-    allow_retry = FALSE,
-    incorrect = NULL,
-    rows = 6)
-```
-```
-
-The text in `message` is read closely by students, who compare their answer to ours. Our answer must be excellent. Use the wording from Key Concepts verbatim for definitional questions (the §11 snapshot is a convenience copy).
+Primer-specific rule: the `message` text is read closely and compared against the student's own answer, so it must be excellent. For definitional questions, use the **Key Concepts** wording *verbatim* (the §11 snapshot is a convenience copy).
 
 ### 7.3 Written exercise without model answer
 
-A `question_text()` with no `message`, `allow_retry = TRUE`, `try_again_button = "Edit Answer"`. Used only when there is no single correct answer — typically when the student is asked to run a diagnostic command like `show_file()` and paste the output, or to describe something specific to their own analysis. Do not use this type for definitional or conceptual questions.
+The base guide's no-answer `question_text()` form (`allow_retry = TRUE`, `try_again_button = "Edit Answer"`, no `message`). Used only when there is no single correct answer — typically evidence submission (paste `show_file()` output or copy from the rendered HTML) or describing something specific to the student's own analysis. Do **not** use this type for definitional or conceptual questions.
 
-```r
-```{r introduction-2}
-question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 3)
-```
-```
+### 7.4 Operational conventions
 
-### 7.4 Operational conventions: "CP/CR", `show_file()`, and "the R prompt"
+**CP/CR** and **`show_file()`** follow the base guide's *Submission evidence* section and are not repeated here: CP/CR = copy/paste the command and the response (terminal evidence); `show_file()` (from `tutorial.helpers`) displays a file's contents — e.g. `show_file("analysis.qmd", chunk = "Last")` for the last chunk — which the student copies and pastes back. The first tutorial spells out CP/CR once before using it as shorthand.
 
-Many operational exercises end with the string **CP/CR**, short for *copy/paste the **c**ommand and the **r**esponse*. Students copy/paste both the command they sent to R (or the shell) and the response R gave back. Students know what it means by the time they get past the first tutorial. Exception: the **very first tutorial** should spell it out once, inside the exercise Start, before using it as shorthand.
+Primer-specific notes, all deferring to the base guide's workflow:
 
-`show_file()` (from `tutorial.helpers`) prints the contents of a file in the student's project. The usual pattern: the student does something in their QMD, then runs `show_file("XX.qmd", chunk = "Last")` at the R prompt to display the last chunk, copies the output, and pastes it back into the tutorial. `chunk = "Last"` is preferred over `start = -N` because it's more robust. We never actually check what they paste; the threat of checking is the point.
-
-The `Cmd/Ctrl + Shift + K` keystroke renders the QMD. Use it often — rendering catches bugs early, and professionals do it.
-
-**"At the R prompt" is the canonical phrasing for running code interactively.** Do not say "in the Console" — that term is Positron- and RStudio-specific and does not translate to the VS Code / Codespaces primary environment (§README). When an exercise asks the student to run something interactively rather than by rendering the QMD, use **"At the R prompt, run …"** (or *"At the R prompt, type …"*). When describing the `Cmd/Ctrl + Enter` workflow, say the line is **"sent to the R prompt"** rather than "copied down to the Console." The metaphor is pane-neutral: every supported environment has an R prompt somewhere, even if its on-screen label varies.
+- **Render + view per the base guide.** Students run `quarto render analysis.qmd` in a bash terminal and view the result via **Live Server**. Do **not** tell students to render with `Cmd/Ctrl + Shift + K` or to send lines to a Console with `Cmd/Ctrl + Enter`. Those keystrokes are **retired** here — superseded by the base workflow.
+- **Terminal phrasing.** For interactive one-off commands (`show_file()`, `?recruits`, `list.files()`), use the base guide's terminal vocabulary — **R Terminal** and **bash terminal** — consistently. The Primer's older "at the R prompt" / "not the Console" phrasing is being swept out; prefer the base guide's wording in all new material.
 
 ---
 
@@ -681,13 +664,13 @@ Before writing a tutorial, read §17 for the problem specification (dataset, que
 
 ## 9. AI-mediated code exercises
 
-Students use AI (ChatGPT, Claude, etc.) to produce code. They prompt the AI and paste the result into their tutorial. Design code exercises accordingly:
+This is the base guide's model (*Philosophy*, *Authoring student prompts to AI*, *Authoring with AI agents*): students prompt an AI agent to produce code, edit `analysis.qmd`, render, and inspect — describing the **goal**, not the implementation, and not dictating functions. The general rules are in the base guide and are not repeated here.
 
-- **Do not build pipelines line-by-line with the student writing each line** the way older tutorials do. Instead, state the goal of the code clearly enough that a student could prompt an AI for it, then have them run the AI's output.
-- **Be explicit about what the code should do, not what it should look like.** "Create a tibble called `x` that contains only the 1992 observations from `nes`, with no missing values" is better than a fill-in-the-blanks pipeline.
-- **Knowledge drops still matter.** The student may not read the code the AI wrote carefully. Use the End of each exercise to point out what the code actually did and why it matters.
+Primer-specific consequences for section shape:
 
-This affects the shape of Wisdom and Courage sections in particular. Wisdom has lots of "examine the data" exercises; those still make sense as AI-prompted code. Courage fits models; fitting is typically one-shot, so most of Courage is interpretation, not pipeline-building.
+- **Wisdom** has many "examine the data" tasks; those work well as AI-prompted edits to `analysis.qmd`.
+- **Courage** fits the model; fitting is typically one-shot, so most of Courage is *interpretation* (written exercises), not pipeline-building.
+- Knowledge drops carry the load: the student may not read the AI's code closely, so the End of each exercise says what the code actually did and why it matters.
 
 ---
 
@@ -2522,11 +2505,9 @@ Students read our `message` text as closely as they read anything in the tutoria
 
 Where a knowledge drop has two components — a universal truth and a problem-specific example — separate them when practical. The universal truth belongs in §12. The problem-specific piece is written per-tutorial.
 
-### 14.2 Build objects through questions, not by assignment
+### 14.2 Build understanding in steps, not one giant prompt
 
-Never have students do the final assignment themselves. Build objects through a series of exercises — often a pipe built line by line — each producing output the student can examine. When the creation is complete, have a final exercise that says, in effect: "Behind the scenes we have assigned the result to the object `fit_<n>`. To confirm, type `fit_<n>` and hit Run Code."
-
-With AI-mediated authoring (§9), the line-by-line pipe pattern is less necessary than it was. But for key objects you want the student to understand in parts, still prefer build-up over final-assignment.
+*(Superseded in mechanism by the base guide's `analysis.qmd` model; the pedagogical intent survives.)* Students no longer build objects line-by-line in exercise chunks, and there is no "type `fit_<n>` and hit Run Code." Instead, follow the base guide's *Exercise rhythm*: prefer several small AI-prompted edits to `analysis.qmd` — inspect the data, build a rough version, refine it — over one large prompt that produces the finished object in a single step. For a key object you want understood in parts (e.g. the fitted DGM), break the path into steps the student renders and examines along the way, rather than asking for the whole thing at once.
 
 ### 14.3 Show the plot, don't show the code
 
@@ -2773,7 +2754,7 @@ options(tutorial.exercise.timelimit = 600, tutorial.storage = "local")
 ```
 Leave the rendering behavior to chunk-level overrides when needed. `options(tutorial.exercise.timelimit = ...)` gives each student-code exercise 10 minutes (600s); `tutorial.storage = "local"` tells learnr to persist student answers between sessions on the student's machine.
 
-**Keyboard shortcut reference** — `Cmd/Ctrl + Shift + K` renders a QMD; `Cmd/Ctrl + Enter` sends the current line to the R prompt. These are the only two shortcut bindings tutorials can assume students know; both are standard across Positron, RStudio, and VS Code with the R extension.
+**Rendering and running — follow the base guide.** Students render with `quarto render analysis.qmd` in a bash terminal and view the result via Live Server (base guide, *Student workflow*). That section forbids the `Cmd/Ctrl + Shift + K` render keystroke and the `Cmd/Ctrl + Enter` send-to-Console keystroke; the earlier Primer text that told students to use those is **retired**.
 
 ---
 
