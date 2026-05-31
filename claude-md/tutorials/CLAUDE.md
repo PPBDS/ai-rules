@@ -1,8 +1,14 @@
-# CLAUDE.md — vscode.tutorials
+# CLAUDE.md — Tutorial authoring guide
 
-This is an R package (`vscode.tutorials`) containing **learnr** tutorials for learning VS Code in GitHub Codespaces. Tutorials live in `inst/tutorials/` as `tutorial.Rmd` files.
+This is the authoring guide for **"normal" tutorials**: the data science tutorials students do *after* they have learned the basic mechanics of their tools. It is not specific to any one package. The same guidance applies to any **learnr** tutorial that teaches a data science topic to students who already know how to work in their environment — across `vscode.tutorials`, the Primer, and any other tutorial package in this ecosystem.
+
+These tutorials assume students already understand the foundational skills: Git, GitHub, `.gitignore`, `_files` directories, terminals, Codespaces, and Quarto rendering. Tutorials written under this guide do **not** re-teach those mechanics.
+
+**The exception is the core/infrastructure tutorials.** In the `vscode.tutorials` package, `01-code` through `09-infrastructure` are the first tutorials students do, and they exist precisely to teach those foundational skills. They do *not* follow this guidance — they teach mechanics directly and may repeat core lessons about terminals, GitHub, Codespaces, Quarto, files, and warnings. Everything in this file is about the tutorials that come *after* them, once Git, GitHub, `.gitignore`, `_files`, and the like can be taken for granted.
 
 ## Project layout
+
+Tutorials are **learnr** tutorials shipped inside an R package. In `vscode.tutorials` — the package this guide originated in — they live in `inst/tutorials/` as `tutorial.Rmd` files:
 
 ```
 inst/tutorials/<name>/
@@ -12,14 +18,13 @@ inst/tutorials/<name>/
 inst/extdata/<name>/ # stable source copies of data students may download
 ```
 
-Current tutorials: `01-code` through `09-infrastructure`, `r4ds-1` through `r4ds-5`, `census`.
+Current `vscode.tutorials` tutorials: `01-code` through `09-infrastructure` (the infrastructure exception above), `r4ds-1` through `r4ds-5`, `census`.
 
 ## Philosophy (AI era)
 
-The goal is not to teach coding — it is to teach students how to **use AI to create data science artifacts**. After the initial VS Code and infrastructure tutorials, students should mostly interact with an AI agent that edits their files, renders their Quarto document, and helps them debug. They should learn to steer analysis, inspect output, notice problems, and ask for refinements.
+The goal is not to teach coding — it is to teach students how to **use AI to create data science artifacts**. Once students are past the infrastructure tutorials, they should mostly interact with an AI agent that edits their files, renders their Quarto document, and helps them debug. They should learn to steer analysis, inspect output, notice problems, and ask for refinements.
 
-- `01-code` through `09-infrastructure` are setup/infrastructure tutorials. They may repeat core lessons about terminals, GitHub, Codespaces, Quarto, files, and warnings.
-- Later tutorials are data science tutorials. They should follow an exploratory path through data toward a useful published artifact.
+- These are data science tutorials. They should follow an exploratory path through data toward a useful published artifact.
 - Show students **results** (plots, printed tibbles, summary statistics, rendered pages), not just the code that produced them.
 - Questions ask students to prompt AI for file edits, render, inspect output, and compare their output to ours.
 - Prefer many small exercises that form a data analysis path over one large prompt that solves the whole section.
