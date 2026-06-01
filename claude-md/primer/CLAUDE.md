@@ -1997,7 +1997,7 @@ These patterns appear in roughly this order across the tutorials — slice-sampl
 **Exercise 10.** [per-tutorial, written-with-answer] First two sentences of the summary paragraph.
 - Prompt: *We will be creating a summary paragraph over the course of this tutorial. Write the first two sentences. The first sentence is a general statement about the overall topic, mentioning the general class of outcome and at least one covariate. The second introduces the data source and the specific question — when/where gathered, how many observations, who collected it.*
 - Message: an excellent two-sentence opener.
-- End: *Read our answer. It will not be the same as yours. You can change your answer to incorporate some of our ideas, but do not copy/paste our answer exactly. Add your two sentences to your QMD, render, and commit/push.*
+- End: *Read our answer. It will not be the same as yours. You can change your answer to incorporate some of our ideas, but do not copy/paste our answer exactly. Add your two sentences to your QMD and render.* (No commit here — see §14.4; the Primer commits after Justice and at the end.)
 
 ### 13.3 Justice
 
@@ -2116,7 +2116,7 @@ Parts 1 and 2 are deliberately repetitive with Wisdom — same Preceptor Table, 
 **Exercise 15.** [per-tutorial, written-with-answer] Add a weakness sentence to the summary.
 - Prompt: *Write one sentence highlighting a potential weakness in your model. Derive it from possible problems with the assumptions above. We will add this to our summary paragraph. So far our version of the summary paragraph looks like this:* (paste our first two sentences). *Your version will be somewhat different.*
 - Message: per-tutorial.
-- End: *Add a weakness sentence to the summary paragraph in your QMD. You can modify your paragraph, but don't copy/paste our answer exactly. Render, then commit/push.*
+- End: *Add a weakness sentence to the summary paragraph in your QMD. You can modify your paragraph, but don't copy/paste our answer exactly. Render, then commit/push.* (This is the after-Justice commit — see §14.4.)
 
 ### 13.4 Courage
 
@@ -2257,7 +2257,7 @@ The interpretation questions are concentrated in Courage so the parameter-table-
 
 **Exercise 15.** [operational] Add `*_cache` to `.gitignore`.
 - Prompt: *Add `*_cache` to `.gitignore`. Cached objects are often large and don't belong on GitHub. In the R Terminal, run `tutorial.helpers::show_file(".gitignore")`. CP/CR.*
-- End: *Because of the change in your `.gitignore` (assuming you saved it), the cache directory should not appear in the Source Control panel because Git is ignoring it. Commit and push.*
+- End: *Because of the change in your `.gitignore` (assuming you saved it), the cache directory should not appear in the Source Control panel because Git is ignoring it.* (No commit here; the final commit at the end of the tutorial folds in this `.gitignore` change — see §14.4.)
 
 **Exercise 16.** [per-tutorial, code] Run `tidy(fit_<n>, conf.int = TRUE)`.
 - Prompt: *In the R Terminal, run `tidy()` on `fit_<n>` with `conf.int = TRUE`. This returns 95% intervals for all the parameters of the final model.*
@@ -2270,7 +2270,7 @@ The interpretation questions are concentrated in Courage so the parameter-table-
 **Exercise 18.** [per-tutorial, written-with-answer] Model-structure sentence.
 - Prompt: *Add a sentence to your project summary explaining the structure of the model. Something like: "I/we model XX [concept of outcome, not variable name] as a [normally distributed / Bernoulli / multinomial / ordinal] variable which is a [linear/logistic/multinomial/ordinal] function of XX [and maybe other covariates]." Name the outcome's distributional family before the functional-form clause — Justice's choice of probability family is part of the model, not just the link function. Recall the beginning of our summary: [paste what we suggested at the end of Justice].*
 - Message: per-tutorial.
-- End: *Read our answer. Do not copy/paste exactly. Add your two sentences to the summary paragraph. Render, then commit/push.*
+- End: *Read our answer. Do not copy/paste exactly. Add your two sentences to the summary paragraph. Render.* (No commit here — see §14.4; the Primer commits after Justice and at the end.)
 
 ### 13.5 Temperance
 
@@ -2522,7 +2522,9 @@ The summary paragraph is built up across the tutorial:
 - Courage Exercise 16: add a model-structure sentence.
 - Temperance Exercise 13: add the final sentence with a QoI and uncertainty.
 
-After each addition, the student updates their QMD, renders, and commits/pushes.
+After each addition, the student updates their QMD and renders.
+
+**Commit/push cadence — explicit override of the base guide.** The base guide's default is a commit at the end of every topic section. The Primer overrides this: it commits exactly **twice** — once after **Justice**, and once at the **end** of the tutorial. The Wisdom and Courage summary-paragraph additions are rendered but not committed; the next commit folds them in. Two commits keyed to natural milestones — the assumptions are settled after Justice, the artifact is finished at the end — are enough, and avoid commit-churn across six sections.
 
 ### 14.5 Test chunks for marginaleffects calls
 

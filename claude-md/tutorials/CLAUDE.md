@@ -8,6 +8,12 @@ These tutorials assume students already understand the foundational skills: Git,
 
 **The exception is the core/infrastructure tutorials.** In the `vscode.tutorials` package, `01-code` through `09-infrastructure` are the first tutorials students do, and they exist precisely to teach those foundational skills. They do *not* follow this guidance — they teach mechanics directly and may repeat core lessons about terminals, GitHub, Codespaces, Quarto, files, and warnings. Everything in this file is about the tutorials that come *after* them, once Git, GitHub, `.gitignore`, `_files`, and the like can be taken for granted.
 
+## Scope and what is universal
+
+This guide governs **tutorials** — learnr tutorials specifically. Other artifacts a project may produce (textbook chapters, classroom exercises, slide decks) are **out of scope** here; each such artifact defines its own relationship to this guide. The Primer, for example, applies this guide to its tutorials but not to its prose book chapters.
+
+Almost everything below is **universal** — true of any normal tutorial regardless of package. The one section that is genuinely package-specific is **Choosing topics (vscode.tutorials-specific)**, which describes how `vscode.tutorials` selects each tutorial's subject; other projects replace it (the Primer fixes its topics as the four Cardinal Virtues, identical in every tutorial). A few rules state a **default value or cadence** a project may override on the record (per the contract above); those are noted inline.
+
 ## Project layout
 
 Tutorials are **learnr** tutorials shipped inside an R package. In `vscode.tutorials` — the package this guide originated in — they live in `inst/tutorials/` as `tutorial.Rmd` files:
@@ -45,9 +51,11 @@ Students view all QMD output via **render + Live Server**, not by running code i
 - Cache chunks when students are done with an expensive piece of code. Most tutorials should use caching at least once; tutorials with several expensive visualizations or data-preparation chunks may use it more often.
 - Add the generated cache directory (usually `analysis_cache`) to `.gitignore`; cache files do not belong on GitHub.
 
-## Subject-area tutorials
+## Choosing topics (vscode.tutorials-specific)
 
-Tutorials after `09-infrastructure` should be organized around prominent data sources and real data science domains, not around book chapters. Examples: US Census data, baseball data, stock data, Bitcoin, and other subject areas where students can learn what analysts actually use.
+*This section is `vscode.tutorials`' content model — how it picks each tutorial's subject. Other projects replace it; the Primer's topic sections are the four Cardinal Virtues, fixed across every tutorial, so the Primer ignores the subject-area guidance here.*
+
+In `vscode.tutorials`, tutorials after `09-infrastructure` should be organized around prominent data sources and real data science domains. Examples: US Census data, baseball data, stock data, Bitcoin, and other subject areas where students can learn what analysts actually use.
 
 Each subject-area tutorial should teach:
 
@@ -61,7 +69,7 @@ Each subject-area tutorial should teach:
 Every tutorial follows this order:
 
 1. **Introduction** — overview of packages/functions covered; exercises to set up the repo, QMD, and libraries.
-2. **Topic sections** — each section starts from data, follows an exploratory path, and usually ends with a useful plot or table plus a short interpretation.
+2. **Topic sections** — the *topics* are project-defined: in `vscode.tutorials` each tutorial picks a subject-area domain (see *Choosing topics*); in the Primer the topic sections are a fixed set — the Cardinal Virtues — the same in every tutorial. Either way, each section starts from data, follows an exploratory path, and usually ends with a useful plot or table plus a short interpretation.
 3. **Summary** — mirrors the Introduction in past tense; finishes with `quarto publish gh-pages` and a GitHub URL.
 
 ### Introduction exercises (standard sequence)
@@ -95,7 +103,7 @@ Describe the **goal**, not the implementation. Students should tell AI what they
 
 ### Git commit exercises
 
-Each topic section should end with a dedicated commit exercise placed as the last exercise in that section, after the final plot or analysis output. Do not fold it into another exercise.
+Each topic section should end with a dedicated commit exercise placed as the last exercise in that section, after the final plot or analysis output. Do not fold it into another exercise. This per-section cadence is the **default**; a project may override it on the record (the Primer, for instance, commits only after Justice and at the end).
 
 The exercise asks students to commit `analysis.qmd` with a specific descriptive message. Students may use any of three methods — all are acceptable:
 
@@ -240,7 +248,7 @@ library(tidyverse)
 
 knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(out.width = '90%')
-options(tutorial.exercise.timelimit = 60, tutorial.storage = "local")
+options(tutorial.exercise.timelimit = 600, tutorial.storage = "local")
 ```
 
 Pre-compute only what the tutorial itself needs to show examples after submission. Do not load data merely to support student exercise code chunks in post-infrastructure tutorials.
@@ -288,7 +296,7 @@ When showing multiple commands for students to copy/paste, make sure they render
 
 1. **Quick syntax check**: `rmarkdown::render("inst/tutorials/name/tutorial.Rmd")` — open resulting HTML in browser.
 2. **Full check**: `devtools::check()` (`Cmd/Ctrl + Shift + E`) — must pass before any PR.
-3. **Student perspective**: `devtools::install()` then `learnr::run_tutorial("tutorial_name", "vscode.tutorials")`.
+3. **Student perspective**: `devtools::install()` then `learnr::run_tutorial("tutorial_name", "<your package>")` (e.g. `"vscode.tutorials"` or `"primer.tutorials"`).
 
 `devtools::check()` validates that all tutorials include the default `copy-code-chunk` and `download-answers` chunks from the `tutorial_template`. Do not remove or alter these.
 
