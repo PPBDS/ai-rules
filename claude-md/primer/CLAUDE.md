@@ -2593,6 +2593,8 @@ Every sentence a student reads in a knowledge drop should earn its place. Verbos
 
 The test: can you delete the sentence and lose information? If no, delete it. Knowledge drops are short on purpose — §6.4 says "Students won't read more than two sentences at a time." Every sentence is precious real estate.
 
+**Every drop must teach chapter content.** Per the base tutorial guide's *Knowledge drops* rule, recycled / default / process drops do not belong in post-infrastructure tutorials, and Primer tutorials are post-infrastructure (`vscode.tutorials` covers infrastructure). If an operational exercise has no natural chapter-content drop, find one — forecast a coming concept, define a term the body section will use, name a tool a later exercise will rely on — but never fall back to a generic process drop (cloud, spaced repetition, CP/CR explanations, "what tidyverse is"). Those are vscode.tutorials material; the student has already seen them. The retired drops in §12.1, §13.1 Ex 1/Ex 2 Ends, and Theme 2 (§12.6) are listed as historical record so authors recognize them in legacy tutorials and sweep them out, not as a menu to reach for.
+
 ### 14.12 Visualization house style
 
 Every student-produced plot (EDA in Wisdom, final plot in Temperance) should use the same four-slot layout:
