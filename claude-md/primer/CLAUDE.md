@@ -1683,8 +1683,6 @@ If a tutorial is being drafted without a pre-flight tier check, the default is M
 
 ### 13.1 Introduction
 
-> **⚠ Migration pending.** This Introduction spec predates several base-guide rules adopted recently and is **not yet rewritten to match them**: students no longer load libraries or run diagnostics in the R Terminal (everything happens in `analysis.qmd`, rendered — `show_file()` is the only routine R-Terminal use); knowledge drops must be one of the three allowed kinds (chapter key point / the data / comment on what was displayed), not generic infrastructure lessons; and §12.6 Themes 1 & 2 (QMD World vs R World; tidyverse ecosystems) are retired. The migrated `02-sampling` tutorial is the worked reference for what this section should become. Treat the exercise wordings below as the *pre-migration* draft until this block is rewritten; the dangling drop/theme references in it have been neutralized but the operational shape (R-Terminal library loads, etc.) still needs replacing.
-
 **The Introduction preamble always has exactly three paragraphs, in this order:**
 
 1. **Citation paragraph.** *"This tutorial supports [*Preceptor's Primer for Bayesian Data Science: Using the Cardinal Virtues for Inference*](https://ppbds.github.io/primer/) by [David Kane](https://davidkane.info/)."* Verbatim in every tutorial.
@@ -1701,9 +1699,11 @@ If a tutorial is being drafted without a pre-flight tier check, the default is M
 
 A good Imagine paragraph reads like a sketch of a real person doing a real job, with a boss who has goals, decisions to make, and a budget that doesn't stretch to all of them. A bad Imagine paragraph reads like a homework prompt that names a topic and a question. See §5.4 for the section-header formatting convention that determines where `###` Continue buttons sit around the preamble; the three paragraphs above run directly into `### Exercise 1` with no trailing `###` between them.
 
-**Pacing across the EMH tiers.** The Introduction is mostly operational — repo setup, adding libraries to the QMD, turning off code echo, rendering, running diagnostic commands in the R Terminal, etc. The exercise list below is pitched at **Medium** pace: concise, one operational step per exercise, assuming the student has been through this workflow once before. The pace changes with tier:
+**First three tutorials: chapter highlights instead of Imagine.** The Imagine paragraph above is for tutorials built around a real data-science problem — the example tutorials (05+). The first three tutorials (01 Probability, 02 Sampling, 03 Rubin Causal Model) are conceptual, with no decision-maker to imagine, so they **replace paragraph 3 with a short paragraph of highlights from the companion chapter** (students often don't read it). Paragraphs 1 (citation) and 2 (bookend) are unchanged. Tutorial 04 (Cardinal Virtues) is also conceptual; treat it the same way unless its §17 entry says otherwise. The migrated `02-sampling` tutorial is the worked example of the highlights paragraph.
 
-- **Easy** (positions 1–4, tutorials 05–08). Slower. Expand each operational exercise with more explanatory prose *before* the step — what a `.gitignore` does and why we need one; what `echo: false` does to the rendered document and why we care; what rendering does and why our work lives in `analysis.qmd` rather than typed straight into the R Terminal. Split a long exercise into two or three short ones if the student would otherwise have to track multiple unfamiliar steps at once. Add knowledge drops that teach the *concept* behind each mechanic (how the rendered document and the R Terminal are separate sessions, what "rendering" actually does). Students at this stage have never done this before — silence is not a feature.
+**Pacing across the EMH tiers.** The Introduction is mostly operational — repo setup, adding libraries to the QMD, turning off code echo, rendering, and a first look at the data in the QMD. The exercise list below is pitched at **Medium** pace: concise, one operational step per exercise, assuming the student has been through this workflow once before. The pace changes with tier:
+
+- **Easy** (positions 1–4, tutorials 05–08). Slower. Expand each operational exercise with more explanatory prose *before* the step — what a `.gitignore` does and why we need one; what `echo: false` does to the rendered document and why we care. Split a long exercise into two or three short ones if the student would otherwise have to track multiple unfamiliar steps at once. Knowledge drops still obey the base guide's rule — a key chapter point, a note about the data, or a comment on what the render just showed — not a generic lesson on the mechanics. Students at this stage have never done this before — silence is not a feature.
 - **Medium** (positions 5–8, tutorials 09–12). Current pace. The exercise list below is calibrated here: one step per exercise, minimal lead-in prose, concepts assumed.
 - **Hard** (positions 9–12, tutorials 13–16). Faster. Collapse sequences of related operational exercises into a single exercise (e.g. "add libraries, turn off echo, and commit the QMD — paste the result"). Drop explanatory knowledge drops that at Easy and Medium we kept for their own sake. Students at this stage have been through the setup six or more times and do not need it re-explained; keep the operational scaffold, but shrink it.
 
@@ -1717,10 +1717,13 @@ This progression applies to every Introduction exercise below unless the exercis
 
 **Exercise 2.** [operational] Confirm working repo and set up the QMD.
 - The primary assumed environment is **VS Code on GitHub Codespaces**, started from the [`PPBDS/codespace-starter`](https://github.com/PPBDS/codespace-starter) devcontainer. The repo — named after the tutorial (e.g. `nhanes`) and initially empty — is expected to already exist, since the student must have created it to launch the Codespace. Positron-local and VS-Code-local are supported alternatives documented in the `primer.tutorials` package README, not in the tutorial text.
-- Prompt: *You should be working inside a GitHub repo named `XX`, opened in a Codespace from the [`PPBDS/codespace-starter`](https://github.com/PPBDS/codespace-starter) template. If you are not there yet, please create that repo and open it in a Codespace now — see the [package README](https://github.com/PPBDS/primer/tree/main/primer.tutorials#working-environments-and-repo-setup) if you need setup instructions or are working locally instead. Once you're inside the `XX` repo, create a new Quarto document titled `"XX"` with yourself as the author, render it, save it as `analysis.qmd`, and open it with Live Server so the rendered HTML auto-refreshes on every later render. Create a `.gitignore` file with `analysis_files` on the first line followed by a blank line. Save and push. In the R Terminal, run `show_file(".gitignore")`. If that fails, it's probably because you haven't loaded `library(tutorial.helpers)` in the R Terminal. CP/CR.*
-- The prompt does **not** spell out the IDE-specific mechanics for creating a new Quarto document — no "File → New File → ..." menu path, no mention of a specific pane or button. Assume students know how to create a new document in whatever IDE they are using. The Codespaces-primary / locally-supported framing handles environment differences; mechanics that vary by IDE do not belong here.
-- The QMD's filename is `analysis.qmd` by default in all tutorials (earlier tutorials used per-topic filenames like `immigration.qmd`; new tutorials should stick with `analysis.qmd` for consistency).
-- In the **first** tutorial, spell out CP/CR as *"copy/paste the command you sent to R along with the response R gave back"* on first use. Keep it concise — no "you will see this throughout" filler.
+- Prompt: *You should be working inside a GitHub repo named `XX`. Once you're inside the `XX` repo, create a new Quarto document titled `"XX"` (Title Case) with yourself as the author, render it, save it as `analysis.qmd`, and open `analysis.html` with Live Server so the rendered HTML auto-refreshes on every later render. Create a `.gitignore` file with `analysis_files` on the first line followed by a blank line. Commit and push. Use AI however you like. In the R Terminal, run `show_file(".gitignore")`.*
+
+  *CP/CR.*
+- This is Exercise 2 only because Exercise 1 is the (no-AI) Cardinal Virtues question; it is the **first exercise that does anything**, so it carries the one-time *"Use AI however you like."* note. No later exercise repeats it (base guide, *Writing student prompts to AI*).
+- The prompt does **not** spell out the IDE-specific mechanics for creating a new Quarto document — no "File → New File → ..." menu path, no mention of a specific pane or button. Assume students know how to create a new document. (The repo is expected to already exist, since the student created it to launch the Codespace; Positron-local and VS-Code-local are documented in the `primer.tutorials` README, not in the tutorial text.)
+- The QMD's filename is `analysis.qmd` by default in all tutorials; its document **title** is the Title-Case topic (e.g. `"Sampling"`).
+- CP/CR is **not** explained — students know it from `vscode.tutorials` (base guide, *Submission evidence*).
 - End: a key point from this tutorial's chapter, or a note about the data (per the base guide's KD rule). *(The former generic "work in the cloud / laptops fail" drop is retired.)*
 
 **Exercise 3.** [operational] Add libraries and echo settings to QMD.
@@ -1730,20 +1733,21 @@ This progression applies to every Introduction exercise below unless the exercis
     echo: false
   ```
 - *In the R Terminal, run `show_file("XX.qmd", chunk = "Last")`. CP/CR.*
-- End: *Render again. Everything looks nice, albeit empty, because we have added code to make the file look better and more professional.* Theme 2 (tidyverse / package ecosystems, §12.6) may also attach here, since this is the exercise that first puts `library(tidyverse)` into the QMD.
+- End: *Render again. Everything looks nice, albeit empty, because we have added code to make the file look better and more professional.*
 
-**Exercise 4.** [operational] Open an R Terminal and load tidyverse.
-- Prompt: *We will use the R Terminal for quick diagnostic commands as we work — checking a file, reading a help page, glancing at a model. Open an R Terminal and run `library(tidyverse)` there. CP/CR.*
-- End: Theme 2 (tidyverse / package ecosystems, §12.6) — the attach message and its conflicts, at the level this tutorial is due. (If Theme 2 was attached to Exercise 3, use Theme 1 here instead.)
+**Exercise 4.** [operational] First look at the data.
+- Prompt: *Add a code chunk to `analysis.qmd` that prints the `<tibble>` (just `<tibble>` on its own line). Render, and copy the first few rows from the rendered HTML below.*
+- End: a note about the data (base guide KD rule, "the data") — what it is, its units of observation, and where it came from.
 
-**Exercise 5.** [operational] Load the data package in the R Terminal.
-- Prompt: *In the R Terminal, run `library(<data package>)`. CP/CR.*
-- End: Theme 1 (QMD World vs R World, §12.6) — the R Terminal you just loaded these libraries into is a *separate session* from the one that runs when you render; loading a package here does not load it for the render, and vice versa. Then introduce the data: "A version of the data from XX is available in the `XX` tibble."
+**Exercise 5.** [operational] Glimpse the columns.
+- Prompt: *Add a chunk that runs `glimpse(<tibble>)` — on a column group of ≤ ~15 columns if the data is wide. Render, and copy the output from the HTML.*
+- End: a note on what the column types and a few spot-checked values reveal — something worth noticing before we model.
 
-**Exercise 6.** [operational] Read the `?<tibble>` help.
-- Prompt: *In the R Terminal, run `?XX`, and paste the Description below.*
-- Only include if the tibble has a help page. Delete if not.
-- End: short paragraph of context about the data (paper abstract, source website quote).
+**Exercise 6.** [operational] Summarize the key column(s).
+- Prompt: *Add a chunk that runs `summary()` on the outcome and the most important covariate(s). Render, and copy the output.*
+- End: a note on the scale, range, or placeholder/missing values the summary exposes — which begins to set up the question Wisdom will ask.
+
+*(These three orient the student to the data, all in the QMD per the base guide's* Structural exploration *— no R Terminal. For a well-known built-in dataset they can be compressed per the tier pacing above. They replace the retired R-Terminal library-load and `?help` exercises; libraries now live only in the QMD setup chunk, added in Exercise 3.)*
 
 **Exercises 7 and 8 are causal-only with a spaced-repetition schedule.** Neither exercise appears in predictive tutorials. Across causal tutorials (positions 2, 4, 6, 8, 10, 12), the pattern is:
 

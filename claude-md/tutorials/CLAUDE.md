@@ -100,6 +100,8 @@ Keep introductions short. Avoid repeating details that the exercises will teach.
 
 Describe the **goal**, not the implementation. Students should tell AI what they want to see — a plot of X by Y, a table of the top 10, the distribution of Z — and let the AI choose the functions. This is how professionals actually work, and it gives students practice evaluating whether the AI's approach is correct.
 
+**Don't narrate the AI.** State each task as a direct instruction — *"Add a chunk to `analysis.qmd` that plots X by Y, then render"* — not *"ask your AI agent to add a chunk that…"*. Say **once**, in the first exercise, that the student may use AI however they like (e.g. *"Use AI however you like."*); after that, every exercise simply states the goal, and the student knows AI is how they get there. Repeating "ask your AI agent to…" on every exercise is noise.
+
 - **Do not** list functions for students to include in their AI prompt (e.g., "use `geom_histogram()` and `scale_x_log10()`").
 - **Do not** dictate the pipe steps or function arguments students should pass to AI.
 - **Exception**: it is fine to name one key function when it is the explicit concept being taught (e.g., "use `pivot_longer()` to reshape the data") — but only if that function is the point of the exercise, not just an implementation detail.
