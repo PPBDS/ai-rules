@@ -49,6 +49,8 @@ Students view all QMD output via **render + Live Server**, not by running code i
 - Cache chunks when students are done with an expensive piece of code. Most tutorials should use caching at least once; tutorials with several expensive visualizations or data-preparation chunks may use it more often.
 - Add the generated cache directory (usually `analysis_cache`) to `.gitignore`; cache files do not belong on GitHub.
 
+**Almost everything happens in the QMD, not the R Terminal.** Students do their work by prompting the AI agent to edit `analysis.qmd`, then rendering and reading the HTML — so a normal tutorial should (almost) never ask a student to *do* something in the R Terminal. The standing exception is `show_file()`, used to submit the contents of a file or chunk as evidence. `tutorial.helpers` is loaded for the student so `show_file()` works; loading it is **not** a student-facing step, and there are no "load `library(...)` in the R Terminal" exercises — every library the analysis needs goes in the QMD's setup chunk, and every result the student inspects comes from the render.
+
 ## Choosing topics (misc.tutorials-specific)
 
 *This section is `misc.tutorials`' content model — how it picks each tutorial's subject. Other projects replace it; the Primer's topic sections are the four Cardinal Virtues, fixed across every tutorial, so the Primer ignores the subject-area guidance here.*
@@ -70,9 +72,11 @@ Every tutorial follows this order:
 2. **Topic sections** — the *topics* are project-defined: in `misc.tutorials` each tutorial picks a subject-area domain (see *Choosing topics*); in the Primer the topic sections are a fixed set — the Cardinal Virtues — the same in every tutorial. Either way, each section starts from data, follows an exploratory path, and usually ends with a useful plot or table plus a short interpretation.
 3. **Summary** — mirrors the Introduction in past tense; finishes with `quarto publish gh-pages` and a GitHub URL.
 
+**Don't quiz concepts the student hasn't reached.** In a sequenced tutorial set — especially one paired with a book — a tutorial's questions may only ask about concepts introduced in its own chapter or an earlier one. Never build an exercise on a concept the curriculum introduces later. (Light forward-pointers in knowledge-drop prose — "you will see this again when we reach X" — are a separate judgment call; keep them rare, per *no road signs*.) Which concept is introduced where is project-specific; consult the project's guide for the schedule.
+
 ### Introduction exercises (standard sequence)
 
-1. Create repo from `codespace-starter` template, open Codespace, create `analysis.qmd`, render, open `analysis.html` with Live Server, set up `.gitignore`, submit evidence.
+1. Confirm you're already in your repo (you created it to launch the Codespace), then create `analysis.qmd` with a **Title-Case** document title (see *Formatting conventions*), render, open `analysis.html` with Live Server, set up `.gitignore`, commit and push, submit evidence. Keep this lean — students past the infrastructure tutorials know how to make a repo and open a Codespace, so don't re-walk that or re-link the `codespace-starter` template.
 2. Add `library(tidyverse)` to QMD with `#| message: false` and `execute: echo: false` in YAML, render, check the rendered HTML, submit evidence.
 3. In a bash terminal, run `quarto render analysis.qmd`; confirm the rendered HTML auto-refreshes. CP/CR.
 4. (Optional) Create `data/` directory via `dir.create("data")`. CP/CR.
@@ -80,6 +84,8 @@ Every tutorial follows this order:
 Replace `XX` placeholders with actual repo names, titles, and knowledge drops.
 
 Keep introductions short. Avoid repeating details that the exercises will teach. If students must read several paragraphs before the first exercise, split the prose with Continue buttons; better yet, cut the prose down.
+
+**Companion-text link.** If a tutorial is the companion to a specific chapter of a book or other text, its **first sentence** should name and link that **exact chapter** — not merely the work as a whole. A reader should be able to click straight through to the matching chapter. (Primer tutorials, for example, open by naming and linking the specific Primer chapter they support, in addition to the book.)
 
 ### Topic exercises
 
@@ -129,13 +135,13 @@ The canonical loop is:
 
 ### Submission evidence
 
-CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or R Terminal submissions where students paste both the command they ran and the response they got. Do not add extra wording like "the command and response" or "the terminal output"; that is already implied by CP/CR.
+CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or R Terminal submissions where students paste both the command they ran and the response they got. Do not add extra wording like "the command and response" or "the terminal output"; that is already implied by CP/CR. Assume students already know what CP/CR means — they learned it in the `vscode.tutorials` infrastructure tutorials — so do **not** explain it in a normal tutorial; just use the shorthand. Put the `CP/CR.` instruction on its own line at the end of the prompt.
 
 For rendered HTML output, say "copy and paste from the HTML" or "copy and paste the table/summary/text from the HTML." Do not call HTML submissions CP/CR.
 
 Use `show_file()` when checking file contents or code: `.gitignore`, the last chunk, a data-analysis pipeline, chart code, or the final QMD state. When checking chart code or a data pipeline, pair `show_file()` with our rendered plot, tibble, or other output so students can compare both the code and its result.
 
-Use terminal CP/CR for directory structure and command output, such as `list.files()`, `pwd`, `ls`, or render messages.
+Beyond `show_file()`, R Terminal CP/CR should be rare (per *Student workflow*): reach for it only for the occasional directory-structure or shell check (`list.files()`, `pwd`, `ls`, render messages) that has no place in the QMD. Anything that produces analysis output belongs in a QMD chunk, rendered, and copied from the HTML — not run in the R Terminal.
 
 ### Analysis path
 
@@ -151,7 +157,7 @@ Build topic sections from linked exercise units. A typical path:
 8. Improve labels, grouping, ordering, scale, caption, and visual polish.
 9. End each significant visualization with a dedicated interpretation exercise asking students to write one or two sentences about what the plot shows. This is distinct from the knowledge drop: the KD teaches; the interpretation exercise asks students to synthesize what they observed. Every major plot or table should have one.
 
-**Structural exploration for downloaded or unfamiliar datasets.** Before moving to plots, add exercises that let students discover the dataset's shape and vocabulary. Three exercises work well together: `names()` in the R Terminal gives students the exact column names they need to prompt AI accurately (CP/CR); `glimpse()` on a column group of ≤ ~15 columns reveals types and spot-checks values (ask AI to render it in a chunk); and `summary()` on key numeric columns catches placeholder values and establishes scale before plotting. Do not use `glimpse()` on the full dataset when it has more than ~15 columns — split by column group first (e.g., `select(starts_with("artist")) |> glimpse()`). These exercises are most valuable for downloaded CSVs and unfamiliar datasets; they are less necessary for well-known built-in datasets where the column structure is self-evident from the first print. Place any "what does this variable mean?" exercise immediately after students first see the column name — not after they have already used it in a summary or plot.
+**Structural exploration for downloaded or unfamiliar datasets.** Before moving to plots, add exercises that let students discover the dataset's shape and vocabulary. Three exercises work well together, all done in the QMD and read from the render: `names()` (ask AI to add a chunk that prints the column names, so students have them exactly when prompting); `glimpse()` on a column group of ≤ ~15 columns reveals types and spot-checks values; and `summary()` on key numeric columns catches placeholder values and establishes scale before plotting. Do not use `glimpse()` on the full dataset when it has more than ~15 columns — split by column group first (e.g., `select(starts_with("artist")) |> glimpse()`). These exercises are most valuable for downloaded CSVs and unfamiliar datasets; they are less necessary for well-known built-in datasets where the column structure is self-evident from the first print. Place any "what does this variable mean?" exercise immediately after students first see the column name — not after they have already used it in a summary or plot.
 
 **Categorical comparisons.** For comparisons across categories, scaffold the student's choice rather than prescribing it: first have students count observations per category so they can see what is plentiful, then ask them to choose two categories with enough data to compare (e.g., at least 100 rows each), then build the comparison plot. This gives students practice making an informed analytical decision rather than following a script.
 
@@ -195,7 +201,15 @@ Use when providing the correct answer. Set `allow_retry = FALSE`.
 
 ## Knowledge drops
 
-- Every exercise must have a knowledge drop after submission. This applies even when the exercise is mostly setup, committing, publishing, or verification.
+**Every knowledge drop in a normal tutorial does one of three jobs.** The generic, reusable drops the infrastructure tutorials lean on — *"Professionals keep their data science work in the cloud because laptops fail,"* *"the tidyverse is a family of packages…"*, *"QMD World and R World are not the same"* — belong **only** in `vscode.tutorials`. In a normal tutorial, a knowledge drop must instead:
+
+1. **Make a key point from the companion book chapter** (when there is one). Students usually don't read the chapter, so the tutorial is where we *pull out* the points they most need to carry away.
+2. **Talk about the data** the tutorial works with — its source, its units of observation, how it was collected, a quirk or limitation worth knowing.
+3. **Comment on what the most recent command displayed** — point out something in the plot or table the student just produced that they probably didn't notice, or that guides them toward the next question.
+
+If a drop isn't doing one of these three, cut it. Do **not** reach for a canned infrastructure lesson to fill the slot.
+
+- Every exercise must have a knowledge drop after submission, and it must be one of the three kinds above. This holds even when the exercise is mostly setup, committing, publishing, or verification — for those, pull a key point from the chapter or say something about the data, rather than narrating the mechanics.
 - Usually one short paragraph; one or two sentences is often enough.
 - Place after students submit an exercise and after the expected output/answer. The usual pattern is question chunk, `###`, expected output/answer, `###`, knowledge drop.
 - Place before the question only when context is needed to answer.
@@ -217,6 +231,7 @@ Use when providing the correct answer. Set `allow_retry = FALSE`.
 - `echo = FALSE` everywhere (set globally in setup chunk via `knitr::opts_chunk$set(echo = FALSE)`).
 - Set `knitr::opts_chunk$set(out.width = '90%')` in setup for consistent image sizing.
 - Avoid exercise code chunks in post-infrastructure tutorials. Use question chunks for evidence submissions and test chunks for our example output.
+- Do **not** include the `copy-code-chunk` (copy-button) child document. Its only purpose is to add a copy button to exercise code chunks, and these tutorials have none. The `info-section` and `download-answers` child documents stay.
 
 ## Test chunk output
 
@@ -296,7 +311,7 @@ When showing multiple commands for students to copy/paste, make sure they render
 2. **Full check**: `devtools::check()` (`Cmd/Ctrl + Shift + E`) — must pass before any PR.
 3. **Student perspective**: `devtools::install()` then `learnr::run_tutorial("tutorial_name", "<your package>")` (e.g. `"misc.tutorials"` or `"primer.tutorials"`).
 
-`devtools::check()` validates that all tutorials include the default `copy-code-chunk` and `download-answers` chunks from the `tutorial_template`. Do not remove or alter these.
+`devtools::check()` validates the default `tutorial_template` child documents. Keep `info-section` and `download-answers`; do not remove or alter them. The `copy-code-chunk` child is no longer used (see *Code chunk conventions*) — if `check()` still flags its absence, that check in `tutorial.helpers` is what needs updating, since the copy button has no role once there are no exercise code chunks.
 
 ## Formatting conventions
 
@@ -304,6 +319,7 @@ When showing multiple commands for students to copy/paste, make sure they render
 - Package names in prose: bolded and linked to the package's gold-standard documentation site, usually the official package website (e.g. **[ggplot2](https://ggplot2.tidyverse.org/)**, **[dplyr](https://dplyr.tidyverse.org/)**). Do not link package names inside code.
 - Function names always include parentheses: `read_csv()`, not `read_csv`
 - Section/topic titles: sentence case
+- Document titles (the `analysis.qmd` title) use **Title Case** — e.g. `"Sampling"`, not `"sampling"`. (Distinct from section/topic headings, which stay sentence case.)
 - Terminal names: `R Terminal` and `bash terminal`
 - Abbreviation: CP/CR = Copy/Paste the Command/Response
 

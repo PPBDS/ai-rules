@@ -1359,15 +1359,9 @@ Short prose fragments — typically one or two sentences — that go in the End 
 
 Knowledge drops are deliberately short. Students won't read more than two sentences.
 
-**Reduce repetition across tutorials.** A common authoring failure is to use identical knowledge drops in every tutorial — the same tidyverse blurb after `library(tidyverse)`, the same QMD/R-World speech after every library-loading exercise. Students notice, and stop reading. The fix is **progressive themes**: pick a concept (how QMD talks to R, what a package namespace is, what the tidyverse ecosystem covers, what `broom` does, how caching works) and plan a ladder of knowledge drops that deepen across the curriculum. Each appearance builds on the previous one rather than restating it. §12.6 below catalogs the themes and the intended progression. When drafting a tutorial, consult §12.6 to see which theme-level each recurring exercise should use, rather than reaching for the same knowledge drop each time.
+**Reduce repetition across tutorials.** A common authoring failure is to use identical knowledge drops in every tutorial — the same paragraph about predictive-vs-causal language, say, pasted verbatim each time. Students notice, and stop reading. The fix is **progressive themes**: pick a recurring concept and plan a ladder of knowledge drops that deepen across the curriculum, each appearance building on the previous one rather than restating it. §12.6 below catalogs the surviving themes (predictive-models-have-no-treatments, language discipline, expected-values-vs-other-QoIs) and their progressions. When drafting a tutorial, consult §12.6 for which level each recurring drop should use, rather than reaching for the same wording each time.
 
 ### 12.1 Introduction
-
-**On spaced repetition.**
-> *The best way to ensure that students remember these concepts more than a few months after the course ends is spaced repetition, although we focus more on the repetition than on the spacing.*
-
-**On professional practice.**
-> *Professionals keep their data science work in the cloud because laptops fail.*
 
 **On the Rubin Causal Model.**
 > *According to the Rubin Causal Model, there must be two (or more) potential outcomes for any discussion of causation to make sense. This is simplest to discuss when the treatment has only two different values, generating only two potential outcomes.*
@@ -1611,29 +1605,9 @@ Rather than repeating the same knowledge drop every tutorial, we plan **themes**
 
 Two themes are fully sketched here. Authors should propose new themes whenever they find themselves repeating the same drop across tutorials; add the new theme to this subsection with a ladder of levels.
 
-**Theme 1: QMD World vs R World.** Attached to an early R-Terminal exercise (Intro Exercise 5, where the student first loads libraries in the R Terminal alongside the QMD). From Level 2 onward, each drop opens with the fixed sentence *"QMD World and R World are not the same."* *(Reframed for the `analysis.qmd` model: the old ladder taught this distinction through `Cmd/Ctrl + Enter`, which is retired. The distinction itself is unchanged and arguably more important now — the render and the R Terminal are genuinely separate sessions.)*
+**Theme 1: QMD World vs R World.** *Retired from the Primer.* This is generic infrastructure pedagogy, and per the base guide's knowledge-drop rule such drops live **only** in `vscode.tutorials`, never in a normal tutorial. (The number is kept so existing `Theme N` cross-references stay valid.)
 
-| Level | Where it appears | Focus |
-|---|---|---|
-| L1 | First Easy tutorial (06) | The two worlds exist. Rendering runs in its own R session; the R Terminal is a different session. A library or object you set up in one is not present in the other. Students rely on this separation constantly. |
-| L2 | Easy, next appearance | *QMD World and R World are not the same.* Rendering runs in a fresh session — packages loaded in the R Terminal are invisible to the render, which is why every library the document needs must be in the QMD's setup chunk. |
-| L3 | Easy, third appearance | *QMD World and R World are not the same.* Several R sessions can run simultaneously (R Terminal, render, AI agent), each with its own workspace. |
-| L4 | Medium, first mention | *QMD World and R World are not the same.* The isolation is usually a feature: renders start from known-clean state, so results don't depend on whatever is loaded in an interactive session. |
-| L5 | Medium, later mention | *QMD World and R World are not the same.* The rare failure mode is when they do share state — writing to the same file, reading a cache another process is updating — and those are almost always bugs. |
-| L6 | Hard, last tutorial (17) | *QMD World and R World are not the same.* In modern workflows, neither is a single instance: many R sessions run in parallel (students on shared Codespaces, `Rscript` jobs, AI agents spawning their own sessions). Parallelism is the norm now; non-interaction is what makes it work; when they do interact, expect trouble. |
-
-Do not reuse the same level across tutorials — each appearance advances the ladder. Skipped levels are fine (authors choose which ones fit); what must not happen is two tutorials shipping the same level.
-
-**Theme 2: `library(tidyverse)` and package ecosystems.** Attached to the exercise that loads `library(tidyverse)` — Intro Exercise 3 (adds it to the QMD and renders) or Intro Exercise 4 (loads it in the R Terminal), whichever exercise's output is the tidyverse attach message. The theme grows from "what tidyverse is" through "why the conflicts matter" to "what a namespace is."
-
-| Level | Where it appears | Focus |
-|---|---|---|
-| L1 | First Easy tutorial (06) | The tidyverse is a family of packages — dplyr for manipulation, ggplot2 for plotting, readr for I/O, etc. `library(tidyverse)` loads the core set at once. |
-| L2 | Easy, next appearance | The attach message ends with a "Conflicts" section naming functions that have the same name in multiple packages — `dplyr::filter()` masks `stats::filter()`. The last-loaded package wins. |
-| L3 | Medium, first appearance | Why masking matters: `filter()` from dplyr behaves very differently from `filter()` in base R. Tidyverse's masking is deliberate; the tidyverse is saying "our version is what you want." |
-| L4 | Medium, later or Hard appearance | **Namespaces**: every function in R lives in a package's namespace. `dplyr::filter` names the function explicitly and avoids masking entirely. When you write reusable code (packages, scripts meant to be sourced), reach for the namespace prefix rather than relying on load order. |
-
-Authors can compress or expand — the goal is "each appearance teaches something the previous didn't." Reaching L4 (namespaces) across the full curriculum is aspirational, not required.
+**Theme 2: `library(tidyverse)` and package ecosystems.** *Retired from the Primer.* Also generic infrastructure pedagogy — `vscode.tutorials`-only, per the base guide's knowledge-drop rule. (Number kept for stable cross-references.)
 
 **Theme 3: "Predictive models have no treatments."** Attached to §13.1 Exercise 13's End (the predictive-only "which variable has an important connection to the outcome" question). Appears only in predictive tutorials (positions 1, 3, 5, 7, 9, 11 — tutorials 05, 07, 09, 11, 13, 15); causal tutorials skip this exercise entirely. At E and M the drop is reused verbatim — students see the framing often enough to cement it, and it's the canonical answer to "why didn't we use the word treatment here." At H the drop deepens: the causal/predictive distinction is a commitment by the analyst, not a property of the data or model, and the sophistication level grows to match.
 
@@ -1663,7 +1637,7 @@ The core observation: a tutorial's QoI is almost always an expected value (*"the
 
 Chapters get more room for this topic than tutorials can afford, and should include concrete simulation code (not just prose) where feasible.
 
-**Structural note.** Themes can require rearranging which exercise a knowledge drop attaches to. For example, the tidyverse theme (Theme 2) and the QMD/R-World theme (Theme 1) both have natural homes in the Introduction's library-loading exercises; split them so each gets its own place to breathe — put the tidyverse drop on the exercise whose output is the tidyverse attach message (Intro Exercise 3 or 4), and the QMD/R-World drop on the next R-Terminal exercise (Intro Exercise 5).
+**Structural note.** Themes can require rearranging which exercise a knowledge drop attaches to. When two themes would naturally land on the same exercise, split them so each gets its own place to breathe — put one on that exercise and the next on the exercise immediately after.
 
 ---
 
@@ -1709,6 +1683,8 @@ If a tutorial is being drafted without a pre-flight tier check, the default is M
 
 ### 13.1 Introduction
 
+> **⚠ Migration pending.** This Introduction spec predates several base-guide rules adopted recently and is **not yet rewritten to match them**: students no longer load libraries or run diagnostics in the R Terminal (everything happens in `analysis.qmd`, rendered — `show_file()` is the only routine R-Terminal use); knowledge drops must be one of the three allowed kinds (chapter key point / the data / comment on what was displayed), not generic infrastructure lessons; and §12.6 Themes 1 & 2 (QMD World vs R World; tidyverse ecosystems) are retired. The migrated `02-sampling` tutorial is the worked reference for what this section should become. Treat the exercise wordings below as the *pre-migration* draft until this block is rewritten; the dangling drop/theme references in it have been neutralized but the operational shape (R-Terminal library loads, etc.) still needs replacing.
+
 **The Introduction preamble always has exactly three paragraphs, in this order:**
 
 1. **Citation paragraph.** *"This tutorial supports [*Preceptor's Primer for Bayesian Data Science: Using the Cardinal Virtues for Inference*](https://ppbds.github.io/primer/) by [David Kane](https://davidkane.info/)."* Verbatim in every tutorial.
@@ -1736,7 +1712,8 @@ This progression applies to every Introduction exercise below unless the exercis
 **Exercise 1.** [canonical] Four Cardinal Virtues.
 - Prompt: *What are the four [Cardinal Virtues](https://en.wikipedia.org/wiki/Cardinal_virtues), in order, which we use to guide our data science work?*
 - Message: `"Wisdom, Justice, Courage, and Temperance."`
-- End: knowledge drop *On spaced repetition* (§12.1).
+- End: a key point from the Cardinal Virtues chapter (per the base guide's KD rule). *(The former generic "spaced repetition" drop is retired.)*
+- **Sequencing guard.** This question presupposes the student has reached the **Cardinal Virtues** chapter/tutorial (04). Every example tutorial (05–16) follows 04, so all of them include it. But **no tutorial before 04 may ask any Cardinal Virtues question, and none before 03 may ask any Rubin Causal Model question** — the misc tutorials 01 (Probability) and 02 (Sampling) in particular must not, and 03 (Rubin) introduces the RCM rather than quizzing it. This is the Primer's instance of the base guide's general rule, *Don't quiz concepts the student hasn't reached*: a tutorial never quizzes a concept the curriculum introduces in a later chapter.
 
 **Exercise 2.** [operational] Confirm working repo and set up the QMD.
 - The primary assumed environment is **VS Code on GitHub Codespaces**, started from the [`PPBDS/codespace-starter`](https://github.com/PPBDS/codespace-starter) devcontainer. The repo — named after the tutorial (e.g. `nhanes`) and initially empty — is expected to already exist, since the student must have created it to launch the Codespace. Positron-local and VS-Code-local are supported alternatives documented in the `primer.tutorials` package README, not in the tutorial text.
@@ -1744,7 +1721,7 @@ This progression applies to every Introduction exercise below unless the exercis
 - The prompt does **not** spell out the IDE-specific mechanics for creating a new Quarto document — no "File → New File → ..." menu path, no mention of a specific pane or button. Assume students know how to create a new document in whatever IDE they are using. The Codespaces-primary / locally-supported framing handles environment differences; mechanics that vary by IDE do not belong here.
 - The QMD's filename is `analysis.qmd` by default in all tutorials (earlier tutorials used per-topic filenames like `immigration.qmd`; new tutorials should stick with `analysis.qmd` for consistency).
 - In the **first** tutorial, spell out CP/CR as *"copy/paste the command you sent to R along with the response R gave back"* on first use. Keep it concise — no "you will see this throughout" filler.
-- End: *Professionals keep their data science work in the cloud because laptops fail.*
+- End: a key point from this tutorial's chapter, or a note about the data (per the base guide's KD rule). *(The former generic "work in the cloud / laptops fail" drop is retired.)*
 
 **Exercise 3.** [operational] Add libraries and echo settings to QMD.
 - Prompt: *In your QMD, put `library(tidyverse)` and `library(<data package>)` in a new code chunk. Render the file. Notice that the file does not look good because the code is visible and there are messages. Add `#| message: false` to remove the messages in this setup chunk. Also add the following to the YAML header to remove all code echos from the HTML:*
