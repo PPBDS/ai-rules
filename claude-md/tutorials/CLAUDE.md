@@ -1,22 +1,22 @@
 # CLAUDE.md — Tutorial authoring guide
 
-This is the authoring guide for **"normal" tutorials**: the data science tutorials students do *after* they have learned the basic mechanics of their tools. It is not specific to any one package. The same guidance applies to any **learnr** tutorial that teaches a data science topic to students who already know how to work in their environment — across `vscode.tutorials`, the Primer, and any other tutorial package in this ecosystem.
+This is the authoring guide for **"normal" tutorials**: the data science tutorials students do *after* they have learned the basic mechanics of their tools. It is not specific to any one package. The same guidance applies to any **learnr** tutorial that teaches a data science topic to students who already know how to work in their environment — across `misc.tutorials`, the Primer, and any other tutorial package in this ecosystem.
 
 **This guide is the default contract for every such tutorial.** Unless a tutorial is one of the explicit exceptions below, it follows everything here by default. A project may override a rule — but the override must be **explicit**: stated in that project's own guide, named as a departure from this base, and justified. Silent divergence is a bug. Project guides (e.g. the Primer's) read in and accept this file first, then add only what is specific to them or override it on the record.
 
 These tutorials assume students already understand the foundational skills: Git, GitHub, `.gitignore`, `_files` directories, terminals, Codespaces, and Quarto rendering. Tutorials written under this guide do **not** re-teach those mechanics.
 
-**The exception is the core/infrastructure tutorials.** In the `vscode.tutorials` package, `01-code` through `09-infrastructure` are the first tutorials students do, and they exist precisely to teach those foundational skills. They do *not* follow this guidance — they teach mechanics directly and may repeat core lessons about terminals, GitHub, Codespaces, Quarto, files, and warnings. Everything in this file is about the tutorials that come *after* them, once Git, GitHub, `.gitignore`, `_files`, and the like can be taken for granted.
+**The exception is two whole packages, not a list of tutorials.** This guide does **not** apply to any tutorial in the `vscode.tutorials` package or the `tutorial.helpers` package. Those packages teach the tools and mechanics themselves — Git, GitHub, Codespaces, Quarto, the `tutorial.helpers` exercise system — which is precisely what this guide assumes students have already done. Every *other* tutorial follows this guide by default: `misc.tutorials`, the Primer, and any future package. There is no need to enumerate which tutorials are in or out — membership in `vscode.tutorials` or `tutorial.helpers` is the entire exception.
 
 ## Scope and what is universal
 
 This guide governs **tutorials** — learnr tutorials specifically. Other artifacts a project may produce (textbook chapters, classroom exercises, slide decks) are **out of scope** here; each such artifact defines its own relationship to this guide. The Primer, for example, applies this guide to its tutorials but not to its prose book chapters.
 
-Almost everything below is **universal** — true of any normal tutorial regardless of package. The one section that is genuinely package-specific is **Choosing topics (vscode.tutorials-specific)**, which describes how `vscode.tutorials` selects each tutorial's subject; other projects replace it (the Primer fixes its topics as the four Cardinal Virtues, identical in every tutorial). A few rules state a **default value or cadence** a project may override on the record (per the contract above); those are noted inline.
+Almost everything below is **universal** — true of any normal tutorial regardless of package. The one section that is genuinely package-specific is **Choosing topics (misc.tutorials-specific)**, which describes how `misc.tutorials` selects each tutorial's subject; other projects replace it (the Primer fixes its topics as the four Cardinal Virtues, identical in every tutorial). A few rules state a **default value or cadence** a project may override on the record (per the contract above); those are noted inline.
 
 ## Project layout
 
-Tutorials are **learnr** tutorials shipped inside an R package. In `vscode.tutorials` — the package this guide originated in — they live in `inst/tutorials/` as `tutorial.Rmd` files:
+Tutorials are **learnr** tutorials shipped inside an R package (e.g. `misc.tutorials`, `primer.tutorials`), living in `inst/tutorials/<name>/` as `tutorial.Rmd` files:
 
 ```
 inst/tutorials/<name>/
@@ -25,8 +25,6 @@ inst/tutorials/<name>/
 
 inst/extdata/<name>/ # stable source copies of data students may download
 ```
-
-Current `vscode.tutorials` tutorials: `01-code` through `09-infrastructure` (the infrastructure exception above), `r4ds-1` through `r4ds-5`, `census`.
 
 ## Philosophy (AI era)
 
@@ -51,11 +49,11 @@ Students view all QMD output via **render + Live Server**, not by running code i
 - Cache chunks when students are done with an expensive piece of code. Most tutorials should use caching at least once; tutorials with several expensive visualizations or data-preparation chunks may use it more often.
 - Add the generated cache directory (usually `analysis_cache`) to `.gitignore`; cache files do not belong on GitHub.
 
-## Choosing topics (vscode.tutorials-specific)
+## Choosing topics (misc.tutorials-specific)
 
-*This section is `vscode.tutorials`' content model — how it picks each tutorial's subject. Other projects replace it; the Primer's topic sections are the four Cardinal Virtues, fixed across every tutorial, so the Primer ignores the subject-area guidance here.*
+*This section is `misc.tutorials`' content model — how it picks each tutorial's subject. Other projects replace it; the Primer's topic sections are the four Cardinal Virtues, fixed across every tutorial, so the Primer ignores the subject-area guidance here.*
 
-In `vscode.tutorials`, tutorials after `09-infrastructure` should be organized around prominent data sources and real data science domains. Examples: US Census data, baseball data, stock data, Bitcoin, and other subject areas where students can learn what analysts actually use.
+In `misc.tutorials`, tutorials should be organized around prominent data sources and real data science domains. Examples: US Census data, baseball data, stock data, Bitcoin, and other subject areas where students can learn what analysts actually use.
 
 Each subject-area tutorial should teach:
 
@@ -69,7 +67,7 @@ Each subject-area tutorial should teach:
 Every tutorial follows this order:
 
 1. **Introduction** — overview of packages/functions covered; exercises to set up the repo, QMD, and libraries.
-2. **Topic sections** — the *topics* are project-defined: in `vscode.tutorials` each tutorial picks a subject-area domain (see *Choosing topics*); in the Primer the topic sections are a fixed set — the Cardinal Virtues — the same in every tutorial. Either way, each section starts from data, follows an exploratory path, and usually ends with a useful plot or table plus a short interpretation.
+2. **Topic sections** — the *topics* are project-defined: in `misc.tutorials` each tutorial picks a subject-area domain (see *Choosing topics*); in the Primer the topic sections are a fixed set — the Cardinal Virtues — the same in every tutorial. Either way, each section starts from data, follows an exploratory path, and usually ends with a useful plot or table plus a short interpretation.
 3. **Summary** — mirrors the Introduction in past tense; finishes with `quarto publish gh-pages` and a GitHub URL.
 
 ### Introduction exercises (standard sequence)
@@ -205,7 +203,7 @@ Use when providing the correct answer. Set `allow_retry = FALSE`.
 - Tell students what to notice in their rendered output, explain why it matters, or identify the next natural data-science move.
 - In the age of AI, knowledge drops should emphasize concepts students need to steer and audit AI-generated work: data shape, units of observation, missingness, filtering, variable meaning, plot interpretation, domain context, and whether a result supports the claim being made.
 - When AI handles syntax or transformations under the hood, name the concept and explain it in plain language after students see the result. Students do not need to memorize syntax immediately, but they do need to recognize what AI did and why it matters.
-- Do not use recycled/default knowledge drops in post-infrastructure tutorials. Save repeated infrastructure lessons for `01-code` through `09-infrastructure`; later tutorials need knowledge drops tied to the current exercise, current data, or current infrastructure issue.
+- Do not use recycled/default knowledge drops in post-infrastructure tutorials. Save repeated infrastructure lessons for the `vscode.tutorials` infrastructure tutorials; later tutorials need knowledge drops tied to the current exercise, current data, or current infrastructure issue.
 - Use knowledge drops to teach the data science ecosystem for the tutorial's area: gold-standard data sources, common measures, important packages, file formats, APIs, data-quality issues, and standard patterns analysts look for.
 - Name packages and functions students will encounter in AI-generated code — so they can recognize and evaluate them, not so they can dictate them in prompts.
 - No road signs ("In the next section..."). Teach something real.
@@ -296,7 +294,7 @@ When showing multiple commands for students to copy/paste, make sure they render
 
 1. **Quick syntax check**: `rmarkdown::render("inst/tutorials/name/tutorial.Rmd")` — open resulting HTML in browser.
 2. **Full check**: `devtools::check()` (`Cmd/Ctrl + Shift + E`) — must pass before any PR.
-3. **Student perspective**: `devtools::install()` then `learnr::run_tutorial("tutorial_name", "<your package>")` (e.g. `"vscode.tutorials"` or `"primer.tutorials"`).
+3. **Student perspective**: `devtools::install()` then `learnr::run_tutorial("tutorial_name", "<your package>")` (e.g. `"misc.tutorials"` or `"primer.tutorials"`).
 
 `devtools::check()` validates that all tutorials include the default `copy-code-chunk` and `download-answers` chunks from the `tutorial_template`. Do not remove or alter these.
 
