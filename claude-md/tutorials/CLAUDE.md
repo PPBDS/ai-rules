@@ -327,6 +327,7 @@ When showing multiple commands for students to copy/paste, make sure they render
 - Document titles (the `analysis.qmd` title) use **Title Case** — e.g. `"Sampling"`, not `"sampling"`. (Distinct from section/topic headings, which stay sentence case.)
 - Terminal names are **capitalized, including the shell name**: `R Terminal` and `bash Terminal` — always a capital `T`, never "bash terminal".
 - VS Code's file sidebar is the **Explorer** — not "File Explorer", which is the Windows OS file manager.
+- Write **"Commit and push"**, never "Save and push" — saving is assumed (the AI does it), and you cannot push without committing first.
 - Abbreviation: CP/CR = Copy/Paste the Command/Response
 
 ## DESCRIPTION
