@@ -12,7 +12,7 @@ These tutorials assume students already understand the foundational skills: Git,
 
 This guide governs **tutorials** — learnr tutorials specifically. Other artifacts a project may produce (textbook chapters, classroom exercises, slide decks) are **out of scope** here; each such artifact defines its own relationship to this guide. The Primer, for example, applies this guide to its tutorials but not to its prose book chapters.
 
-Almost everything below is **universal** — true of any normal tutorial regardless of package. The one section that is genuinely package-specific is **Choosing topics (misc.tutorials-specific)**, which describes how `misc.tutorials` selects each tutorial's subject; other projects replace it (the Primer fixes its topics as the four Cardinal Virtues, identical in every tutorial). A few rules state a **default value or cadence** a project may override on the record (per the contract above); those are noted inline.
+Almost everything below is **universal** — true of any normal tutorial regardless of package. The one genuinely package-specific concern is **how a tutorial's topic is chosen** (see *Choosing topics*): each project's own guide defines its topic model, so this guide only points there. A few rules state a **default value or cadence** a project may override on the record (per the contract above); those are noted inline.
 
 ## Project layout
 
@@ -46,30 +46,23 @@ Students view all QMD output via **render + Live Server**, not by running code i
 - They open `analysis.html` with Live Server once at the start (right-click in File Explorer → "Open with Live Server"); it auto-refreshes on every subsequent render.
 - **Never** instruct students to use `Cmd/Ctrl + Enter` to run QMD code or `Cmd/Ctrl + Shift + K` to render.
 - `#| cache: true` is a **render-time** feature — the cache is created during `quarto render`, not by running code interactively. The first render with caching takes noticeably longer; subsequent renders load from disk.
-- Cache chunks when students are done with an expensive piece of code. Most tutorials should use caching at least once; tutorials with several expensive visualizations or data-preparation chunks may use it more often.
-- Add the generated cache directory (usually `analysis_cache`) to `.gitignore`; cache files do not belong on GitHub.
+- **Every tutorial walks students through caching at least once.** Caching is a core concept worth reinforcing in every tutorial, exactly as the `.gitignore` step is — not a mere optimization to reach for only when a tutorial happens to be slow. Place the caching exercise on an expensive chunk, generally somewhere in the middle of the tutorial (it can go elsewhere). Tutorials with several expensive visualizations or data-preparation chunks may cache more than once.
+- **Caching and `.gitignore` are coupled.** The moment a tutorial turns on caching, the same exercise (or the very next one) must add the generated cache directory (usually `analysis_cache`) to `.gitignore` — cached files must never go to GitHub. Pair them every time.
+
+**One evolving working chunk per topic.** Within a topic, students do *not* accumulate a new code chunk per exercise. They keep a single **working chunk** and evolve it: it first prints the raw data, then prints a few columns, then a rough plot, then a polished plot — each exercise *replaces* the code that was there before. That is fine, because only the final state matters. A topic therefore ends with one chunk holding its final graphic (or table); starting the next topic starts a fresh working chunk. So a finished `analysis.qmd` is short — the setup chunk plus roughly one chunk per topic (a two-topic tutorial ends with three chunks: setup, topic-one graphic, topic-two graphic). The main exception is a **separate data chunk**: a download or a slow data-preparation step (an API pull, reading and cleaning a file) earns its own chunk — often cached — so it is not re-run as the working chunk evolves. Word prompts to match: the first exercise of a topic *creates* the working chunk; every later exercise says *"change"* or *"replace the code in"* that chunk, **never** *"add a new chunk."* (This is also why the expected-output block we show almost always reflects the most recent state of that one chunk.)
 
 **Almost everything happens in the QMD, not the R Terminal.** Students do their work by prompting the AI agent to edit `analysis.qmd`, then rendering and reading the HTML — so a normal tutorial should (almost) never ask a student to *do* something in the R Terminal. The standing exception is `show_file()`, used to submit the contents of a file or chunk as evidence. `tutorial.helpers` is loaded for the student so `show_file()` works; loading it is **not** a student-facing step, and there are no "load `library(...)` in the R Terminal" exercises — every library the analysis needs goes in the QMD's setup chunk, and every result the student inspects comes from the render.
 
-## Choosing topics (misc.tutorials-specific)
+## Choosing topics
 
-*This section is `misc.tutorials`' content model — how it picks each tutorial's subject. Other projects replace it; the Primer's topic sections are the four Cardinal Virtues, fixed across every tutorial, so the Primer ignores the subject-area guidance here.*
-
-In `misc.tutorials`, tutorials should be organized around prominent data sources and real data science domains. Examples: US Census data, baseball data, stock data, Bitcoin, and other subject areas where students can learn what analysts actually use.
-
-Each subject-area tutorial should teach:
-
-- The gold-standard data sources for that area.
-- The main R packages, APIs, file formats, and vocabulary students should mention to AI.
-- Common data patterns, data quality issues, and standard analytical questions in that domain.
-- A reproducible workflow that ends with a small published Quarto artifact.
+How a tutorial's subject is chosen is **project-specific** — the one genuinely package-dependent part of this guide. Each project's own guide defines its topic model; consult it before starting a tutorial. Two examples: `misc.tutorials` organizes tutorials around data sources / storage technologies and real data science domains (the per-tutorial teaching checklist lives in that package's guide); the Primer fixes its topic sections as the four Cardinal Virtues, identical in every tutorial. Whatever the model, each topic section starts from data, follows an exploratory path, and ends with a useful plot or table plus a short interpretation — that part is universal (see *Tutorial structure* and *Analysis path*).
 
 ## Tutorial structure
 
 Every tutorial follows this order:
 
 1. **Introduction** — overview of packages/functions covered; exercises to set up the repo, QMD, and libraries.
-2. **Topic sections** — the *topics* are project-defined: in `misc.tutorials` each tutorial picks a subject-area domain (see *Choosing topics*); in the Primer the topic sections are a fixed set — the Cardinal Virtues — the same in every tutorial. Either way, each section starts from data, follows an exploratory path, and usually ends with a useful plot or table plus a short interpretation.
+2. **Topic sections** — the *topics* are project-defined (see *Choosing topics* and your project's guide): `misc.tutorials` picks a data source / storage technology per tutorial; the Primer uses a fixed set — the Cardinal Virtues — the same in every tutorial. Either way, each section starts from data, follows an exploratory path, and usually ends with a useful plot or table plus a short interpretation.
 3. **Summary** — mirrors the Introduction in past tense; finishes with `quarto publish gh-pages` and a GitHub URL.
 
 **Don't quiz concepts the student hasn't reached.** In a sequenced tutorial set — especially one paired with a book — a tutorial's questions may only ask about concepts introduced in its own chapter or an earlier one. Never build an exercise on a concept the curriculum introduces later. (Light forward-pointers in knowledge-drop prose — "you will see this again when we reach X" — are a separate judgment call; keep them rare, per *no road signs*.) Which concept is introduced where is project-specific; consult the project's guide for the schedule.
@@ -92,6 +85,7 @@ Keep introductions short. Avoid repeating details that the exercises will teach.
 - Begin by getting data into the student's project. Often this means asking AI to create `data/`, download a file from a stable URL, and record where it came from.
 - Ask for one concrete edit per exercise. Do not micromanage individual R function arguments unless the detail is pedagogically important.
 - Render after every meaningful edit. The rendered HTML is the student's feedback loop.
+- Somewhere in the topic sections, include the **caching exercise** (see *Student workflow*): turn on `#| cache: true` for an expensive chunk and, in the same or the next exercise, add the cache directory to `.gitignore`. Every tutorial does this at least once.
 - Use several linked exercises to build an analysis path: inspect the data, notice a pattern or problem, refine the data, make a rough plot, improve the plot, add interpretation.
 - The final section should make the rendered page look good enough to publish.
 - Before including a visualization exercise, ask what it shows that the preceding table or exercise did not. If the answer is nothing new — the same finding in a different form — cut the exercise and communicate the finding in the table's knowledge drop instead.
@@ -104,8 +98,8 @@ Describe the **goal**, not the implementation. Students should tell AI what they
 
 - **Do not** list functions for students to include in their AI prompt (e.g., "use `geom_histogram()` and `scale_x_log10()`").
 - **Do not** dictate the pipe steps or function arguments students should pass to AI.
-- **Exception**: it is fine to name one key function when it is the explicit concept being taught (e.g., "use `pivot_longer()` to reshape the data") — but only if that function is the point of the exercise, not just an implementation detail.
-- Knowledge drops are the right place to introduce function names after students have already seen the output. Students learn what `geom_smooth()` is by noticing it in AI-generated code, not by being told to ask for it.
+- **When a transformation is itself the lesson** (reshaping rows↔columns, joining tables, aggregating groups), state it as a **concept and a goal**, not a function — "reshape the data so each variable is its own column, which makes the plot easier," not "use `pivot_longer()`." The student should carry away what reshaping *is* and *why* it helps later analysis and plotting; the function name is noise. There is essentially no case where a function name in a student's prompt beats describing what they want and why.
+- In knowledge drops, name **packages and libraries**, not functions — students don't code, so a catalogue of function names is wasted on them. When a transformation is the point, name the **concept** (reshaping, joining, aggregating) and why it matters, not the function that implements it; otherwise point at the package behind the result (and the alternatives). See *Knowledge drops*.
 
 ### Git commit exercises
 
@@ -125,10 +119,10 @@ Exception: if the tutorial has only one or two topic sections and the Summary's 
 
 Most exercises should follow this rhythm:
 
-1. **Prompt AI / edit `analysis.qmd`** — students ask their AI agent to add or change something concrete.
+1. **Edit `analysis.qmd`** — change the topic's working chunk to do something concrete (in a topic's first exercise, create that chunk). See *One evolving working chunk per topic* under *Student workflow*.
 2. **Render** — students run `quarto render analysis.qmd` in a bash terminal and inspect the rendered HTML.
 3. **Verify** — students submit evidence that they completed the exercise. Use CP/CR only for terminal command-and-response evidence.
-4. **Show the expected output** — after students submit and press Continue, show our expected output, answer, plot, tibble, or representative paste.
+4. **Show the expected output** — after students submit and press Continue, show our expected output, answer, plot, tibble, or representative paste. **The author (Claude) is responsible for writing the text inside the backticks that shows students what they should see at the bottom of their rendered HTML.** Because an exercise almost always evolves the topic's *working* chunk (the last chunk in the document), this expected-output block must match that chunk's current result. Keep it accurate: when the data or analysis upstream changes, the displayed expected output has to change with it.
 5. **Knowledge drop** — insert another `###` separator so students press Continue again before seeing the knowledge drop. Then provide a short paragraph that tells students what to notice, teaches domain knowledge, or foreshadows the next exercise.
 
 The canonical loop is:
@@ -159,9 +153,11 @@ Build topic sections from linked exercise units. A typical path:
 8. Improve labels, grouping, ordering, scale, caption, and visual polish.
 9. End each significant visualization with a dedicated interpretation exercise asking students to write one or two sentences about what the plot shows. This is distinct from the knowledge drop: the KD teaches; the interpretation exercise asks students to synthesize what they observed. Every major plot or table should have one.
 
-**Structural exploration for downloaded or unfamiliar datasets.** Before moving to plots, add exercises that let students discover the dataset's shape and vocabulary. Three exercises work well together, all done in the QMD and read from the render: `names()` (ask AI to add a chunk that prints the column names, so students have them exactly when prompting); `glimpse()` on a column group of ≤ ~15 columns reveals types and spot-checks values; and `summary()` on key numeric columns catches placeholder values and establishes scale before plotting. Do not use `glimpse()` on the full dataset when it has more than ~15 columns — split by column group first (e.g., `select(starts_with("artist")) |> glimpse()`). These exercises are most valuable for downloaded CSVs and unfamiliar datasets; they are less necessary for well-known built-in datasets where the column structure is self-evident from the first print. Place any "what does this variable mean?" exercise immediately after students first see the column name — not after they have already used it in a summary or plot.
+**Structural exploration for downloaded or unfamiliar datasets.** Before moving to plots, add exercises that let students discover the dataset's shape and vocabulary. Three steps work well together, all done in the QMD's working chunk and read from the render: print the column names so students have them exactly when prompting; show the structure (types and a few example values) of a column group of ≤ ~15 columns; and show summary statistics for key numeric columns to catch placeholder values and establish scale before plotting. Do not use `glimpse()` on the full dataset when it has more than ~15 columns — split by column group first (e.g., `select(starts_with("artist")) |> glimpse()`). These exercises are most valuable for downloaded CSVs and unfamiliar datasets; they are less necessary for well-known built-in datasets where the column structure is self-evident from the first print. Place any "what does this variable mean?" exercise immediately after students first see the column name — not after they have already used it in a summary or plot.
 
 **Categorical comparisons.** For comparisons across categories, scaffold the student's choice rather than prescribing it: first have students count observations per category so they can see what is plentiful, then ask them to choose two categories with enough data to compare (e.g., at least 100 rows each), then build the comparison plot. This gives students practice making an informed analytical decision rather than following a script.
+
+**The most teachable datasets hide a discoverable anomaly.** The strongest analysis paths are the ones where a naive first look seems fine, but a clue hints that something is off, and a further step — very often a plot — reveals the mystery and then explains it. (The canonical example: a time-series plot of weekly chart rankings exposes a sharp discontinuity that the summary statistics completely hide.) When a dataset has this property, build the path so students *discover* the problem themselves rather than being told about it. Such structure is far more common in rich, sizable datasets than in small clean ones — a reason to favor richer data when the choice is open (topic/data selection itself is project-specific; see *Choosing topics* and the project guide).
 
 The final artifact should be a published page with a meaningful result about the world, not just a completed worksheet.
 
@@ -211,6 +207,8 @@ Use when providing the correct answer. Set `allow_retry = FALSE`.
 
 If a drop isn't doing one of these three, cut it. Do **not** reach for a canned infrastructure lesson to fill the slot.
 
+**The third kind is the most common.** Most knowledge drops are simply an observation about the result the student has just displayed — something interesting in the plot or table that she may not have noticed. Very often that observation leads directly into the next question, so the drop doubles as the setup for what comes next.
+
 - Every exercise must have a knowledge drop after submission, and it must be one of the three kinds above. This holds even when the exercise is mostly setup, committing, publishing, or verification — for those, pull a key point from the chapter or say something about the data, rather than narrating the mechanics.
 - Usually one short paragraph; one or two sentences is often enough.
 - Place after students submit an exercise and after the expected output/answer. The usual pattern is question chunk, `###`, expected output/answer, `###`, knowledge drop.
@@ -221,7 +219,7 @@ If a drop isn't doing one of these three, cut it. Do **not** reach for a canned 
 - When AI handles syntax or transformations under the hood, name the concept and explain it in plain language after students see the result. Students do not need to memorize syntax immediately, but they do need to recognize what AI did and why it matters.
 - Do not use recycled/default knowledge drops in post-infrastructure tutorials. Save repeated infrastructure lessons for the `vscode.tutorials` infrastructure tutorials; later tutorials need knowledge drops tied to the current exercise, current data, or current infrastructure issue.
 - Use knowledge drops to teach the data science ecosystem for the tutorial's area: gold-standard data sources, common measures, important packages, file formats, APIs, data-quality issues, and standard patterns analysts look for.
-- Name packages and functions students will encounter in AI-generated code — so they can recognize and evaluate them, not so they can dictate them in prompts.
+- **Discuss packages and libraries, not specific functions.** Students don't write code, so they don't need to learn individual functions — a knowledge drop should rarely name one. What students *do* need is a map of the **infrastructure**: which packages exist, what each is for, and which alternative packages they could have used for this job even though the tutorial didn't (e.g. mention **data.table** or **arrow** alongside **dplyr**; **httr2** alongside a domain API package). We teach infrastructure, not code, and packages are part of the infrastructure. When a transformation matters, teach the **concept** and the reason for it — "turning rows into columns so each variable has its own column makes plotting and modeling easier" — not the function that does it (`pivot_wider()`). The concept transfers; the function name does not.
 - No road signs ("In the next section..."). Teach something real.
 - No rhetorical questions.
 
@@ -233,6 +231,7 @@ If a drop isn't doing one of these three, cut it. Do **not** reach for a canned 
 - `echo = FALSE` everywhere (set globally in setup chunk via `knitr::opts_chunk$set(echo = FALSE)`).
 - Set `knitr::opts_chunk$set(out.width = '90%')` in setup for consistent image sizing.
 - Avoid exercise code chunks in post-infrastructure tutorials. Use question chunks for evidence submissions and test chunks for our example output.
+- Students evolve one working chunk per topic rather than adding a chunk per exercise; a finished `analysis.qmd` is the setup chunk plus roughly one chunk per topic (plus any separate data-download/preparation chunks). See *One evolving working chunk per topic* under *Student workflow*.
 - Do **not** include the `copy-code-chunk` (copy-button) child document. Its only purpose is to add a copy button to exercise code chunks, and these tutorials have none. The `info-section` and `download-answers` child documents stay.
 
 ## Test chunk output
@@ -309,7 +308,11 @@ When showing multiple commands for students to copy/paste, make sure they render
 
 ## Checking a tutorial
 
-1. **Quick syntax check**: `rmarkdown::render("inst/tutorials/name/tutorial.Rmd")` — open resulting HTML in browser.
+**Render early and often.** Run `rmarkdown::render()` after essentially every change, not just at the end — it is the fastest way to catch a broken chunk, a stray warning, or output that no longer matches the prose. A normal tutorial should render in **not much more than 15 seconds**; if it takes much longer, treat that as a signal (an uncached expensive chunk, an accidental web call) worth fixing. Read the render's console output, not just the exit status: warnings like `NAs introduced by coercion` are defects to fix, not noise to ignore.
+
+**Always confirm numbering after adding, deleting, or reordering exercises.** Exercise headers (`### Exercise N`) and chunk labels (`section-name-N`, `section-name-N-test`) must stay sequential and in sync within each section. Confirm it either by reading the file directly or with `tutorial.helpers::check_current_tutorial()`.
+
+1. **Quick syntax check**: `rmarkdown::render("inst/tutorials/name/tutorial.Rmd")` — open resulting HTML in browser. Do this constantly while authoring.
 2. **Full check**: `devtools::check()` (`Cmd/Ctrl + Shift + E`) — must pass before any PR.
 3. **Student perspective**: `devtools::install()` then `learnr::run_tutorial("tutorial_name", "<your package>")` (e.g. `"misc.tutorials"` or `"primer.tutorials"`).
 
