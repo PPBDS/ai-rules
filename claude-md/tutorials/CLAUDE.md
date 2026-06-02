@@ -69,10 +69,11 @@ Every tutorial follows this order:
 
 ### Introduction exercises (standard sequence)
 
-1. Open with the **standard repo line**, verbatim: *"You should be in a repo named `whatever`. If you are not, create one and move to it."* — where `whatever` is the tutorial's id (`r4ds-3`, `census`, and so on). Then create `analysis.qmd` with a **Title-Case** document title (see *Formatting conventions*), render, open `analysis.html` with Live Server, set up `.gitignore`, commit and push, submit evidence. Keep this lean — students past the infrastructure tutorials know how to make a repo, so don't re-walk that. **Do not name a specific environment.** These tutorials can be done locally just as well as in the cloud, so the intro must not mention Codespaces or the `codespace-starter` template; "create one and move to it" deliberately covers both cases.
-2. Add `library(tidyverse)` to QMD with `#| message: false` and `execute: echo: false` in YAML, render, check the rendered HTML, submit evidence.
-3. In a bash Terminal, run `quarto render analysis.qmd`; confirm the rendered HTML auto-refreshes. CP/CR.
-4. (Optional) Create `data/` directory via `dir.create("data")`. CP/CR.
+1. Open with the **standard repo line**, verbatim: *"You should be in a repo named `whatever`. If you are not, create one and move to it."* — where `whatever` is the tutorial's id (`r4ds-3`, `census`, …). Then create `analysis.qmd` with a **Title-Case** document title (see *Formatting conventions*), render, open `analysis.html` with Live Server, create `.gitignore` with `analysis_files`, commit and push, and submit `show_file(".gitignore")` — followed by the standing note *"If that fails, it is probably because you have not yet loaded `library(tutorial.helpers)` in the R Terminal."* Our answer is the file's one line, `analysis_files`. Keep this lean — students past the infrastructure tutorials know how to make a repo, so don't re-walk that. **Do not name a specific environment.** These tutorials can be done locally just as well as in the cloud, so the intro must not mention Codespaces or the `codespace-starter` template; "create one and move to it" deliberately covers both cases.
+2. Add the libraries the tutorial needs in one chunk with `#| message: false`, add `execute: echo: false` to the YAML, render, and submit `show_file("analysis.qmd", chunk = "Last")`. Show our answer — the chunk — in a `<pre><code>` block (it contains `#|`, so four backticks would mangle it).
+3. **Only if the tutorial downloads data to a local `data/` directory:** have the student create it from the R Terminal — `getwd()`, `dir.create("data")`, `list.files()` in a fenced code block (not inline backticks, which Markdown collapses onto one line) — and show the `list.files()` line as our answer. A live-API tutorial like `census` skips this step; its intro is just steps 1–2.
+
+**No render-confirm exercise.** Do not add a standalone "render again and confirm the page refreshes" step — students already render and inspect Live Server in steps 1 and 2, so a third is pure boilerplate.
 
 Replace `XX` placeholders with actual repo names, titles, and knowledge drops.
 
