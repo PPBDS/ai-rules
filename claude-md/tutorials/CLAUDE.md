@@ -135,7 +135,9 @@ CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or 
 
 For rendered HTML output, say "copy and paste from the HTML" or "copy and paste the table/summary/text from the HTML." Do not call HTML submissions CP/CR.
 
-Use `show_file()` when checking file contents or code: `.gitignore`, the last chunk, a data-analysis pipeline, chart code, or the final QMD state. When checking chart code or a data pipeline, pair `show_file()` with our rendered plot, tibble, or other output so students can compare both the code and its result.
+Use `show_file()` when checking file contents or code: `.gitignore`, the last chunk, a data-analysis pipeline, chart code, or the final QMD state.
+
+**Showing our answer after a `show_file()` exercise.** Almost every `show_file()` exercise should be followed — as the *first* thing after the student submits and clicks Continue — by **our answer**: what we think the file should contain. Present it as a single chunk with `echo = TRUE`, which both shows our code and runs it to display the result, so the student can compare our code *and* our output against their own. Do **not** show the `show_file()` call, and do not reproduce the student's submission (theirs already echoes the command) — just show the analysis code we expect, computed on the fly. A plain three-backtick block (code only) is an acceptable fallback, and the right choice when the code would take more than ~5 seconds to run, but the live `echo = TRUE` chunk is preferred. Follow our answer with a `###` so the student presses Continue again before the knowledge drop. Keep our code concise and modern — always `|>`, never `%>%` — because the whole point is that the student studies it and compares it with their own.
 
 Beyond `show_file()`, R Terminal CP/CR should be rare (per *Student workflow*): reach for it only for the occasional directory-structure or shell check (`list.files()`, `pwd`, `ls`, render messages) that has no place in the QMD. Anything that produces analysis output belongs in a QMD chunk, rendered, and copied from the HTML — not run in the R Terminal.
 
@@ -228,7 +230,8 @@ If a drop isn't doing one of these three, cut it. Do **not** reach for a canned 
 - Label format: `section-name-N` and `section-name-N-test` (e.g., `billboard-3`, `billboard-3-test`).
 - Run `tutorial.helpers::check_current_tutorial()` after adding/deleting exercises to renumber everything.
 - Use `tutorial.helpers::make_exercise()` to add new exercises with correct numbering.
-- `echo = FALSE` everywhere (set globally in setup chunk via `knitr::opts_chunk$set(echo = FALSE)`).
+- `echo = FALSE` everywhere (set globally in setup chunk via `knitr::opts_chunk$set(echo = FALSE)`). The routine exception is the `echo = TRUE` answer chunk shown after a `show_file()` exercise (see *Submission evidence*).
+- Use the native pipe `|>` in all displayed code, never the magrittr `%>%`.
 - Set `knitr::opts_chunk$set(out.width = '90%')` in setup for consistent image sizing.
 - Avoid exercise code chunks in post-infrastructure tutorials. Use question chunks for evidence submissions and test chunks for our example output.
 - Students evolve one working chunk per topic rather than adding a chunk per exercise; a finished `analysis.qmd` is the setup chunk plus roughly one chunk per topic (plus any separate data-download/preparation chunks). See *One evolving working chunk per topic* under *Student workflow*.
