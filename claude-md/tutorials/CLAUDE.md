@@ -280,7 +280,7 @@ Pre-compute only what the tutorial itself needs to show examples after submissio
 - Never depend on a fragile third-party URL at tutorial run time.
 - Keep stable source copies for student downloads under `inst/extdata/<tutorial>/` when practical, and document the original source.
 - Students usually create their own `data/` directory inside their project and download or copy data there.
-- In later tutorials, prefer asking AI to download a file from a stable URL and put it in `data/` over teaching students exact `download.file()` syntax, unless that syntax is the point of the exercise.
+- **Do not give students an explicit `download.file()` command.** Tell them to download the file — give the stable URL — and save it in their `data/` directory; they will typically ask AI to do it, which is fine. Confirm with `ls data` and show that the file is now present. (The lone exception is a tutorial where the download *mechanics* are themselves the lesson — rare in post-infrastructure tutorials.)
 - Avoid `inst/tutorials/<name>/data/` for new post-infrastructure tutorials unless there is a specific learnr runtime reason.
 - Do not download from the web during tutorial compile/run. If a test chunk needs data, load a small stable copy from the package.
 - For large data, create smaller teaching files and use lightweight evidence submissions rather than heavy test computations.
