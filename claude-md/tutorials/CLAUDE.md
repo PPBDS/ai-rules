@@ -28,6 +28,8 @@ inst/extdata/<name>/ # stable source copies of data students may download
 
 ## Philosophy (AI era)
 
+**The purpose is practice, not the artifact.** A tutorial does not exist to help the student produce a particular plot or analysis — if it did, we would just hand her our code. It exists so she can **practice using AI to achieve well-specified goals**: stating what she wants, judging what the AI hands back, noticing when it is wrong, and refining. Copy-pasting our code skips the very skill we are teaching. This is the root reason we describe goals rather than paste code, and show our code only *afterward* — as something to compare against, never something to copy.
+
 The goal is not to teach coding — it is to teach students how to **use AI to create data science artifacts**. Once students are past the infrastructure tutorials, they should mostly interact with an AI agent that edits their files, renders their Quarto document, and helps them debug. They should learn to steer analysis, inspect output, notice problems, and ask for refinements.
 
 - These are data science tutorials. They should follow an exploratory path through data toward a useful published artifact.
