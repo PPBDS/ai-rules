@@ -42,8 +42,8 @@ The goal is not to teach coding — it is to teach students how to **use AI to c
 
 Students view all QMD output via **render + Live Server**, not by running code in the R Terminal:
 
-- After editing `analysis.qmd`, students run `quarto render analysis.qmd` in a bash terminal.
-- They open `analysis.html` with Live Server once at the start (right-click in File Explorer → "Open with Live Server"); it auto-refreshes on every subsequent render.
+- After editing `analysis.qmd`, students run `quarto render analysis.qmd` in a bash Terminal.
+- They open `analysis.html` with Live Server once at the start (right-click in Explorer → "Open with Live Server"); it auto-refreshes on every subsequent render.
 - **Never** instruct students to use `Cmd/Ctrl + Enter` to run QMD code or `Cmd/Ctrl + Shift + K` to render.
 - `#| cache: true` is a **render-time** feature — the cache is created during `quarto render`, not by running code interactively. The first render with caching takes noticeably longer; subsequent renders load from disk.
 - **Every tutorial walks students through caching at least once.** Caching is a core concept worth reinforcing in every tutorial, exactly as the `.gitignore` step is — not a mere optimization to reach for only when a tutorial happens to be slow. Place the caching exercise on an expensive chunk, generally somewhere in the middle of the tutorial (it can go elsewhere). Tutorials with several expensive visualizations or data-preparation chunks may cache more than once.
@@ -69,9 +69,9 @@ Every tutorial follows this order:
 
 ### Introduction exercises (standard sequence)
 
-1. Confirm you're already in your repo (you created it to launch the Codespace), then create `analysis.qmd` with a **Title-Case** document title (see *Formatting conventions*), render, open `analysis.html` with Live Server, set up `.gitignore`, commit and push, submit evidence. Keep this lean — students past the infrastructure tutorials know how to make a repo and open a Codespace, so don't re-walk that or re-link the `codespace-starter` template.
+1. Open with the **standard repo line**, verbatim: *"You should be in a repo named `whatever`. If you are not, create one and move to it."* — where `whatever` is the tutorial's id (`r4ds-3`, `census`, and so on). Then create `analysis.qmd` with a **Title-Case** document title (see *Formatting conventions*), render, open `analysis.html` with Live Server, set up `.gitignore`, commit and push, submit evidence. Keep this lean — students past the infrastructure tutorials know how to make a repo, so don't re-walk that. **Do not name a specific environment.** These tutorials can be done locally just as well as in the cloud, so the intro must not mention Codespaces or the `codespace-starter` template; "create one and move to it" deliberately covers both cases.
 2. Add `library(tidyverse)` to QMD with `#| message: false` and `execute: echo: false` in YAML, render, check the rendered HTML, submit evidence.
-3. In a bash terminal, run `quarto render analysis.qmd`; confirm the rendered HTML auto-refreshes. CP/CR.
+3. In a bash Terminal, run `quarto render analysis.qmd`; confirm the rendered HTML auto-refreshes. CP/CR.
 4. (Optional) Create `data/` directory via `dir.create("data")`. CP/CR.
 
 Replace `XX` placeholders with actual repo names, titles, and knowledge drops.
@@ -109,7 +109,7 @@ The exercise asks students to commit `analysis.qmd` with a specific descriptive 
 
 - **AI agent**: "Ask AI to stage `analysis.qmd`, commit with the message `"Add X analysis"`, and push to GitHub."
 - **VS Code Source Control panel**: click the branch icon in the sidebar, stage the file, enter the message, and sync.
-- **Command line**: `git add analysis.qmd && git commit -m "Add X analysis" && git push` in a bash terminal.
+- **Command line**: `git add analysis.qmd && git commit -m "Add X analysis" && git push` in a bash Terminal.
 
 The Summary commit exercise (sequence step 3) should say "commit any remaining changes" — by that point the main content is already committed section by section.
 
@@ -120,7 +120,7 @@ Exception: if the tutorial has only one or two topic sections and the Summary's 
 Most exercises should follow this rhythm:
 
 1. **Edit `analysis.qmd`** — change the topic's working chunk to do something concrete (in a topic's first exercise, create that chunk). See *One evolving working chunk per topic* under *Student workflow*.
-2. **Render** — students run `quarto render analysis.qmd` in a bash terminal and inspect the rendered HTML.
+2. **Render** — students run `quarto render analysis.qmd` in a bash Terminal and inspect the rendered HTML.
 3. **Verify** — students submit evidence that they completed the exercise. Use CP/CR only for terminal command-and-response evidence.
 4. **Show the expected output** — after students submit and press Continue, show our expected output, answer, plot, tibble, or representative paste. **The author (Claude) is responsible for writing the text inside the backticks that shows students what they should see at the bottom of their rendered HTML.** Because an exercise almost always evolves the topic's *working* chunk (the last chunk in the document), this expected-output block must match that chunk's current result. Keep it accurate: when the data or analysis upstream changes, the displayed expected output has to change with it.
 5. **Knowledge drop** — insert another `###` separator so students press Continue again before seeing the knowledge drop. Then provide a short paragraph that tells students what to notice, teaches domain knowledge, or foreshadows the next exercise.
@@ -325,7 +325,8 @@ When showing multiple commands for students to copy/paste, make sure they render
 - Function names always include parentheses: `read_csv()`, not `read_csv`
 - Section/topic titles: sentence case
 - Document titles (the `analysis.qmd` title) use **Title Case** — e.g. `"Sampling"`, not `"sampling"`. (Distinct from section/topic headings, which stay sentence case.)
-- Terminal names: `R Terminal` and `bash terminal`
+- Terminal names are **capitalized, including the shell name**: `R Terminal` and `bash Terminal` — always a capital `T`, never "bash terminal".
+- VS Code's file sidebar is the **Explorer** — not "File Explorer", which is the Windows OS file manager.
 - Abbreviation: CP/CR = Copy/Paste the Command/Response
 
 ## DESCRIPTION
