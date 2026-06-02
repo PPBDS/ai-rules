@@ -213,6 +213,8 @@ If a drop isn't doing one of these three, cut it. Do **not** reach for a canned 
 
 - Every exercise must have a knowledge drop after submission, and it must be one of the three kinds above. This holds even when the exercise is mostly setup, committing, publishing, or verification — for those, pull a key point from the chapter or say something about the data, rather than narrating the mechanics.
 - Usually one short paragraph; one or two sentences is often enough.
+- Keep drops **brief in word count, but they may be richer visually**: a small concrete example — a five-line sample of the raw file format, a tiny named list, a one-line snippet — often teaches a concept far better than prose. Show the example and stop; do not follow it with discussion.
+- Teach what something **is**, with a simple example, rather than narrating what a package *can do* with it. The reader assumes the package works ("would be surprised if it couldn't"); the concept is what they need to carry away. Prefer *"a named list labels each element — `list(name = ..., year = ...)`"* over *"`tidyr` can unnest a named list-column."*
 - Place after students submit an exercise and after the expected output/answer. The usual pattern is question chunk, `###`, expected output/answer, `###`, knowledge drop.
 - Place before the question only when context is needed to answer.
 - Reference our example output when the test chunk displays a plot, tibble, or summary. When the test chunk reveals specific numbers, use them — "496 zero values (nearly 5%)" rather than "many zero values." Concrete numbers make knowledge drops credible and easier for students to verify against their own output.
