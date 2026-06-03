@@ -583,6 +583,36 @@ Per the base guide (*Philosophy*, *Student workflow*), students do **not** write
 
 This is the migrated model. The legacy `{section}-{N}` exercise chunk + `-hint-1` hint chunk pattern is **retired** — do not author new exercises with it.
 
+**Test-chunk code must run as-is in the student's `analysis.qmd`.** This is the central honesty rule of the migrated model. A test chunk that runs in the tutorial's R session because the tutorial's `setup` chunk pre-built some object the student has never created is a *fiction*: it shows the student an output their own copy-paste of the same code would not reproduce. Don't do that.
+
+The rule has two consequences for how tutorials are organized:
+
+1. **Interim objects are created by the student in a cached chunk of `analysis.qmd` *before* any test chunk references them.** For a typical example tutorial that means an early Wisdom exercise instructs the student to add a chunk like
+
+   ````
+   ```{r}
+   #| cache: true
+   x <- <raw_tibble> |>
+     <select / filter / drop_na / type-coerce>
+   ```
+   ````
+
+   and a similar early Courage exercise instructs the student to add the fitted model:
+
+   ````
+   ```{r}
+   #| cache: true
+   fit_<n> <- <model spec> |>
+     fit(<formula>, data = x)
+   ```
+   ````
+
+   From that point on, any later test chunk may reference `x` or `fit_<n>` directly. The cached chunks make this cheap to re-render.
+
+2. **The tutorial's `setup` chunk mirrors what the student is asked to add to `analysis.qmd`.** Same `x`, same `fit_<n>`, same names. The mirror lets the test chunks run under `learnr::run_tutorial()` *and* lets a student paste the same code into their own QMD and get the same output. Two sources of truth, identical content; that is the cost of the model.
+
+The author check: read each test chunk and ask, *"if a student types this code into their own `analysis.qmd`, will it run?"* If the answer requires `x`, `fit_<n>`, or any other interim object that the student has not been told to create in their QMD, the tutorial is wrong; either add the missing setup exercise upstream, or inline the data-prep / fit into the test chunk itself.
+
 ### 6.3 End
 
 After the exercise code chunks, always place a `###` (to give the student a Continue button to pause on their output) and then a short End: one or two sentences of knowledge drop.
@@ -1846,10 +1876,11 @@ By the end of Wisdom, the student has a specific question, a Preceptor Table tha
 **Preamble (between `## Wisdom` header and Exercise 1).** The Cardinal Virtues assume a student arrives with a broad question and a data set; Wisdom's preamble emphasizes exactly those two things. Contents, in order:
 
 1. **Canonical opening sentence, verbatim:** *"Data science starts with some broad questions and a data set which might help us to answer them."* Every Wisdom preamble in the Primer begins with this sentence, unchanged.
-2. **The "Imagine that you are…" paragraph from Introduction, verbatim.** Same text, not paraphrased. It reorients a reader who skipped Introduction, and it costs nothing to show a reader who did read Introduction.
-3. **The specific question** in one line, labeled verbatim: *"The specific question: <the question>"* (e.g. *"The specific question: What is the average height of male and female USMC recruits?"*). This is the canonical answer to Intro Exercise 15 — the question the student just stated at the end of Introduction. The Introduction narrows from a broad topic (the "Imagine" paragraph) to this specific QoI; Wisdom starts from here. Do not relabel it "broad" — the topic is broad, the question is specific.
-4. **One or two sentences naming the dataset.** The Introduction identifies the dataset; Wisdom is where we will explore it. Write as a plain statement — *"We will work from the NHANES survey (conducted by the CDC), available in the `nhanes` tibble of the `primer.data` package."* Do not make claims about what the data will show, and do not mention measurement or validity concerns — those come later.
-5. A Continue button (`###` with no heading) before `### Exercise 1`.
+2. **The specific question** in one line, labeled verbatim: *"The specific question: <the question>"* (e.g. *"The specific question: What is the average height of male and female USMC recruits?"*). This is the canonical answer to Intro Exercise 15 — the question the student just stated at the end of Introduction. The Introduction narrows from a broad topic (the "Imagine" paragraph) to this specific QoI; Wisdom starts from here. Do not relabel it "broad" — the topic is broad, the question is specific.
+3. **One or two sentences naming the dataset.** The Introduction identifies the dataset; Wisdom is where we will explore it. Write as a plain statement — *"We will work from the NHANES survey (conducted by the CDC), available in the `nhanes` tibble of the `primer.data` package."* Do not make claims about what the data will show, and do not mention measurement or validity concerns — those come later.
+4. A Continue button (`###` with no heading) before `### Exercise 1`.
+
+The Imagine-paragraph repetition that used to live between the opening sentence and the specific question is **retired** — students have just read it three exercises earlier in the Introduction. Do not reuse it here.
 
 Per §14.6, the preamble does **not** describe what Wisdom does; Exercise 1 below asks the student to describe Wisdom using the canonical Key Concepts wording. *Exception:* when Exercise 1 is skipped (Medium tutorials not on the Wisdom rotation, Hard tutorials not on the Wisdom rotation; see §13 pre-flight list), add the canonical definition to this preamble as a reminder — *"Remember that Wisdom begins with a question and then moves on to the creation of a Preceptor Table and an examination of our data."* The reminder replaces the exercise; preamble absorbs what Ex 1 would have asked.
 
