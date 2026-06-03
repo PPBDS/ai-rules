@@ -75,6 +75,8 @@ The chapter therefore has two Preceptor Tables, two Population Tables, one fitte
 
 The "Imagine that you are…" opener is the same in the chapter and the tutorial --- reuse it verbatim. The *only* word that changes is *tutorial* → *chapter* in the sentence that names what the artifact focuses on (*"This tutorial focuses on…"* → *"This chapter focuses on…"*). The Imagine paragraph does not mention the predictive/causal pairing --- that is a Wisdom move, introduced once the reader has the apparatus to understand it; in Imagine we stay at the real-world level of decisions and estimates.
 
+**Use all the data.** The chapter and tutorial work from the same data --- the full dataset, in every case where we have access to the full dataset. Down-sampling for tutorial-speed reasons is **not** the default and should not appear in new authoring. The chapter is a published artifact that should arrive at the real estimate, not a noisier slice of it; the tutorial, by the *chapter ≠ tutorial* match rule above, uses the same data the chapter does. If a candidate model would take a long time to fit on the full dataset (typically because it is a Stan/brms posterior, or the dataset itself is unusually large), **do not down-sample silently** --- flag the speed problem to the author for discussion. The resolution may be a pre-fit `.rds` (§5.6), a different model, a different dataset, or, in rare cases, an explicit slice; the resolution is never "quietly cut the dataset to 500 rows and apologize for the wide error bars in a knowledge drop." The packaged-dataset cases (`recruits`, `smokes`) are not exceptions to this rule --- those tibbles **are** the full dataset for tutorial purposes, curated upstream in `data-raw/` for reasons documented in §3.1 (incomplete original sources, reproducible curated cuts), and the chapter uses the same packaged tibble.
+
 ### 1.3 Progressive sophistication
 
 Many definitions, concepts, and tools have three sophistication levels — **Easy**, **Medium**, and **Hard** (abbreviated **EMH**). The curriculum uses the Easy version in roughly the first third of the chapter sequence, the Medium version in the second third, and the Hard version in the final third. Each return to a concept builds on the previous visit, deepening the student's understanding rather than restating it.
@@ -330,11 +332,11 @@ Some tutorials need a curated cut of an upstream dataset rather than the full up
 - The `?<dataset>` exercise asks the student to look at the *packaged* dataset's help page (e.g. `?recruits`), not the upstream `?nhanes`.
 - The Justice / Wisdom prose names the upstream source ("a 50-row teaching sample drawn from NHANES…"), but the analysis code references the packaged tibble.
 
-**When to ship vs. when to slice in-tutorial.** Ship a dataset when one of the following is true:
+**When to ship a packaged dataset.** Per §1.2 *Use all the data*, in-tutorial down-sampling for tutorial-speed reasons is not a default — so the question is no longer "ship vs. slice in-tutorial" but "ship vs. use the upstream raw tibble directly." Ship a packaged dataset when one of the following is true:
 
-- The transformation is non-trivial (composite covariates, stratified sampling, joins).
-- The tutorial benefits from every student seeing exactly the same rows (uniform canonical answers, reproducible plots).
-- A `slice_sample()` in the setup chunk would force `set.seed()` ceremony or produce different fits on different runs.
+- The transformation is non-trivial (composite covariates, joins, recodes that don't fit in a one-liner).
+- The upstream tibble is incomplete on its own and needs curation to be usable (e.g. an NHANES cut that drops rows with missing demographics).
+- The tutorial benefits from every student seeing exactly the same rows for reasons unrelated to fit speed (uniform canonical answers, reproducible plots, a small didactic subset that exposes a feature a random slice would hide).
 
 A blanket rule that *every* tutorial use a packaged dataset is overkill — datasets like `trains` are already small, balanced, and don't need re-cutting. Use the pattern when there is a real reason; ad-hoc filtering that a single `filter() |> select()` line can do in setup does not need its own `.rda`.
 
@@ -1915,26 +1917,14 @@ If the modeling requires a cleaned tibble `x` (e.g., filtering to one year, drop
 
 **Canonical data-prep patterns.** The cleaned `x` is built with a handful of recurring transformations. New tutorials should reuse these patterns — they are codified here so authors don't have to reverse-engineer them from existing tutorials:
 
-- **Slice-sample for setup-chunk speed** (used in almost every tutorial).
+- **No slice. Use all the data.** Default pattern: `select` the outcome and covariates, `drop_na`, type-coerce where needed, and stop.
   ```r
   x <- <raw_tibble> |>
     filter(<scoping>) |>
     select(<outcome>, <covariates>) |>
-    drop_na() |>
-    slice_sample(n = 50)   # or whatever N keeps the fit cheap
+    drop_na()
   ```
-  Set `set.seed(N)` on the line before the pipeline so the sample is reproducible across renders. The sample size (`n = 50` for NHANES, `n = 5000` for Mail) is chosen so the fit finishes in a few seconds — see §5.2 *Setup chunk must be cheap*.
-
-- **Stratified sample when treatment arms are imbalanced** (Mail; applies to any RCT with a huge control arm).
-  ```r
-  x <- <raw_tibble> |>
-    filter(<scoping>) |>
-    drop_na() |>
-    group_by(treatment) |>
-    slice_sample(n = 1500) |>
-    ungroup()
-  ```
-  `slice_sample()` *after* `group_by()` samples within each group. Without this, a naive `slice_sample(n = 5000)` on a 936K-row tibble with a 95% control arm pulls almost no treated units.
+  Per §1.2 *Use all the data*, this is the only default. `slice_sample()` does not belong in the setup chunk for tutorial-speed reasons --- linear and logistic fits on tens of thousands of rows are essentially instant, and the chapter's published estimate must be the *real* estimate, not a noisier slice. If a candidate model genuinely cannot fit on the full data in a reasonable time (Stan/brms posterior, or an unusually large tibble), flag the speed problem to the author for discussion; the resolution may be a pre-fit `.rds` (§5.6), a different model, or --- in the rare case where a slice is truly the answer --- an explicit slice the author has signed off on. Never quietly down-sample.
 
 - **Composite-score construction** (Shaming: `voter_class` from prior election turnout).
   ```r
@@ -2873,7 +2863,7 @@ Preceptor Table and Population Table columns are listed by spanner in order. Pop
 - **Model:** Linear regression, binary treatment (optionally one covariate for adjustment)
 - **Causal / Predictive:** Causal
 - **Student project:** `sps`
-- **Data prep:** `sps |> select(treatment, t2_health_exp_3m, age, sex, education) |> drop_na() |> slice_sample(n = 100)` → `x`
+- **Data prep:** `sps |> select(treatment, t2_health_exp_3m, age, sex, education) |> drop_na()` → `x` *(use the full ~27.6K-row tibble; an `lm` fit on this is essentially instant)*
 - **Final model:** `linear_reg() |> set_engine("lm") |> fit(t2_health_exp_3m ~ treatment, data = x)` → `fit_sps`  *(add `age` or `sex` as a second covariate if the author wants to trigger the adjustment-clause practice at the two-or-more-covariates threshold)*
 - **Preceptor Table:** Unit (Household) | Potential Outcomes (Expenditure if Enrolled, Expenditure if Not Enrolled) | Treatment (Enrollment)
 - **Population Table:** Source | Unit/Time (Household, Year) | Potential Outcomes (Expenditure if Enrolled, Expenditure if Not Enrolled) | Treatment (Enrollment)
@@ -2970,7 +2960,7 @@ Preceptor Table and Population Table columns are listed by spanner in order. Pop
 - **Model:** Logistic regression with multi-arm treatment; interpretation via `marginaleffects::avg_comparisons()` back to the probability scale (Medium-tier adds `comparisons()` per §13.5)
 - **Causal / Predictive:** Causal
 - **Student project:** `mail`
-- **Data prep:** `mail |> select(treatment, applied_mail, party, age, sex) |> drop_na() |> mutate(applied_mail = as.factor(applied_mail)) |> slice_sample(n = 5000)` → `x` *(stratify on `treatment` to preserve arm balance; control arm ~888K vs ~23K per treatment arm means a naive slice will under-represent treatment)*
+- **Data prep:** `mail |> select(treatment, applied_mail, party, age, sex) |> drop_na() |> mutate(applied_mail = as.factor(applied_mail))` → `x` *(full ~936K-row tibble; per §1.2 use-all-the-data, this dataset is large enough that a `glm` fit may be slow --- flag to the author for discussion before authoring this chapter and decide whether the size warrants pre-fitting via `.rds`, a different sub-design, or some other resolution. Do not silently slice.)*
 - **Final model:** `logistic_reg(engine = "glm") |> fit(applied_mail ~ treatment + party + age + sex, data = x)` → `fit_mail`
 - **Preceptor Table:** Unit (Voter) | Potential Outcomes (Applied if No Postcard, Applied if Self, Applied if Neighborhood) | Treatment (Postcard) | Covariates (Party, Age, Sex)
 - **Population Table:** Source | Unit/Time (Voter, Year) | Potential Outcomes (three columns, one per treatment arm) | Treatment (Postcard) | Covariates (Party, Age, Sex)
