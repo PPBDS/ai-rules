@@ -528,6 +528,8 @@ Detailed per-virtue preamble specs for Introduction, Wisdom, Justice, and Summar
 
 ### 5.6 Pre-fitting expensive models
 
+**This section is about a different kind of caching than the one the base guide requires — do not confuse them.** The base guide requires a **student-facing caching exercise** (`#| cache: true` on a chunk in the student's `analysis.qmd`, paired with a `.gitignore` entry) **at least once in every tutorial** — caching is a concept we reinforce every time, like `.gitignore`, even when the fit is cheap. That inherited rule is implemented by §13.4 Exercise 14 and is **not** optional. This section, by contrast, is about an **author-side** decision: whether to pre-fit an expensive model to a stored `.rds` so the tutorial's *own* setup chunk renders fast. The two are independent — the student still does the caching exercise whether or not the author pre-fits to `.rds`.
+
 §5.2 requires the setup chunk to be cheap — a tutorial launch that takes more than a few seconds breaks the student's flow. Most fits in the curriculum are cheap (linear regression on 50 rows of NHANES, logistic on 5K rows of Mail). A handful are not: the causal forest at position 12 (Kenya), potentially the shaming fit on the full 344K rows, potentially the ordinal fit on full CES.
 
 **Default: fit in setup.** Do not create a `data/fit_<n>.rds` just because a model exists. Linear, logistic, multinomial, and ordinal fits on a slice-sampled subset are all cheap enough to fit directly in setup. The `.rds` pattern adds complexity (binary artifacts in git, silent-drift risk, R-version coupling) that isn't worth paying for a fit that takes 50 ms.
@@ -579,7 +581,7 @@ Students tend to click Continue until they see a question. They then read the se
 Per the base guide (*Philosophy*, *Student workflow*), students do **not** write R in learnr exercise chunks. Code work happens in their own `analysis.qmd`: the exercise states a goal, the student prompts an AI agent to make the edit, renders with `quarto render`, and inspects the rendered HTML. The tutorial `.Rmd` carries only two kinds of chunk:
 
 - **Written question chunks** (`question_text()`, §7.2/§7.3) — for definitions, interpretation, and evidence submission (CP/CR, paste-from-HTML, `show_file()` output).
-- **Test chunks** — labeled `{section}-{N}-test`, `include = FALSE`. These are *author-only*: they hold the canonical code that produces the example output we show students after they submit, and they let us verify our own examples still run. They are not student exercises; there is no `exercise = TRUE` chunk and no `-hint` chunk.
+- **Answer chunks** — labeled `{section}-{N}-test`, with `#| echo: true`. Per the base guide's *canonical question shape*, this chunk is **shown** to the student the instant they click Continue: it runs our canonical code and displays the code **and** its result together, with **no label**, so the student compares it against their own. (A plain code-only block is the fallback when the code is too slow to run live.) There is no `exercise = TRUE` chunk and no `-hint` chunk.
 
 This is the migrated model. The legacy `{section}-{N}` exercise chunk + `-hint-1` hint chunk pattern is **retired** — do not author new exercises with it.
 
@@ -655,11 +657,12 @@ Three types, used in roughly this mix:
 
 The student produces code by prompting an AI agent and editing their `analysis.qmd`, then renders and inspects the result — never by typing into a learnr exercise chunk (base guide, *Philosophy* and *Authoring student prompts to AI*; §9). State the **goal**, not the implementation — *"Add a chunk to `analysis.qmd` that fits `att_end ~ treatment` on `trains`, assigns it to `fit_attitude`, render, and confirm it appears"* — and let the AI choose the functions.
 
-Authoring: there is no `exercise = TRUE` chunk and no `-hint` chunk. When we want to show students the canonical result after they submit, the code goes in an author-only `{section}-{N}-test` chunk (`include = FALSE`; see §6.2). With AI-mediated authoring (§9), most code tasks are single-shot: state the goal, the student prompts AI, edits `analysis.qmd`, renders, submits evidence.
+Authoring: there is no `exercise = TRUE` chunk and no `-hint` chunk. The canonical result we show students after they submit goes in the `{section}-{N}-test` **answer chunk** with `#| echo: true` — shown (code **and** result, no label) after the first `###`, per the base guide's *canonical question shape* and §6.2. With AI-mediated authoring (§9), most code tasks are single-shot: state the goal, the student prompts AI, edits `analysis.qmd`, renders, submits evidence.
 
 ```r
-```{r courage-3-test, include = FALSE}
-# author-only: produces the example output shown after the student submits
+```{r courage-3-test}
+#| echo: true
+# shown to the student after Continue — our code and its result, no label
 linear_reg(engine = "lm") |>
   fit(att_end ~ treatment, data = trains)
 ```
@@ -677,7 +680,7 @@ The base guide's no-answer `question_text()` form (`allow_retry = TRUE`, `try_ag
 
 ### 7.4 Operational conventions
 
-**CP/CR** and **`show_file()`** follow the base guide's *Submission evidence* section and are not repeated here: CP/CR = copy/paste the command and the response (terminal evidence); `show_file()` (from `tutorial.helpers`) displays a file's contents — e.g. `show_file("analysis.qmd", chunk = "Last")` for the last chunk — which the student copies and pastes back. The first tutorial spells out CP/CR once before using it as shorthand.
+**CP/CR** and **`show_file()`** follow the base guide's *Submission evidence* section and are not repeated here: CP/CR = copy/paste the command and the response (terminal evidence); `show_file()` (from `tutorial.helpers`) displays a file's contents — e.g. `show_file("analysis.qmd", chunk = "Last")` for the last chunk — which the student copies and pastes back. CP/CR is **not** explained — students learned it in `vscode.tutorials` (base guide, *Submission evidence*).
 
 Primer-specific notes, all deferring to the base guide's workflow:
 
@@ -1755,12 +1758,12 @@ This progression applies to every Introduction exercise below unless the exercis
 - **Sequencing guard.** This question presupposes the student has reached the **Cardinal Virtues** chapter/tutorial (04). Every example tutorial (05–16) follows 04, so all of them include it. But **no tutorial before 04 may ask any Cardinal Virtues question, and none before 03 may ask any Rubin Causal Model question** — the misc tutorials 01 (Probability) and 02 (Sampling) in particular must not, and 03 (Rubin) introduces the RCM rather than quizzing it. This is the Primer's instance of the base guide's general rule, *Don't quiz concepts the student hasn't reached*: a tutorial never quizzes a concept the curriculum introduces in a later chapter.
 
 **Exercise 2.** [operational] Confirm working repo and set up the QMD.
-- The primary assumed environment is **VS Code on GitHub Codespaces**, started from the [`PPBDS/codespace-starter`](https://github.com/PPBDS/codespace-starter) devcontainer. The repo — named after the tutorial (e.g. `nhanes`) and initially empty — is expected to already exist, since the student must have created it to launch the Codespace. Positron-local and VS-Code-local are supported alternatives documented in the `primer.tutorials` package README, not in the tutorial text.
-- Prompt: *You should be working inside a GitHub repo named `XX`. Once you're inside the `XX` repo, create a new Quarto document titled `"XX"` (Title Case) with yourself as the author, save it as `analysis.qmd`, render it, and open `analysis.html` with Live Server so the rendered HTML auto-refreshes on every later render. Create a `.gitignore` file with `analysis_files` on the first line followed by a blank line. Commit and push. Use AI however you like. In the R Terminal, run `show_file(".gitignore")`.*
+- **Do not name a specific environment** — no Codespaces, no `codespace-starter` template. Per the base guide's standard repo line, *"create one and connect to it"* covers both cloud and local; these tutorials can be done either way. Environment specifics live in the `primer.tutorials` README, not in the tutorial text.
+- Prompt (the base guide's verbatim standard repo line, then the rest): *You should be connected to a repo named `XX`. If you are not, create one and connect to it. Create a new Quarto document titled `"XX"` (Title Case) with yourself as the author, save it as `analysis.qmd`, render it, and open `analysis.html` with Live Server so the rendered HTML auto-refreshes on every later render. Create a `.gitignore` file with `analysis_files` on the first line followed by a blank line. Commit and push. Use AI however you like. In the R Terminal, run `show_file(".gitignore")`. If that fails, it is probably because you have not yet loaded `library(tutorial.helpers)` in the R Terminal.*
 
   *CP/CR.*
 - This is Exercise 2 only because Exercise 1 is the (no-AI) Cardinal Virtues question; it is the **first exercise that does anything**, so it carries the one-time *"Use AI however you like."* note. No later exercise repeats it (base guide, *Writing student prompts to AI*).
-- The prompt does **not** spell out the IDE-specific mechanics for creating a new Quarto document — no "File → New File → ..." menu path, no mention of a specific pane or button. Assume students know how to create a new document. (The repo is expected to already exist, since the student created it to launch the Codespace; Positron-local and VS-Code-local are documented in the `primer.tutorials` README, not in the tutorial text.)
+- The prompt does **not** spell out the IDE-specific mechanics for creating a new Quarto document — no "File → New File → ..." menu path, no mention of a specific pane or button. Assume students know how to create a new document.
 - The QMD's filename is `analysis.qmd` by default in all tutorials; its document **title** is the Title-Case topic (e.g. `"Sampling"`).
 - CP/CR is **not** explained — students know it from `vscode.tutorials` (base guide, *Submission evidence*).
 - End: a key point from this tutorial's chapter, or a note about the data (per the base guide's KD rule). *(The former generic "work in the cloud / laptops fail" drop is retired.)*

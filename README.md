@@ -20,6 +20,8 @@ like.
 The guides are **layered**: [`claude-md/tutorials/CLAUDE.md`](claude-md/tutorials/CLAUDE.md)
 is the general guide for authoring "normal" data science tutorials, and the
 project guides build on it rather than repeating it.
+[`claude-md/CLAUDE.md`](claude-md/CLAUDE.md) is the **overview/map** that explains
+which of the three guides applies to which package — start there.
 
 | File | Scope | What it covers |
 |------|-------|----------------|

@@ -1,22 +1,34 @@
 # CLAUDE.md — Tutorial authoring guide
 
-This is the authoring guide for **"normal" tutorials**: the data science tutorials students do *after* they have learned the basic mechanics of their tools. It is not specific to any one package. The same guidance applies to any **learnr** tutorial that teaches a data science topic to students who already know how to work in their environment — across `misc.tutorials`, the Primer, and any other tutorial package in this ecosystem.
+This is the authoring guide for **"normal" tutorials**: the data science tutorials students do *after* they have learned the basic mechanics of their tools. **Read §1–§3 before writing anything** — the contract, the working model, and the shape of a single exercise are most of what you need. §4–§7 are reference.
+
+## Contents
+
+1. **Scope and contract** — which tutorials this governs, the exceptions, the override protocol.
+2. **The model** — what a tutorial is for, and how students work (QMD + render + Live Server; one working chunk; almost never the R Terminal; caching).
+3. **The shape of one exercise** — the canonical question pattern, the `echo = TRUE` answer, the knowledge drop; question types.
+4. **Structure of a whole tutorial** — Introduction / topic / Summary sequences, the sequencing guard, commits, the analysis path.
+5. **Writing rules** — prompts to AI, knowledge drops, submission evidence, formatting.
+6. **Mechanics and checking** — chunk conventions, setup chunk, test-chunk length, data handling, images, verbatim display, checking, DESCRIPTION.
+7. **Choosing topics** — the one project-specific part; points to your project's guide.
+
+---
+
+## 1. Scope and contract
+
+This guide is not specific to any one package. The same guidance applies to any **learnr** tutorial that teaches a data science topic to students who already know how to work in their environment — across `misc.tutorials`, the Primer, and any other tutorial package in this ecosystem.
 
 **This guide is the default contract for every such tutorial.** Unless a tutorial is one of the explicit exceptions below, it follows everything here by default. A project may override a rule — but the override must be **explicit**: stated in that project's own guide, named as a departure from this base, and justified. Silent divergence is a bug. Project guides (e.g. the Primer's) read in and accept this file first, then add only what is specific to them or override it on the record.
 
-These tutorials assume students already understand the foundational skills: Git, GitHub, `.gitignore`, `_files` directories, terminals, Codespaces, and Quarto rendering. Tutorials written under this guide do **not** re-teach those mechanics.
+**Assumed skills.** These tutorials assume students already understand the foundational skills: Git, GitHub, `.gitignore`, `_files` directories, terminals, Codespaces, and Quarto rendering. Tutorials written under this guide do **not** re-teach those mechanics.
 
 **The exception is two whole packages, not a list of tutorials.** This guide does **not** apply to any tutorial in the `vscode.tutorials` package or the `tutorial.helpers` package. Those packages teach the tools and mechanics themselves — Git, GitHub, Codespaces, Quarto, the `tutorial.helpers` exercise system — which is precisely what this guide assumes students have already done. Every *other* tutorial follows this guide by default: `misc.tutorials`, the Primer, and any future package. There is no need to enumerate which tutorials are in or out — membership in `vscode.tutorials` or `tutorial.helpers` is the entire exception.
 
-## Scope and what is universal
+**This guide governs tutorials only.** Other artifacts a project may produce (textbook chapters, classroom exercises, slide decks) are **out of scope** here; each such artifact defines its own relationship to this guide. The Primer, for example, applies this guide to its tutorials but not to its prose book chapters.
 
-This guide governs **tutorials** — learnr tutorials specifically. Other artifacts a project may produce (textbook chapters, classroom exercises, slide decks) are **out of scope** here; each such artifact defines its own relationship to this guide. The Primer, for example, applies this guide to its tutorials but not to its prose book chapters.
+Almost everything below is **universal** — true of any normal tutorial regardless of package. The one genuinely package-specific concern is **how a tutorial's topic is chosen** (see §7, *Choosing topics*): each project's own guide defines its topic model, so this guide only points there. A few rules state a **default value or cadence** a project may override on the record (per the contract above); those are noted inline.
 
-Almost everything below is **universal** — true of any normal tutorial regardless of package. The one genuinely package-specific concern is **how a tutorial's topic is chosen** (see *Choosing topics*): each project's own guide defines its topic model, so this guide only points there. A few rules state a **default value or cadence** a project may override on the record (per the contract above); those are noted inline.
-
-## Project layout
-
-Tutorials are **learnr** tutorials shipped inside an R package (e.g. `misc.tutorials`, `primer.tutorials`), living in `inst/tutorials/<name>/` as `tutorial.Rmd` files:
+**Project layout.** Tutorials are **learnr** tutorials shipped inside an R package (e.g. `misc.tutorials`, `primer.tutorials`), living in `inst/tutorials/<name>/` as `tutorial.Rmd` files:
 
 ```
 inst/tutorials/<name>/
@@ -26,7 +38,11 @@ inst/tutorials/<name>/
 inst/extdata/<name>/ # stable source copies of data students may download
 ```
 
-## Philosophy (AI era)
+---
+
+## 2. The model
+
+### Purpose: practice, not the artifact
 
 **The purpose is practice, not the artifact.** A tutorial does not exist to help the student produce a particular plot or analysis — if it did, we would just hand her our code. It exists so she can **practice using AI to achieve well-specified goals**: stating what she wants, judging what the AI hands back, noticing when it is wrong, and refining. Copy-pasting our code skips the very skill we are teaching. This is the root reason we describe goals rather than paste code, and show our code only *afterward* — as something to compare against, never something to copy.
 
@@ -36,35 +52,111 @@ The goal is not to teach coding — it is to teach students how to **use AI to c
 - Show students **results** (plots, printed tibbles, summary statistics, rendered pages), not just the code that produced them.
 - Questions ask students to prompt AI for file edits, render, inspect output, and compare their output to ours.
 - Prefer many small exercises that form a data analysis path over one large prompt that solves the whole section.
-- Students should not type R into learnr exercise chunks in post-infrastructure tutorials. Their work happens in `analysis.qmd` and supporting files.
-- `echo = FALSE` is the default everywhere. Only reveal code when there is a strong pedagogical reason.
-- Test chunks (`exercise-N-test`) may produce visible output after students click Continue — this is how we give them something concrete to check against, such as our example plot or tibble.
 
-## Student workflow
+### Student workflow: render + Live Server
 
 Students view all QMD output via **render + Live Server**, not by running code in the R Terminal:
 
 - After editing `analysis.qmd`, students run `quarto render analysis.qmd` in a bash Terminal.
 - They open `analysis.html` with Live Server once at the start (right-click in Explorer → "Open with Live Server"); it auto-refreshes on every subsequent render.
 - **Never** instruct students to use `Cmd/Ctrl + Enter` to run QMD code or `Cmd/Ctrl + Shift + K` to render.
+
+### One evolving working chunk per topic
+
+Within a topic, students do *not* accumulate a new code chunk per exercise. They keep a single **working chunk** and evolve it: it first prints the raw data, then prints a few columns, then a rough plot, then a polished plot — each exercise *replaces* the code that was there before. That is fine, because only the final state matters. A topic therefore ends with one chunk holding its final graphic (or table); starting the next topic starts a fresh working chunk. So a finished `analysis.qmd` is short — the setup chunk plus roughly one chunk per topic (a two-topic tutorial ends with three chunks: setup, topic-one graphic, topic-two graphic). The main exception is a **separate data chunk**: a download or a slow data-preparation step (an API pull, reading and cleaning a file) earns its own chunk — often cached — so it is not re-run as the working chunk evolves. Word prompts lightly. The student is *always* working in the last (working) chunk, so usually you need not mention the chunk at all — just state the goal, and the working chunk is understood. Only call out a chunk explicitly when you genuinely want the student to **save the current chunk and start a new one** (for example, right after caching a data chunk), which is rare. And never write *"replace the code … with a new code chunk"* — code is replaced with different *code*, not with a chunk. (This is also why the expected-output block we show almost always reflects the most recent state of that one chunk.)
+
+### Almost everything happens in the QMD, not the R Terminal
+
+Students do their work by prompting the AI agent to edit `analysis.qmd`, then rendering and reading the HTML — so a normal tutorial should (almost) never ask a student to *do* something in the R Terminal. The standing exception is `show_file()`, used to submit the contents of a file or chunk as evidence. We do **not** add an explicit step to load `library(tutorial.helpers)` — students learned to do that in `vscode.tutorials` — but we always include the standing reminder that *if `show_file()` fails, it is probably because `library(tutorial.helpers)` has not been loaded in the R Terminal.* There are no other "load `library(...)` in the R Terminal" exercises — every library the analysis needs goes in the QMD's setup chunk, and every result the student inspects comes from the render.
+
+### Caching — every tutorial, once
+
 - `#| cache: true` is a **render-time** feature — the cache is created during `quarto render`, not by running code interactively. The first render with caching takes noticeably longer; subsequent renders load from disk.
 - **Every tutorial walks students through caching at least once.** Caching is a core concept worth reinforcing in every tutorial, exactly as the `.gitignore` step is — not a mere optimization to reach for only when a tutorial happens to be slow. Place the caching exercise on an expensive chunk, generally somewhere in the middle of the tutorial (it can go elsewhere). Tutorials with several expensive visualizations or data-preparation chunks may cache more than once.
 - **Caching and `.gitignore` are coupled.** The moment a tutorial turns on caching, the same exercise (or the very next one) must add the generated cache directory (usually `analysis_cache`) to `.gitignore` — cached files must never go to GitHub. Pair them every time.
 
-**One evolving working chunk per topic.** Within a topic, students do *not* accumulate a new code chunk per exercise. They keep a single **working chunk** and evolve it: it first prints the raw data, then prints a few columns, then a rough plot, then a polished plot — each exercise *replaces* the code that was there before. That is fine, because only the final state matters. A topic therefore ends with one chunk holding its final graphic (or table); starting the next topic starts a fresh working chunk. So a finished `analysis.qmd` is short — the setup chunk plus roughly one chunk per topic (a two-topic tutorial ends with three chunks: setup, topic-one graphic, topic-two graphic). The main exception is a **separate data chunk**: a download or a slow data-preparation step (an API pull, reading and cleaning a file) earns its own chunk — often cached — so it is not re-run as the working chunk evolves. Word prompts lightly. The student is *always* working in the last (working) chunk, so usually you need not mention the chunk at all — just state the goal, and the working chunk is understood. Only call out a chunk explicitly when you genuinely want the student to **save the current chunk and start a new one** (for example, right after caching a data chunk), which is rare. And never write *"replace the code … with a new code chunk"* — code is replaced with different *code*, not with a chunk. (This is also why the expected-output block we show almost always reflects the most recent state of that one chunk.)
+---
 
-**Almost everything happens in the QMD, not the R Terminal.** Students do their work by prompting the AI agent to edit `analysis.qmd`, then rendering and reading the HTML — so a normal tutorial should (almost) never ask a student to *do* something in the R Terminal. The standing exception is `show_file()`, used to submit the contents of a file or chunk as evidence. `tutorial.helpers` is loaded for the student so `show_file()` works; loading it is **not** a student-facing step, and there are no "load `library(...)` in the R Terminal" exercises — every library the analysis needs goes in the QMD's setup chunk, and every result the student inspects comes from the render.
+## 3. The shape of one exercise
 
-## Choosing topics
+### The rhythm
 
-How a tutorial's subject is chosen is **project-specific** — the one genuinely package-dependent part of this guide. Each project's own guide defines its topic model; consult it before starting a tutorial. Two examples: `misc.tutorials` organizes tutorials around data sources / storage technologies and real data science domains (the per-tutorial teaching checklist lives in that package's guide); the Primer fixes its topic sections as the four Cardinal Virtues, identical in every tutorial. Whatever the model, each topic section starts from data, follows an exploratory path, and ends with a useful plot or table plus a short interpretation — that part is universal (see *Tutorial structure* and *Analysis path*).
+Most exercises should follow this rhythm:
 
-## Tutorial structure
+1. **Edit `analysis.qmd`** — change the topic's working chunk to do something concrete (in a topic's first exercise, create that chunk). See *One evolving working chunk per topic* (§2).
+2. **Render** — students run `quarto render analysis.qmd` in a bash Terminal and inspect the rendered HTML.
+3. **Verify** — students submit evidence that they completed the exercise. Use CP/CR only for terminal command-and-response evidence.
+4. **Show the expected output** — after students submit and press Continue, show our expected output, answer, plot, tibble, or representative paste. **The author (Claude) is responsible for writing the text inside the backticks that shows students what they should see at the bottom of their rendered HTML.** Because an exercise almost always evolves the topic's *working* chunk (the last chunk in the document), this expected-output block must match that chunk's current result. Keep it accurate: when the data or analysis upstream changes, the displayed expected output has to change with it.
+5. **Knowledge drop** — insert another `###` separator so students press Continue again before seeing the knowledge drop. Then provide a short paragraph that tells students what to notice, teaches domain knowledge, or foreshadows the next exercise.
+
+The canonical loop is:
+
+`prompt AI/edit analysis.qmd -> render -> inspect rendered HTML -> submit evidence -> expected output/answer -> Continue -> knowledge drop -> next exercise`
+
+### The canonical question shape
+
+Nearly every regular question looks exactly like this:
+
+````
+<prompt — one concrete goal; the student steers AI to do it. The student renders
+and inspects the HTML as a matter of course, so the prompt need not spell that
+out every single time.>
+
+In the R Terminal, run `show_file("analysis.qmd", chunk = "Last")`. CP/CR.
+
+```{r section-name-N}
+question_text(NULL, answer(NULL, correct = TRUE), allow_retry = TRUE,
+  try_again_button = "Edit Answer", incorrect = NULL, rows = 5)
+```
+
+###
+
+```{r section-name-N-test}
+#| echo: true
+# our code — concise and modern (|>, never %>%)
+```
+
+###
+
+<knowledge drop>
+````
+
+The **two `###` separators are load-bearing**. The first reveals our answer the instant the student clicks Continue — the `echo = TRUE` chunk shows our code *and* its result together. **Give that answer no label** — no "Our plot:", "Our code:", "Our result:" heading — because after Continue it is obviously ours; a label is noise. The second `###` makes the student pause on our code and result, comparing it to their own, before a final Continue reveals the knowledge drop. That knowledge drop does one or both of two jobs: it teaches a concept (often new terminology, like *faceting*), and/or it points out something specific in the result the student probably missed — ideally something that leads into the next exercise.
+
+Showing our code *and* its result, via `echo = TRUE`, is the **default for every answer** — it is the whole point of "show our code afterward to compare against" (§2). A plain three-backtick block (code only) is an acceptable fallback, and the right choice when the code would take more than ~5 seconds to run, but the live `echo = TRUE` chunk is preferred.
+
+### Question types
+
+**No-answer questions (default).** Used for evidence-submission questions. Set `rows` to match expected output length.
+
+```r
+question_text(NULL,
+  answer(NULL, correct = TRUE),
+  allow_retry = TRUE,
+  try_again_button = "Edit Answer",
+  incorrect = NULL,
+  rows = 5)
+```
+
+**Yes-answer questions.** Used when providing the correct answer (definitional or conceptual recall). Set `allow_retry = FALSE`.
+
+```r
+question_text(NULL,
+  message = "Correct answer text here.",
+  answer(NULL, correct = TRUE),
+  allow_retry = FALSE,
+  incorrect = NULL,
+  rows = 6)
+```
+
+---
+
+## 4. Structure of a whole tutorial
 
 Every tutorial follows this order:
 
 1. **Introduction** — overview of packages/functions covered; exercises to set up the repo, QMD, and libraries.
-2. **Topic sections** — the *topics* are project-defined (see *Choosing topics* and your project's guide): `misc.tutorials` picks a data source / storage technology per tutorial; the Primer uses a fixed set — the Cardinal Virtues — the same in every tutorial. Either way, each section starts from data, follows an exploratory path, and usually ends with a useful plot or table plus a short interpretation.
+2. **Topic sections** — the *topics* are project-defined (see §7, *Choosing topics*, and your project's guide): `misc.tutorials` picks a data source / storage technology per tutorial; the Primer uses a fixed set — the Cardinal Virtues — the same in every tutorial. Either way, each section starts from data, follows an exploratory path, and usually ends with a useful plot or table plus a short interpretation.
 3. **Summary** — mirrors the Introduction in past tense; finishes with `quarto publish gh-pages` and a GitHub URL.
 
 **Don't quiz concepts the student hasn't reached.** In a sequenced tutorial set — especially one paired with a book — a tutorial's questions may only ask about concepts introduced in its own chapter or an earlier one. Never build an exercise on a concept the curriculum introduces later. (Light forward-pointers in knowledge-drop prose — "you will see this again when we reach X" — are a separate judgment call; keep them rare, per *no road signs*.) Which concept is introduced where is project-specific; consult the project's guide for the schedule.
@@ -88,22 +180,10 @@ Keep introductions short. Avoid repeating details that the exercises will teach.
 - Begin by getting data into the student's project. Often this means asking AI to create `data/`, download a file from a stable URL, and record where it came from.
 - Ask for one concrete edit per exercise. Do not micromanage individual R function arguments unless the detail is pedagogically important.
 - Render after every meaningful edit. The rendered HTML is the student's feedback loop.
-- Somewhere in the topic sections, include the **caching exercise** (see *Student workflow*): turn on `#| cache: true` for an expensive chunk and, in the same or the next exercise, add the cache directory to `.gitignore`. Every tutorial does this at least once.
+- Somewhere in the topic sections, include the **caching exercise** (see §2, *Caching*): turn on `#| cache: true` for an expensive chunk and, in the same or the next exercise, add the cache directory to `.gitignore`. Every tutorial does this at least once.
 - Use several linked exercises to build an analysis path: inspect the data, notice a pattern or problem, refine the data, make a rough plot, improve the plot, add interpretation.
 - The final section should make the rendered page look good enough to publish.
 - Before including a visualization exercise, ask what it shows that the preceding table or exercise did not. If the answer is nothing new — the same finding in a different form — cut the exercise and communicate the finding in the table's knowledge drop instead.
-
-### Writing student prompts to AI
-
-Describe the **goal**, not the implementation. Students should tell AI what they want to see — a plot of X by Y, a table of the top 10, the distribution of Z — and let the AI choose the functions. This is how professionals actually work, and it gives students practice evaluating whether the AI's approach is correct.
-
-**Don't narrate the AI.** State each task as a direct instruction — *"Add a chunk to `analysis.qmd` that plots X by Y, then render"* — not *"ask your AI agent to add a chunk that…"*. Say **once**, in the first exercise, that the student may use AI however they like (e.g. *"Use AI however you like."*); after that, every exercise simply states the goal, and the student knows AI is how they get there. Repeating "ask your AI agent to…" on every exercise is noise.
-
-- **Do not** list functions for students to include in their AI prompt (e.g., "use `geom_histogram()` and `scale_x_log10()`").
-- **Do not** dictate the pipe steps or function arguments students should pass to AI.
-- **Never paste a block of analysis code for the student to copy.** State the goal — what the code should *produce* — and let AI write it. If a goal is too complex to state cleanly, split it into several smaller questions that build the result step by step ("first read the file and pull out the features; then flatten those into a table; …"). It is fine if the student can't produce it on their own — that is exactly why the question is followed by our good code and its result. (Giving the `library()` lines to load is the one routine exception: that's setup, not analysis.)
-- **When a transformation is itself the lesson** (reshaping rows↔columns, joining tables, aggregating groups), state it as a **concept and a goal**, not a function — "reshape the data so each variable is its own column, which makes the plot easier," not "use `pivot_longer()`." The student should carry away what reshaping *is* and *why* it helps later analysis and plotting; the function name is noise. There is essentially no case where a function name in a student's prompt beats describing what they want and why.
-- In knowledge drops, name **packages and libraries**, not functions — students don't code, so a catalogue of function names is wasted on them. When a transformation is the point, name the **concept** (reshaping, joining, aggregating) and why it matters, not the function that implements it; otherwise point at the package behind the result (and the alternatives). See *Knowledge drops*.
 
 ### Git commit exercises
 
@@ -118,64 +198,6 @@ The exercise asks students to commit `analysis.qmd` with a specific descriptive 
 The Summary commit exercise (sequence step 3) should say "commit any remaining changes" — by that point the main content is already committed section by section.
 
 Exception: if the tutorial has only one or two topic sections and the Summary's commit would cover all outstanding work, the final topic-section commit may be omitted to avoid asking students to commit twice in quick succession.
-
-### Exercise rhythm
-
-Most exercises should follow this rhythm:
-
-1. **Edit `analysis.qmd`** — change the topic's working chunk to do something concrete (in a topic's first exercise, create that chunk). See *One evolving working chunk per topic* under *Student workflow*.
-2. **Render** — students run `quarto render analysis.qmd` in a bash Terminal and inspect the rendered HTML.
-3. **Verify** — students submit evidence that they completed the exercise. Use CP/CR only for terminal command-and-response evidence.
-4. **Show the expected output** — after students submit and press Continue, show our expected output, answer, plot, tibble, or representative paste. **The author (Claude) is responsible for writing the text inside the backticks that shows students what they should see at the bottom of their rendered HTML.** Because an exercise almost always evolves the topic's *working* chunk (the last chunk in the document), this expected-output block must match that chunk's current result. Keep it accurate: when the data or analysis upstream changes, the displayed expected output has to change with it.
-5. **Knowledge drop** — insert another `###` separator so students press Continue again before seeing the knowledge drop. Then provide a short paragraph that tells students what to notice, teaches domain knowledge, or foreshadows the next exercise.
-
-The canonical loop is:
-
-`prompt AI/edit analysis.qmd -> render -> inspect rendered HTML -> submit evidence -> expected output/answer -> Continue -> knowledge drop -> next exercise`
-
-**The canonical question shape.** Nearly every regular question looks exactly like this:
-
-````
-<prompt — one concrete goal; the student steers AI to do it. The student renders
-and inspects the HTML as a matter of course, so the prompt need not spell that
-out every single time.>
-
-In the R Terminal, run `show_file("analysis.qmd", chunk = "Last")`. CP/CR.
-
-```{r section-N}
-question_text(NULL, answer(NULL, correct = TRUE), allow_retry = TRUE,
-  try_again_button = "Edit Answer", incorrect = NULL, rows = 5)
-```
-
-###
-
-```{r section-N-test}
-#| echo: true
-# our code — concise and modern (|>, never %>%)
-```
-
-###
-
-<knowledge drop>
-````
-
-The **two `###` separators are load-bearing**. The first reveals our answer the instant the student clicks Continue — the `echo = TRUE` chunk shows our code *and* its result together. **Give that answer no label** — no "Our plot:", "Our code:", "Our result:" heading — because after Continue it is obviously ours; a label is noise. The second `###` makes the student pause on our code and result, comparing it to their own, before a final Continue reveals the knowledge drop. That knowledge drop does one or both of two jobs: it teaches a concept (often new terminology, like *faceting*), and/or it points out something specific in the result the student probably missed — ideally something that leads into the next exercise.
-
-### Submission evidence
-
-CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or R Terminal submissions where students paste both the command they ran and the response they got. Do not add extra wording like "the command and response" or "the terminal output"; that is already implied by CP/CR. Assume students already know what CP/CR means — they learned it in the `vscode.tutorials` infrastructure tutorials — so do **not** explain it in a normal tutorial; just use the shorthand. Put the `CP/CR.` instruction on its own line at the end of the prompt.
-
-For rendered HTML output, say "copy and paste from the HTML" or "copy and paste the table/summary/text from the HTML." Do not call HTML submissions CP/CR.
-
-Use `show_file()` when checking file contents or code: `.gitignore`, the last chunk, a data-analysis pipeline, chart code, or the final QMD state.
-
-**Showing our answer after a `show_file()` exercise.** Almost every `show_file()` exercise should be followed — as the *first* thing after the student submits and clicks Continue — by **our answer**: what we think the file should contain. Present it as a single chunk with `echo = TRUE`, which both shows our code and runs it to display the result, so the student can compare our code *and* our output against their own. Do **not** show the `show_file()` call, and do not reproduce the student's submission (theirs already echoes the command) — just show the analysis code we expect, computed on the fly. Give it **no label** — no "Our plot:" or "Our code:" heading; after Continue it is obviously ours. A plain three-backtick block (code only) is an acceptable fallback, and the right choice when the code would take more than ~5 seconds to run, but the live `echo = TRUE` chunk is preferred.
-
-**Fake the output of terminal commands you can't run in a chunk.** We almost *always* follow a question with our best guess at what the student will — or at least should — see. For R code that is the `echo = TRUE` answer chunk. For a bash/R-Terminal command whose result you cannot reproduce in a live chunk (`ls data`, `pwd`, render messages), you still show the answer: a plain code block with your best guess at what the command prints — e.g., the file(s) `ls data` would list. Do not leave it as prose ("Your `data` directory should now include `X`"); show the faked output instead. Follow our answer with a `###` so the student presses Continue again before the knowledge drop. Keep our code concise and modern — always `|>`, never `%>%` — because the whole point is that the student studies it and compares it with their own.
-
-**The "if your result doesn't match ours, replace your code" fallback is now rare — and never a second paste.** We ask a question, then show our code and its result (the `echo = TRUE` answer). Most of the time that is the end of it: the next exercise rewrites the chunk anyway, and small differences from our code don't matter. Only when it genuinely matters — we are about to **save an object whose shape the rest of the section depends on** (a cached data pipeline) — do we add a short line asking the student to compare, and, if their result differs, replace their code with **the code we just showed above**. Never re-paste the code in a second block, and never make the student paste two pieces; if anything is pasted at all, it is one chunk. And keep **caching a separate question** — never fold "add `#| cache: true`" into the copy-our-code question.
-
-Beyond `show_file()`, R Terminal CP/CR should be rare (per *Student workflow*): reach for it only for the occasional directory-structure or shell check (`list.files()`, `pwd`, `ls`, render messages) that has no place in the QMD. Anything that produces analysis output belongs in a QMD chunk, rendered, and copied from the HTML — not run in the R Terminal.
 
 ### Analysis path
 
@@ -195,7 +217,7 @@ Build topic sections from linked exercise units. A typical path:
 
 **Categorical comparisons.** For comparisons across categories, scaffold the student's choice rather than prescribing it: first have students count observations per category so they can see what is plentiful, then ask them to choose two categories with enough data to compare (e.g., at least 100 rows each), then build the comparison plot. This gives students practice making an informed analytical decision rather than following a script.
 
-**The most teachable datasets hide a discoverable anomaly.** The strongest analysis paths are the ones where a naive first look seems fine, but a clue hints that something is off, and a further step — very often a plot — reveals the mystery and then explains it. (The canonical example: a time-series plot of weekly chart rankings exposes a sharp discontinuity that the summary statistics completely hide.) When a dataset has this property, build the path so students *discover* the problem themselves rather than being told about it. Such structure is far more common in rich, sizable datasets than in small clean ones — a reason to favor richer data when the choice is open (topic/data selection itself is project-specific; see *Choosing topics* and the project guide).
+**The most teachable datasets hide a discoverable anomaly.** The strongest analysis paths are the ones where a naive first look seems fine, but a clue hints that something is off, and a further step — very often a plot — reveals the mystery and then explains it. (The canonical example: a time-series plot of weekly chart rankings exposes a sharp discontinuity that the summary statistics completely hide.) When a dataset has this property, build the path so students *discover* the problem themselves rather than being told about it. Such structure is far more common in rich, sizable datasets than in small clean ones — a reason to favor richer data when the choice is open (topic/data selection itself is project-specific; see §7, *Choosing topics*, and the project guide).
 
 The final artifact should be a published page with a meaningful result about the world, not just a completed worksheet.
 
@@ -207,35 +229,22 @@ For histograms and other distribution plots, usually include the number of obser
 2. `quarto publish gh-pages analysis.qmd` in bash Terminal; paste resulting URL.
 3. Commit and push any remaining changes; paste GitHub repo URL.
 
-## Question types
+---
 
-### No-answer questions (default)
+## 5. Writing rules
 
-```r
-question_text(NULL,
-  answer(NULL, correct = TRUE),
-  allow_retry = TRUE,
-  try_again_button = "Edit Answer",
-  incorrect = NULL,
-  rows = 5)
-```
+### Writing student prompts to AI
 
-Use for evidence-submission questions. Set `rows` to match expected output length.
+Describe the **goal**, not the implementation. Students should tell AI what they want to see — a plot of X by Y, a table of the top 10, the distribution of Z — and let the AI choose the functions. This is how professionals actually work, and it gives students practice evaluating whether the AI's approach is correct.
 
-### Yes-answer questions
+**Don't narrate the AI.** State each task as a direct instruction — *"Add a chunk to `analysis.qmd` that plots X by Y, then render"* — not *"ask your AI agent to add a chunk that…"*. Say **once**, in the first exercise, that the student may use AI however they like (e.g. *"Use AI however you like."*); after that, every exercise simply states the goal, and the student knows AI is how they get there. Repeating "ask your AI agent to…" on every exercise is noise.
 
-```r
-question_text(NULL,
-  message = "Correct answer text here.",
-  answer(NULL, correct = TRUE),
-  allow_retry = FALSE,
-  incorrect = NULL,
-  rows = 6)
-```
+- **Do not** list functions for students to include in their AI prompt (e.g., "use `geom_histogram()` and `scale_x_log10()`").
+- **Do not** dictate the pipe steps or function arguments students should pass to AI.
+- **Never paste a block of analysis code for the student to copy.** State the goal — what the code should *produce* — and let AI write it. If a goal is too complex to state cleanly, split it into several smaller questions that build the result step by step ("first read the file and pull out the features; then flatten those into a table; …"). It is fine if the student can't produce it on their own — that is exactly why the question is followed by our good code and its result. (Giving the `library()` lines to load is the one routine exception: that's setup, not analysis.)
+- **When a transformation is itself the lesson** (reshaping rows↔columns, joining tables, aggregating groups), state it as a **concept and a goal**, not a function — "reshape the data so each variable is its own column, which makes the plot easier," not "use `pivot_longer()`." The student should carry away what reshaping *is* and *why* it helps later analysis and plotting; the function name is noise. There is essentially no case where a function name in a student's prompt beats describing what they want and why.
 
-Use when providing the correct answer. Set `allow_retry = FALSE`.
-
-## Knowledge drops
+### Knowledge drops
 
 **Every knowledge drop in a normal tutorial does one of three jobs.** The generic, reusable drops the infrastructure tutorials lean on — *"Professionals keep their data science work in the cloud because laptops fail,"* *"the tidyverse is a family of packages…"*, *"QMD World and R World are not the same"* — belong **only** in `vscode.tutorials`. In a normal tutorial, a knowledge drop must instead:
 
@@ -263,19 +272,66 @@ If a drop isn't doing one of these three, cut it. Do **not** reach for a canned 
 - No road signs ("In the next section..."). Teach something real.
 - No rhetorical questions.
 
-## Code chunk conventions
+### Submission evidence
+
+CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or R Terminal submissions where students paste both the command they ran and the response they got. Do not add extra wording like "the command and response" or "the terminal output"; that is already implied by CP/CR. Assume students already know what CP/CR means — they learned it in the `vscode.tutorials` infrastructure tutorials — so do **not** explain it in a normal tutorial; just use the shorthand. Put the `CP/CR.` instruction on its own line at the end of the prompt.
+
+For rendered HTML output, say "copy and paste from the HTML" or "copy and paste the table/summary/text from the HTML." Do not call HTML submissions CP/CR.
+
+Use `show_file()` when checking file contents or code: `.gitignore`, the last chunk, a data-analysis pipeline, chart code, or the final QMD state.
+
+**Showing our answer after a `show_file()` exercise.** Almost every `show_file()` exercise should be followed — as the *first* thing after the student submits and clicks Continue — by **our answer**: what we think the file should contain. Present it as a single chunk with `echo = TRUE` (the §3 pattern), which both shows our code and runs it to display the result, so the student can compare our code *and* our output against their own. Do **not** show the `show_file()` call, and do not reproduce the student's submission (theirs already echoes the command) — just show the analysis code we expect, computed on the fly. Give it **no label** — no "Our plot:" or "Our code:" heading; after Continue it is obviously ours. A plain three-backtick block (code only) is an acceptable fallback, and the right choice when the code would take more than ~5 seconds to run, but the live `echo = TRUE` chunk is preferred.
+
+**Fake the output of terminal commands you can't run in a chunk.** We almost *always* follow a question with our best guess at what the student will — or at least should — see. For R code that is the `echo = TRUE` answer chunk. For a bash/R-Terminal command whose result you cannot reproduce in a live chunk (`ls data`, `pwd`, render messages), you still show the answer: a plain code block with your best guess at what the command prints — e.g., the file(s) `ls data` would list. Do not leave it as prose ("Your `data` directory should now include `X`"); show the faked output instead. Follow our answer with a `###` so the student presses Continue again before the knowledge drop. Keep our code concise and modern — always `|>`, never `%>%` — because the whole point is that the student studies it and compares it with their own.
+
+**The "if your result doesn't match ours, replace your code" fallback is now rare — and never a second paste.** We ask a question, then show our code and its result (the `echo = TRUE` answer). Most of the time that is the end of it: the next exercise rewrites the chunk anyway, and small differences from our code don't matter. Only when it genuinely matters — we are about to **save an object whose shape the rest of the section depends on** (a cached data pipeline) — do we add a short line asking the student to compare, and, if their result differs, replace their code with **the code we just showed above**. Never re-paste the code in a second block, and never make the student paste two pieces; if anything is pasted at all, it is one chunk. And keep **caching a separate question** — never fold "add `#| cache: true`" into the copy-our-code question.
+
+Beyond `show_file()`, R Terminal CP/CR should be rare (per §2, *Almost everything happens in the QMD*): reach for it only for the occasional directory-structure or shell check (`list.files()`, `pwd`, `ls`, render messages) that has no place in the QMD. Anything that produces analysis output belongs in a QMD chunk, rendered, and copied from the HTML — not run in the R Terminal.
+
+### Formatting conventions
+
+- Keyboard input and inline code: `backticks`
+- Package names in prose: bolded and linked to the package's gold-standard documentation site, usually the official package website (e.g. **[ggplot2](https://ggplot2.tidyverse.org/)**, **[dplyr](https://dplyr.tidyverse.org/)**). Do not link package names inside code.
+- Function names always include parentheses: `read_csv()`, not `read_csv`
+- Section/topic titles: sentence case
+- Document titles (the `analysis.qmd` title) use **Title Case** — e.g. `"Sampling"`, not `"sampling"`. (Distinct from section/topic headings, which stay sentence case.)
+- Terminal names are **capitalized, including the shell name**: `R Terminal` and `bash Terminal` — always a capital `T`, never "bash terminal".
+- VS Code's file sidebar is the **Explorer** — not "File Explorer", which is the Windows OS file manager.
+- Write **"Commit and push"**, never "Save and push" — saving is assumed (the AI does it), and you cannot push without committing first.
+- Abbreviation: CP/CR = Copy/Paste the Command/Response
+
+---
+
+## 6. Mechanics and checking
+
+### Code chunk conventions
 
 - Label format: `section-name-N` and `section-name-N-test` (e.g., `billboard-3`, `billboard-3-test`).
 - Run `tutorial.helpers::check_current_tutorial()` after adding/deleting exercises to renumber everything.
 - Use `tutorial.helpers::make_exercise()` to add new exercises with correct numbering.
-- `echo = FALSE` everywhere (set globally in setup chunk via `knitr::opts_chunk$set(echo = FALSE)`). The routine exception is the `echo = TRUE` answer chunk shown after a `show_file()` exercise (see *Submission evidence*).
+- `echo = FALSE` everywhere (set globally in setup chunk via `knitr::opts_chunk$set(echo = FALSE)`). The routine exception is the `echo = TRUE` answer chunk shown after the question (see §3 and *Submission evidence*).
 - Use the native pipe `|>` in all displayed code, never the magrittr `%>%`.
 - Set `knitr::opts_chunk$set(out.width = '90%')` in setup for consistent image sizing.
 - Avoid exercise code chunks in post-infrastructure tutorials. Use question chunks for evidence submissions and test chunks for our example output.
-- Students evolve one working chunk per topic rather than adding a chunk per exercise; a finished `analysis.qmd` is the setup chunk plus roughly one chunk per topic (plus any separate data-download/preparation chunks). See *One evolving working chunk per topic* under *Student workflow*.
+- Students evolve one working chunk per topic rather than adding a chunk per exercise; a finished `analysis.qmd` is the setup chunk plus roughly one chunk per topic (plus any separate data-download/preparation chunks). See *One evolving working chunk per topic* (§2).
 - Do **not** include the `copy-code-chunk` (copy-button) child document. Its only purpose is to add a copy button to exercise code chunks, and these tutorials have none. The `info-section` and `download-answers` child documents stay.
 
-## Test chunk output
+### Setup chunk requirements
+
+```r
+library(learnr)
+library(tutorial.helpers)
+library(tidyverse)
+# ...other libraries...
+
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(out.width = '90%')
+options(tutorial.exercise.timelimit = 600, tutorial.storage = "local")
+```
+
+Pre-compute only what the tutorial itself needs to show examples after submission. Do not load data merely to support student exercise code chunks in post-infrastructure tutorials.
+
+### Test chunk output
 
 Test chunk output should be scannable in a few seconds. If it scrolls, it is too long. Apply these fixes before committing:
 
@@ -293,22 +349,7 @@ read_csv("../../extdata/r4ds-1/music.csv", show_col_types = FALSE)
 
 **The rule of thumb**: if the rendered test chunk output is taller than a laptop screen, shorten it.
 
-## Setup chunk requirements
-
-```r
-library(learnr)
-library(tutorial.helpers)
-library(tidyverse)
-# ...other libraries...
-
-knitr::opts_chunk$set(echo = FALSE)
-knitr::opts_chunk$set(out.width = '90%')
-options(tutorial.exercise.timelimit = 600, tutorial.storage = "local")
-```
-
-Pre-compute only what the tutorial itself needs to show examples after submission. Do not load data merely to support student exercise code chunks in post-infrastructure tutorials.
-
-## Data handling
+### Data handling
 
 - Never depend on a fragile third-party URL at tutorial run time.
 - Keep stable source copies for student downloads under `inst/extdata/<tutorial>/` when practical, and document the original source.
@@ -319,23 +360,13 @@ Pre-compute only what the tutorial itself needs to show examples after submissio
 - For large data, create smaller teaching files and use lightweight evidence submissions rather than heavy test computations.
 - If a teaching dataset is incomplete, sampled, capped, or otherwise artificial, do not hide that fact. Build an exercise path that lets students discover the limitation and reason about how it affects interpretation.
 
-## Authoring with AI agents
-
-When changing or creating subject-area tutorials, use Claude/Gemini iteratively:
-
-- Ask the agent to inspect the existing tutorial and propose changes before editing.
-- Correct the agent's plan when it misses project rules, especially the render + Live Server workflow, no post-infrastructure exercise code chunks, data handling, and knowledge drops.
-- Make one section correct first. Render it, inspect the result, and revise before applying the same pattern elsewhere.
-- Ask the agent what it will do in the next section before it edits.
-- Keep expected output, prose, prompts, knowledge drops, and displayed example plots in sync when the data or analysis changes.
-
-## Images
+### Images
 
 - Store in `images/` directory alongside `tutorial.Rmd`.
 - Include with `knitr::include_graphics("images/example.png")` in an unnamed chunk.
 - Requires `library(knitr)` in the setup chunk.
 
-## Displaying code verbatim in tutorials
+### Displaying code verbatim in tutorials
 
 Use `<pre><code>` wrappers (not four backticks) to display R code chunks verbatim inside tutorial text:
 
@@ -347,7 +378,17 @@ Use `<pre><code>` wrappers (not four backticks) to display R code chunks verbati
 
 When showing multiple commands for students to copy/paste, make sure they render as separate lines. Do not let Markdown collapse separate commands into one paragraph.
 
-## Checking a tutorial
+### Authoring with AI agents
+
+When changing or creating subject-area tutorials, use Claude/Gemini iteratively:
+
+- Ask the agent to inspect the existing tutorial and propose changes before editing.
+- Correct the agent's plan when it misses project rules, especially the render + Live Server workflow, no post-infrastructure exercise code chunks, data handling, and knowledge drops.
+- Make one section correct first. Render it, inspect the result, and revise before applying the same pattern elsewhere.
+- Ask the agent what it will do in the next section before it edits.
+- Keep expected output, prose, prompts, knowledge drops, and displayed example plots in sync when the data or analysis changes.
+
+### Checking a tutorial
 
 **Render early and often.** Run `rmarkdown::render()` after essentially every change, not just at the end — it is the fastest way to catch a broken chunk, a stray warning, or output that no longer matches the prose. A normal tutorial should render in **not much more than 15 seconds**; if it takes much longer, treat that as a signal (an uncached expensive chunk, an accidental web call) worth fixing. Read the render's console output, not just the exit status: warnings like `NAs introduced by coercion` are defects to fix, not noise to ignore.
 
@@ -359,18 +400,12 @@ When showing multiple commands for students to copy/paste, make sure they render
 
 `devtools::check()` validates the default `tutorial_template` child documents. Keep `info-section` and `download-answers`; do not remove or alter them. The `copy-code-chunk` child is no longer used (see *Code chunk conventions*) — if `check()` still flags its absence, that check in `tutorial.helpers` is what needs updating, since the copy button has no role once there are no exercise code chunks.
 
-## Formatting conventions
-
-- Keyboard input and inline code: `backticks`
-- Package names in prose: bolded and linked to the package's gold-standard documentation site, usually the official package website (e.g. **[ggplot2](https://ggplot2.tidyverse.org/)**, **[dplyr](https://dplyr.tidyverse.org/)**). Do not link package names inside code.
-- Function names always include parentheses: `read_csv()`, not `read_csv`
-- Section/topic titles: sentence case
-- Document titles (the `analysis.qmd` title) use **Title Case** — e.g. `"Sampling"`, not `"sampling"`. (Distinct from section/topic headings, which stay sentence case.)
-- Terminal names are **capitalized, including the shell name**: `R Terminal` and `bash Terminal` — always a capital `T`, never "bash terminal".
-- VS Code's file sidebar is the **Explorer** — not "File Explorer", which is the Windows OS file manager.
-- Write **"Commit and push"**, never "Save and push" — saving is assumed (the AI does it), and you cannot push without committing first.
-- Abbreviation: CP/CR = Copy/Paste the Command/Response
-
-## DESCRIPTION
+### DESCRIPTION
 
 Any library loaded in a tutorial must appear under `Imports` or `Suggests` in `DESCRIPTION`. `devtools::check()` on GitHub Actions will fail if a package is `library()`-ed but not listed.
+
+---
+
+## 7. Choosing topics
+
+How a tutorial's subject is chosen is **project-specific** — the one genuinely package-dependent part of this guide. Each project's own guide defines its topic model; consult it before starting a tutorial. Two examples: `misc.tutorials` organizes tutorials around data sources / storage technologies and real data science domains (the per-tutorial teaching checklist lives in that package's guide); the Primer fixes its topic sections as the four Cardinal Virtues, identical in every tutorial. Whatever the model, each topic section starts from data, follows an exploratory path, and ends with a useful plot or table plus a short interpretation — that part is universal (see §4, *Tutorial structure*, and *Analysis path*).
