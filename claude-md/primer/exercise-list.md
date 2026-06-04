@@ -1,6 +1,8 @@
 # Primer authoring guide — Master exercise list (§13)
 
 > A part of the Primer authoring guide. Start at the index — [`CLAUDE.md`](CLAUDE.md) — which maps each `§` to its file. **Section numbers are unchanged**, so every `§N.M` cross-reference in the guide still resolves via that map.
+>
+> **These exercises sit on top of the base tutorial guide (`../tutorials/CLAUDE.md`)** — its canonical question shape, `echo = TRUE` answers, knowledge-drop rules, and evidence conventions apply throughout unless a Primer override says otherwise.
 
 ---
 

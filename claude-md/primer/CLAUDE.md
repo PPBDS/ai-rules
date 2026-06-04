@@ -1,5 +1,7 @@
 # CLAUDE.md — Preceptor's Primer authoring guide (index)
 
+> **Primer tutorials follow the base tutorial guide — [`../tutorials/CLAUDE.md`](../tutorials/CLAUDE.md) — by default.** They are "normal" tutorials; that guide is the default contract and the source of truth for everything common to all tutorials. **Read it first.** This Primer guide adds only what is *specific* to the Primer, or records an **explicit override** (never a silent one). (Book chapters are a different artifact — the base guide is tutorial-only; see [`chapters.md`](chapters.md).)
+
 This file is the working reference for creating data science education artifacts. The first artifact is a chapter in the textbook *Preceptor's Primer for Bayesian Data Science: Using the Cardinal Virtues for Inference*. The second is a matching learnr tutorial. Every chapter has an associated tutorial and vice versa. The third is a class exercise covering similar material. The file is addressed to Claude. David Kane is the author; Claude is the co-author he collaborates with to produce new material.
 
 The goal is that this guide, **together with the base tutorial guide**, is the reference either of us needs when starting work on a new chapter/tutorial pair or class exercise. The guide is **split into parts** (this file is the index); read only the parts a task needs — see the map below.
@@ -27,7 +29,8 @@ This index is the entry point. The rest of the guide lives in the part files bel
 |---|---|---|
 | [`curriculum.md`](curriculum.md) | §1 Project, §8 Spaced repetition | designing or sequencing the curriculum; fixing a tutorial's tier (EMH) and predictive/causal framing |
 | [`chapters.md`](chapters.md) | §4 Chapter structure | writing a **book chapter** |
-| [`authoring.md`](authoring.md) | §3 file conventions, §5 tutorial structure, §6 question flow, §7 exercise types, §9 AI-mediated exercises, §14 author guidance, §15 R tooling | building or editing a **tutorial** |
+| [`authoring.md`](authoring.md) | §3 file conventions, §5 tutorial structure, §6 question flow, §7 exercise types, §9 AI-mediated exercises, §15 R tooling | building or editing a **tutorial** |
+| [`guidance.md`](guidance.md) | §14 cross-cutting author guidance (rounding, visualization house style, LaTeX, package-name formatting, …) | applying the cross-cutting rules while writing exercises |
 | [`tables.md`](tables.md) | §10 Preceptor & Population Tables | building a Preceptor or Population Table (`gt`) |
 | [`concepts-and-drops.md`](concepts-and-drops.md) | §11 Canonical definitions, §12 Knowledge-drop library | writing definition answers or knowledge drops |
 | [`exercise-list.md`](exercise-list.md) | §13 Master exercise list | authoring the exercise **sequence** of a tutorial |
