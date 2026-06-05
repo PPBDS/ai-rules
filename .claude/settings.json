@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/dkane/Desktop/projects/misc.tutorials/inst/tutorials/r4ds-5/**)",
+      "Edit(//Users/dkane/Desktop/projects/ai-rules/**)",
+      "Write(//Users/dkane/Desktop/projects/ai-rules/**)",
+      "MultiEdit(//Users/dkane/Desktop/projects/ai-rules/**)",
+      "NotebookEdit(//Users/dkane/Desktop/projects/ai-rules/**)"
+    ]
+  }
+}
