@@ -127,6 +127,14 @@ Showing our code *and* its result, via `echo = TRUE`, is the **default for every
 
 **Which evidence to collect — copy from the HTML by default; `show_file()` for plots.** Every render produces evidence; the question is which form. **Default: copy from the HTML** — whenever the render prints output (a tibble, a lazy-table preview, `dbListTables()`, `list.files()`, `summary()`, any non-visual result), the evidence line is *"copy and paste the … from the HTML."* **Exception: a plot.** A plot can't be pasted and isn't the point — the *code* behind it is — so a plot exercise instead ends with `In the R Terminal, run `show_file("analysis.qmd", chunk = "Last")`. CP/CR.`, submitting the student's chunk so their code and our rendered plot sit side by side. (Full rule in *Submission evidence*.)
 
+**The three common question shapes.** In practice a question is almost always one of three:
+
+1. **Edit the QMD → render → copy the printed result from the HTML** — the default (the canonical shape above), whenever the render prints output.
+2. **Edit the QMD → render → `show_file("analysis.qmd", chunk = "Last")`, CP/CR** — when the result is a **plot** (submit the code behind it) or you are showing a **file's contents**. (Runs in the R Terminal.)
+3. **Run a bash Terminal command → CP/CR** — the operational steps with no QMD edit: `quarto render`, `quarto publish gh-pages`, `git add/commit/push`, `ls data`, `pwd`. The student runs the one command in the bash Terminal and pastes the command and its response; follow with the faked expected output (see *Submission evidence*).
+
+Shapes 1 and 2 are the same QMD-edit exercise differing only in evidence form; shape 3 is the operational, no-edit pattern.
+
 ### Question types
 
 **No-answer questions (default).** Used for evidence-submission questions. Set `rows` to match expected output length.
@@ -278,11 +286,12 @@ If a drop isn't doing one of these three, cut it. Do **not** reach for a canned 
 
 CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or R Terminal submissions where students paste both the command they ran and the response they got. Do not add extra wording like "the command and response" or "the terminal output"; that is already implied by CP/CR. Assume students already know what CP/CR means — they learned it in the `vscode.tutorials` infrastructure tutorials — so do **not** explain it in a normal tutorial; just use the shorthand. Put the `CP/CR.` instruction on its own line at the end of the prompt.
 
-**Copy-from-HTML is the default; `show_file()` is for plots and files.** Every render produces evidence; choose the form by what the render produced:
+**The evidence forms.** Copy-from-HTML is the default for QMD output; `show_file()` is for plots and files; a bash command is its own response. Pick by what the exercise produced:
 
-- **Printed result → copy from the HTML** (the default). Whenever the render prints output — a tibble, a lazy-table preview, `dbListTables()`, `list.files()`, `summary()`, any non-visual result — say *"copy and paste the table/summary/text from the HTML."* Do **not** call an HTML submission CP/CR, and do **not** route a printed result through `show_file()`.
-- **Plot → `show_file("analysis.qmd", chunk = "Last")`** (CP/CR). The visual can't be pasted and isn't the point; the *code* that generated it is. `show_file()` submits the student's chunk so their code and our rendered plot sit side by side for comparison.
-- **File contents → `show_file()`** for the genuine file checks — `.gitignore`, the final QMD state.
+- **Printed render result → copy from the HTML** (the default). Whenever the render prints output — a tibble, a lazy-table preview, `dbListTables()`, `list.files()`, `summary()`, any non-visual result — say *"copy and paste the table/summary/text from the HTML."* Do **not** call an HTML submission CP/CR, and do **not** route a printed result through `show_file()`.
+- **Plot → `show_file("analysis.qmd", chunk = "Last")`** (CP/CR). The visual can't be pasted and isn't the point; the *code* that generated it is. `show_file()` submits the student's chunk so their code and our rendered plot sit side by side for comparison. (R Terminal.)
+- **File contents → `show_file()`** (CP/CR) for the genuine file checks — `.gitignore`, the final QMD state. (R Terminal.)
+- **Bash Terminal command → CP/CR.** The operational steps with no QMD edit — `quarto render`, `quarto publish gh-pages`, `git add/commit/push`, `ls data`, `pwd`. The student runs the one command in the bash Terminal; the command and its response are the evidence.
 
 **Showing our answer.** Almost every exercise should be followed — as the *first* thing after the student submits and clicks Continue — by **our answer**. Present it as a single chunk with `echo = TRUE` (the §3 pattern), which both shows our code and runs it to display the result, so the student can compare our code *and* our output against their own. Do not reproduce the student's submission, and — for a `show_file()` (plot or file) exercise — do not show the `show_file()` call itself; just show the analysis code we expect, computed on the fly. Give it **no label** — no "Our plot:" or "Our code:" heading; after Continue it is obviously ours. A plain three-backtick block (code only) is an acceptable fallback, and the right choice when the code would take more than ~5 seconds to run, but the live `echo = TRUE` chunk is preferred.
 
@@ -290,7 +299,7 @@ CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or 
 
 **The "if your result doesn't match ours, replace your code" fallback is now rare — and never a second paste.** We ask a question, then show our code and its result (the `echo = TRUE` answer). Most of the time that is the end of it: the next exercise rewrites the chunk anyway, and small differences from our code don't matter. Only when it genuinely matters — we are about to **save an object whose shape the rest of the section depends on** (a cached data pipeline) — do we add a short line asking the student to compare, and, if their result differs, replace their code with **the code we just showed above**. Never re-paste the code in a second block, and never make the student paste two pieces; if anything is pasted at all, it is one chunk. And keep **caching a separate question** — never fold "add `#| cache: true`" into the copy-our-code question.
 
-Beyond `show_file()`, R Terminal CP/CR should be rare (per §2, *Almost everything happens in the QMD*): reach for it only for the occasional directory-structure or shell check (`list.files()`, `pwd`, `ls`, render messages) that has no place in the QMD. Anything that produces analysis output belongs in a QMD chunk, rendered, and copied from the HTML — not run in the R Terminal.
+**Two terminals, two roles.** The **bash Terminal** carries the operational commands (shape 3) — `quarto render`, `quarto publish`, `git …`, `ls`/`pwd` — collected CP/CR; that is normal and common. The **R Terminal** is used essentially only for `show_file()` (shape 2) and, rarely, a one-off setup like `dir.create("data")` / `list.files()`. Per §2 (*Almost everything happens in the QMD*), **never run *analysis* in the R Terminal** — anything that produces analysis output belongs in a QMD chunk, rendered, and copied from the HTML.
 
 ### Formatting conventions
 
