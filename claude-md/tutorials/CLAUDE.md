@@ -295,7 +295,7 @@ Beyond `show_file()`, R Terminal CP/CR should be rare (per §2, *Almost everythi
 ### Formatting conventions
 
 - Keyboard input and inline code: `backticks`
-- Package names in prose: bolded and linked to the package's gold-standard documentation site, usually the official package website (e.g. **[ggplot2](https://ggplot2.tidyverse.org/)**, **[dplyr](https://dplyr.tidyverse.org/)**). Do not link package names inside code.
+- Package names in prose: bolded throughout, and the **first mention in a tutorial** is also linked to the package's gold-standard documentation site — usually the official package website (e.g. **[ggplot2](https://ggplot2.tidyverse.org/)**, **[dplyr](https://dplyr.tidyverse.org/)**). Later mentions stay bold with no repeated link. Do not link package names inside code.
 - Function names always include parentheses: `read_csv()`, not `read_csv`
 - Section/topic titles: sentence case
 - Document titles (the `analysis.qmd` title) use **Title Case** — e.g. `"Sampling"`, not `"sampling"`. (Distinct from section/topic headings, which stay sentence case.)
