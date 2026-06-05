@@ -11,7 +11,7 @@ follow that document.
 |---|---|---|
 | [`vscode.tutorials` repo `CLAUDE.md`](https://github.com/PPBDS/vscode.tutorials/blob/main/CLAUDE.md) *(in that repo, not here)* | The **`vscode.tutorials`** package — the introductory tutorials students start with, which teach the tools and environment (Git, GitHub, `.gitignore`, terminals, Codespaces, Quarto rendering, CP/CR, QMD World vs R World, package ecosystems). | a tutorial in `vscode.tutorials`. |
 | [`tutorials/CLAUDE.md`](tutorials/CLAUDE.md) | **Every other tutorial** — the default contract for "normal," post-infrastructure data science tutorials (`misc.tutorials`, the Primer's tutorials, any future package). | a normal tutorial that is **not** in `vscode.tutorials` (or `tutorial.helpers`). |
-| [`primer/CLAUDE.md`](primer/CLAUDE.md) | The **`primer` repo** — both its book chapters (`book/`) and its tutorials (`primer.tutorials/`), organized around the Cardinal Virtues. | anything in the `primer` repo. |
+| [`primer` repo `CLAUDE.md`](https://github.com/PPBDS/primer/blob/main/CLAUDE.md) *(in that repo, not here)* | The **`primer` repo** — both its book chapters (`book/`) and its tutorials (`primer.tutorials/`), organized around the Cardinal Virtues. Its guide lives in the primer repo: a root index plus `guide/` parts read on demand, with nested `CLAUDE.md`s in `book/` and `primer.tutorials/`. | anything in the `primer` repo. |
 
 ## How they relate
 
@@ -31,20 +31,23 @@ follow that document.
    by an **explicit, on-the-record override** in its own guide; silent divergence is a
    bug.
 
-3. **`primer/CLAUDE.md` builds on the base guide.** The Primer's tutorials are normal
-   tutorials, so the Primer guide **reads in and accepts `tutorials/CLAUDE.md` first**,
-   then adds only what is specific to the Primer (the Cardinal Virtues structure, the
-   Easy/Medium/Hard progression, Preceptor and Population Tables, the master exercise
-   list) and records any deliberate overrides. The Primer guide **also** covers the
-   **book chapters** in `book/`, which are prose Quarto — not learnr tutorials — and are
-   therefore outside the base guide's scope entirely.
+3. **The Primer guide builds on the base guide, and lives in the `primer` repo.** Like
+   vscode, the Primer guide now lives **in its own repo** (a root `CLAUDE.md` index plus
+   `guide/` parts read on demand, with nested `CLAUDE.md`s in `book/` and
+   `primer.tutorials/`) — not in this collection. The Primer's tutorials are normal
+   tutorials, so that guide **reads in and accepts the base guide first**, then adds only
+   what is specific to the Primer (the Cardinal Virtues structure, the Easy/Medium/Hard
+   progression, Preceptor and Population Tables, the master exercise list) and records any
+   deliberate overrides. It **also** covers the **book chapters** in `book/`, which are
+   prose Quarto — not learnr tutorials — and are therefore outside the base guide's scope
+   entirely.
 
 ## Which document do I follow?
 
 - Working in **`vscode.tutorials`** → that repo's own [`CLAUDE.md`](https://github.com/PPBDS/vscode.tutorials/blob/main/CLAUDE.md). Stop there; the others do not apply.
 - Working in the **`primer` repo** — a `book/` chapter or a `primer.tutorials/` tutorial
-  → [`primer/CLAUDE.md`](primer/CLAUDE.md), which itself routes you to
-  [`tutorials/CLAUDE.md`](tutorials/CLAUDE.md) for the shared tutorial rules.
+  → that repo's own [`CLAUDE.md`](https://github.com/PPBDS/primer/blob/main/CLAUDE.md)
+  (it routes you to its `guide/` parts and reads in the base guide for the shared rules).
 - Working in **`misc.tutorials`**, or any other normal tutorial package →
   [`tutorials/CLAUDE.md`](tutorials/CLAUDE.md).
 - Working in **`tutorial.helpers`'** own tutorials → like `vscode.tutorials`, the base
