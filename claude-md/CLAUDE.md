@@ -9,7 +9,7 @@ follow that document.
 
 | Document | Governs | Use it when you are authoring… |
 |---|---|---|
-| [`vscode/CLAUDE.md`](vscode/CLAUDE.md) | The **`vscode.tutorials`** package — the introductory tutorials students start with, which teach the tools and environment (Git, GitHub, `.gitignore`, terminals, Codespaces, Quarto rendering, CP/CR, QMD World vs R World, package ecosystems). | a tutorial in `vscode.tutorials`. |
+| [`vscode/CLAUDE.md`](vscode/CLAUDE.md) *(pointer — canonical guide lives in the [`vscode.tutorials`](https://github.com/PPBDS/vscode.tutorials/blob/main/CLAUDE.md) repo)* | The **`vscode.tutorials`** package — the introductory tutorials students start with, which teach the tools and environment (Git, GitHub, `.gitignore`, terminals, Codespaces, Quarto rendering, CP/CR, QMD World vs R World, package ecosystems). | a tutorial in `vscode.tutorials`. |
 | [`tutorials/CLAUDE.md`](tutorials/CLAUDE.md) | **Every other tutorial** — the default contract for "normal," post-infrastructure data science tutorials (`misc.tutorials`, the Primer's tutorials, any future package). | a normal tutorial that is **not** in `vscode.tutorials` (or `tutorial.helpers`). |
 | [`primer/CLAUDE.md`](primer/CLAUDE.md) | The **`primer` repo** — both its book chapters (`book/`) and its tutorials (`primer.tutorials/`), organized around the Cardinal Virtues. | anything in the `primer` repo. |
 
@@ -17,9 +17,11 @@ follow that document.
 
 1. **`vscode.tutorials` stands alone.** It is the first thing students do, and it
    *teaches* the mechanics every later tutorial takes for granted. **Nothing in the
-   other two documents applies to it, and nothing in it applies to them.**
-   (`tutorial.helpers`' own tutorials are the one other "teaches the tools" package and
-   sit outside the base guide for the same reason.)
+   other two documents applies to it, and nothing in it applies to them.** Because it
+   is specific to that one package and builds on nothing here, its guide **lives in the
+   `vscode.tutorials` repo as that repo's own `CLAUDE.md`**; the `vscode/CLAUDE.md` in
+   this collection is a pointer to it. (`tutorial.helpers`' own tutorials are the one
+   other "teaches the tools" package and sit outside the base guide for the same reason.)
 
 2. **`tutorials/CLAUDE.md` is the default for everything else.** Every tutorial outside
    `vscode.tutorials` / `tutorial.helpers` follows it — *because they all assume the
@@ -39,8 +41,7 @@ follow that document.
 
 ## Which document do I follow?
 
-- Working in **`vscode.tutorials`** → [`vscode/CLAUDE.md`](vscode/CLAUDE.md). Stop there;
-  the others do not apply.
+- Working in **`vscode.tutorials`** → that repo's own [`CLAUDE.md`](https://github.com/PPBDS/vscode.tutorials/blob/main/CLAUDE.md) (the canonical guide; [`vscode/CLAUDE.md`](vscode/CLAUDE.md) here just points to it). Stop there; the others do not apply.
 - Working in the **`primer` repo** — a `book/` chapter or a `primer.tutorials/` tutorial
   → [`primer/CLAUDE.md`](primer/CLAUDE.md), which itself routes you to
   [`tutorials/CLAUDE.md`](tutorials/CLAUDE.md) for the shared tutorial rules.
