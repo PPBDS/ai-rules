@@ -357,7 +357,7 @@ The base guide's no-answer `question_text()` form (`allow_retry = TRUE`, `try_ag
 
 ### 7.4 Operational conventions
 
-**CP/CR** and **`show_file()`** follow the base guide's *Submission evidence* section and are not repeated here: CP/CR = copy/paste the command and the response (terminal evidence); `show_file()` (from `tutorial.helpers`) displays a file's contents — e.g. `show_file("analysis.qmd", chunk = "Last")` for the last chunk — which the student copies and pastes back. CP/CR is **not** explained — students learned it in `vscode.tutorials` (base guide, *Submission evidence*).
+**CP/CR** and **`show_file()`** follow the base guide's *Submission evidence* section and are not repeated here. **Evidence form follows the base rule: copy from the HTML by default for any printed result (tibble, `tidy()` table, `summary()`, `predictions()` output, …); reserve `show_file("analysis.qmd", chunk = "Last")` for plot exercises (to submit the code behind the visual, so code and our rendered plot sit side by side) and for genuine file checks (`.gitignore`, the final QMD).** CP/CR is **not** explained — students learned it in `vscode.tutorials` (base guide, *Submission evidence*).
 
 Primer-specific notes, all deferring to the base guide's workflow:
 

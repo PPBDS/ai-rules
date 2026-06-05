@@ -593,7 +593,7 @@ The interpretation questions are concentrated in Courage so the parameter-table-
 - End: the `broom` knowledge drop (§12.4).
 
 **Exercise 17.** [per-tutorial, written-without-answer] Make a nice table from `tidy()`.
-- Prompt: *Create a new code chunk in your QMD that makes a nice-looking table from the tibble returned by `tidy()`. You don't need all the columns — estimate and confidence intervals is typical. You may need to load [tinytable](https://vincentarelbundock.github.io/tinytable/), [knitr](https://yihui.org/knitr/), [gt](https://gt.rstudio.com/), [kableExtra](https://haozhu233.github.io/kableExtra/), [flextable](https://davidgohel.github.io/flextable/), or [modelsummary](https://modelsummary.com/) in the setup chunk. Render. In the R Terminal, run `tutorial.helpers::show_file("XX.qmd", chunk = "Last")`. CP/CR.*
+- Prompt: *Create a new code chunk in your QMD that makes a nice-looking table from the tibble returned by `tidy()`. You don't need all the columns — estimate and confidence intervals is typical. You may need to load [tinytable](https://vincentarelbundock.github.io/tinytable/), [knitr](https://yihui.org/knitr/), [gt](https://gt.rstudio.com/), [kableExtra](https://haozhu233.github.io/kableExtra/), [flextable](https://davidgohel.github.io/flextable/), or [modelsummary](https://modelsummary.com/) in the setup chunk. Render, and copy the table from the HTML.*
 - End: show our table and our code. Closing knowledge drop: *At the very least, your table should include a title and a caption with the data source. The more you use AI, the better you will get at doing so.*
 
 **Exercise 18.** [per-tutorial, written-with-answer] Model-structure sentence.

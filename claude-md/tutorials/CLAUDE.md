@@ -102,7 +102,7 @@ Nearly every regular question looks exactly like this:
 and inspects the HTML as a matter of course, so the prompt need not spell that
 out every single time.>
 
-In the R Terminal, run `show_file("analysis.qmd", chunk = "Last")`. CP/CR.
+Copy and paste the printed result from the HTML below.   <!-- default; a PLOT exercise instead ends with: In the R Terminal, run `show_file("analysis.qmd", chunk = "Last")`. CP/CR. -->
 
 ```{r section-name-N}
 question_text(NULL, answer(NULL, correct = TRUE), allow_retry = TRUE,
@@ -124,6 +124,8 @@ question_text(NULL, answer(NULL, correct = TRUE), allow_retry = TRUE,
 The **two `###` separators are load-bearing**. The first reveals our answer the instant the student clicks Continue — the `echo = TRUE` chunk shows our code *and* its result together. **Give that answer no label** — no "Our plot:", "Our code:", "Our result:" heading — because after Continue it is obviously ours; a label is noise. The second `###` makes the student pause on our code and result, comparing it to their own, before a final Continue reveals the knowledge drop. That knowledge drop does one or both of two jobs: it teaches a concept (often new terminology, like *faceting*), and/or it points out something specific in the result the student probably missed — ideally something that leads into the next exercise.
 
 Showing our code *and* its result, via `echo = TRUE`, is the **default for every answer** — it is the whole point of "show our code afterward to compare against" (§2). A plain three-backtick block (code only) is an acceptable fallback, and the right choice when the code would take more than ~5 seconds to run, but the live `echo = TRUE` chunk is preferred.
+
+**Which evidence to collect — copy from the HTML by default; `show_file()` for plots.** Every render produces evidence; the question is which form. **Default: copy from the HTML** — whenever the render prints output (a tibble, a lazy-table preview, `dbListTables()`, `list.files()`, `summary()`, any non-visual result), the evidence line is *"copy and paste the … from the HTML."* **Exception: a plot.** A plot can't be pasted and isn't the point — the *code* behind it is — so a plot exercise instead ends with `In the R Terminal, run `show_file("analysis.qmd", chunk = "Last")`. CP/CR.`, submitting the student's chunk so their code and our rendered plot sit side by side. (Full rule in *Submission evidence*.)
 
 ### Question types
 
@@ -276,11 +278,13 @@ If a drop isn't doing one of these three, cut it. Do **not** reach for a canned 
 
 CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or R Terminal submissions where students paste both the command they ran and the response they got. Do not add extra wording like "the command and response" or "the terminal output"; that is already implied by CP/CR. Assume students already know what CP/CR means — they learned it in the `vscode.tutorials` infrastructure tutorials — so do **not** explain it in a normal tutorial; just use the shorthand. Put the `CP/CR.` instruction on its own line at the end of the prompt.
 
-For rendered HTML output, say "copy and paste from the HTML" or "copy and paste the table/summary/text from the HTML." Do not call HTML submissions CP/CR.
+**Copy-from-HTML is the default; `show_file()` is for plots and files.** Every render produces evidence; choose the form by what the render produced:
 
-Use `show_file()` when checking file contents or code: `.gitignore`, the last chunk, a data-analysis pipeline, chart code, or the final QMD state.
+- **Printed result → copy from the HTML** (the default). Whenever the render prints output — a tibble, a lazy-table preview, `dbListTables()`, `list.files()`, `summary()`, any non-visual result — say *"copy and paste the table/summary/text from the HTML."* Do **not** call an HTML submission CP/CR, and do **not** route a printed result through `show_file()`.
+- **Plot → `show_file("analysis.qmd", chunk = "Last")`** (CP/CR). The visual can't be pasted and isn't the point; the *code* that generated it is. `show_file()` submits the student's chunk so their code and our rendered plot sit side by side for comparison.
+- **File contents → `show_file()`** for the genuine file checks — `.gitignore`, the final QMD state.
 
-**Showing our answer after a `show_file()` exercise.** Almost every `show_file()` exercise should be followed — as the *first* thing after the student submits and clicks Continue — by **our answer**: what we think the file should contain. Present it as a single chunk with `echo = TRUE` (the §3 pattern), which both shows our code and runs it to display the result, so the student can compare our code *and* our output against their own. Do **not** show the `show_file()` call, and do not reproduce the student's submission (theirs already echoes the command) — just show the analysis code we expect, computed on the fly. Give it **no label** — no "Our plot:" or "Our code:" heading; after Continue it is obviously ours. A plain three-backtick block (code only) is an acceptable fallback, and the right choice when the code would take more than ~5 seconds to run, but the live `echo = TRUE` chunk is preferred.
+**Showing our answer.** Almost every exercise should be followed — as the *first* thing after the student submits and clicks Continue — by **our answer**. Present it as a single chunk with `echo = TRUE` (the §3 pattern), which both shows our code and runs it to display the result, so the student can compare our code *and* our output against their own. Do not reproduce the student's submission, and — for a `show_file()` (plot or file) exercise — do not show the `show_file()` call itself; just show the analysis code we expect, computed on the fly. Give it **no label** — no "Our plot:" or "Our code:" heading; after Continue it is obviously ours. A plain three-backtick block (code only) is an acceptable fallback, and the right choice when the code would take more than ~5 seconds to run, but the live `echo = TRUE` chunk is preferred.
 
 **Fake the output of terminal commands you can't run in a chunk.** We almost *always* follow a question with our best guess at what the student will — or at least should — see. For R code that is the `echo = TRUE` answer chunk. For a bash/R-Terminal command whose result you cannot reproduce in a live chunk (`ls data`, `pwd`, render messages), you still show the answer: a plain code block with your best guess at what the command prints — e.g., the file(s) `ls data` would list. Do not leave it as prose ("Your `data` directory should now include `X`"); show the faked output instead. Follow our answer with a `###` so the student presses Continue again before the knowledge drop. Keep our code concise and modern — always `|>`, never `%>%` — because the whole point is that the student studies it and compares it with their own.
 
