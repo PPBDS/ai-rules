@@ -299,6 +299,21 @@ CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or 
 
 **Fake the output of terminal commands you can't run in a chunk.** We almost *always* follow a question with our best guess at what the student will — or at least should — see. For R code that is the `echo = TRUE` answer chunk. For a bash/R-Terminal command whose result you cannot reproduce in a live chunk (`ls data`, `pwd`, render messages), you still show the answer: a plain code block with your best guess at what the command prints — e.g., the file(s) `ls data` would list. Do not leave it as prose ("Your `data` directory should now include `X`"); show the faked output instead. Follow our answer with a `###` so the student presses Continue again before the knowledge drop. Keep our code concise and modern — always `|>`, never `%>%` — because the whole point is that the student studies it and compares it with their own.
 
+**Two non-negotiables for the faked answer, especially for `show_file()` results:**
+
+1. **Use `<pre><code>…</code></pre>`, not four backticks.** Markdown fences let knitr eat the literal ` ```{r} ` inside as a real chunk and the source never displays. Raw HTML `<pre><code>` bypasses knitr — the chunk text reaches the browser as text. (When the placeholder contains tag-like `<` characters — `&lt;your name&gt;`, `&lt;your-github-username&gt;` — HTML-escape them so the browser doesn't try to parse them as tags.)
+2. **Strip the chunk wrapper *and* the command line.** `show_file()`'s literal output reproduces the QMD source — the `> show_file(...)` prompt the student typed, plus the ` ```{r} ` opening and ` ``` ` closing of every chunk. Our canonical answer never echoes any of that. Just the code *inside* the chunk (and, for `show_file("analysis.qmd")` of the whole file, YAML and prose between chunks), nothing else. The student's paste includes the noise; ours doesn't.
+
+So for a question whose evidence is `show_file("analysis.qmd", chunk = "Last")` on the chunk containing `#| message: false` and `library(tidyverse)`, our answer is:
+
+```
+<pre><code>#| message: false
+library(tidyverse)
+</code></pre>
+```
+
+— not four backticks wrapping ` ```{r} … ``` `, and not the `> show_file(…)` prompt above the code.
+
 **The "if your result doesn't match ours, replace your code" fallback is now rare — and never a second paste.** We ask a question, then show our code and its result (the `echo = TRUE` answer). Most of the time that is the end of it: the next exercise rewrites the chunk anyway, and small differences from our code don't matter. Only when it genuinely matters — we are about to **save an object whose shape the rest of the section depends on** (a cached data pipeline) — do we add a short line asking the student to compare, and, if their result differs, replace their code with **the code we just showed above**. Never re-paste the code in a second block, and never make the student paste two pieces; if anything is pasted at all, it is one chunk. And keep **caching a separate question** — never fold "add `#| cache: true`" into the copy-our-code question.
 
 **Two terminals, two roles.** The **bash Terminal** carries the operational commands (shape 3) — `quarto render`, `quarto publish`, `git …`, `ls`/`pwd` — collected CP/CR; that is normal and common, and building bash-Terminal fluency is itself a goal. The **R Terminal** is used essentially only for `show_file()` (shape 2); **students should rarely issue commands there directly** — prefer the bash Terminal (e.g. create a `data/` directory and confirm with `ls`, not R-Terminal `dir.create()`). Per §2 (*Almost everything happens in the QMD*), **never run *analysis* in the R Terminal** — anything that produces analysis output belongs in a QMD chunk, rendered, and copied from the HTML.
@@ -393,13 +408,17 @@ read_csv("../../extdata/r4ds-1/music.csv", show_col_types = FALSE)
 
 ### Displaying code verbatim in tutorials
 
-Use `<pre><code>` wrappers (not four backticks) to display R code chunks verbatim inside tutorial text:
+Use `<pre><code>…</code></pre>` HTML wrappers (not four backticks) to display code blocks verbatim inside tutorial prose. Four-backtick fences look right in source but knitr eagerly parses the inner ` ```{r} ` as a real chunk and the literal source never reaches the rendered HTML; raw HTML `<pre><code>` bypasses knitr.
+
+When the content represents a QMD chunk (e.g. our canonical answer for a `show_file()` question), include only the **code inside** the chunk — `#|` options and code lines — and **omit the ` ```{r} ` opening and ` ``` ` closing wrappers**. The wrapper is QMD source noise; what matters is the code. (See *Showing our answer* in §3 for the full rule.) Example — to display the canonical state of a setup chunk containing `library(tidyverse)`:
 
 ```
-<pre><code>```{r}
-1 + 1
-```</code></pre>
+<pre><code>#| message: false
+library(tidyverse)
+</code></pre>
 ```
+
+HTML-escape any tag-like `<` placeholders inside the block (`&lt;your name&gt;`, `&lt;your-github-username&gt;`) so the browser doesn't parse them as opening tags. `<-` and `|>` in R code are fine — they don't look like tag starts and browsers display them as text.
 
 When showing multiple commands for students to copy/paste, make sure they render as separate lines. Do not let Markdown collapse separate commands into one paragraph.
 
