@@ -324,6 +324,16 @@ CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or 
 - Run `tutorial.helpers::check_current_tutorial()` after adding/deleting exercises to renumber everything.
 - Use `tutorial.helpers::make_exercise()` to add new exercises with correct numbering.
 - `echo = FALSE` everywhere (set globally in setup chunk via `knitr::opts_chunk$set(echo = FALSE)`). The routine exception is the `echo = TRUE` answer chunk shown after the question (see §3 and *Submission evidence*).
+- **Per-chunk options use Quarto's `#| key: value` syntax on lines inside the chunk, not inline `, key = value` on the header.** So the answer chunk is
+
+  ```
+  ```{r section-name-N-test}
+  #| echo: true
+  # our code
+  ```
+  ```
+
+  not `{r section-name-N-test, echo = TRUE}`. This works in both `.Rmd` and `.qmd` via modern knitr (≥ 1.35) and is the canonical style across the curriculum — use it for `echo`, `message`, `warning`, `cache`, `eval`, and every other chunk option. The only inline options that remain on the header line are `include = FALSE` on the setup chunk and the `child = ...` argument on info-section / download-answers child chunks.
 - Use the native pipe `|>` in all displayed code, never the magrittr `%>%`.
 - Set `knitr::opts_chunk$set(out.width = '90%')` in setup for consistent image sizing.
 - Avoid exercise code chunks in post-infrastructure tutorials. Use question chunks for evidence submissions and test chunks for our example output.
