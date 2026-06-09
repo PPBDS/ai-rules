@@ -1,11 +1,12 @@
 # ai-rules
 
-A collection of the AI-related material I use in my work — instruction files,
-prompts, skills, and related artifacts — shared publicly so others can read,
-borrow, and adapt them.
+A collection of the AI-related material I use in my work — shared publicly so
+others can read, borrow, and adapt it.
 
-The repo is organized **by artifact type**. As the collection grows, new kinds
-of material get their own top-level folder (e.g. `skills/`, `prompts/`).
+Right now it holds one kind of artifact: the `CLAUDE.md` instruction files under
+[`claude-md/`](claude-md/). The repo is organized **by artifact type**, so as the
+collection grows, other kinds of material (e.g. `skills/`, `prompts/`) will get
+their own top-level folders.
 
 ## Contents
 

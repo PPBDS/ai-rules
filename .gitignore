@@ -1,0 +1,3 @@
+# Personal / machine-specific Claude Code config — never commit to this public repo.
+.claude/settings.local.json
+.claude/settings.json
