@@ -48,7 +48,7 @@ inst/extdata/<name>/ # stable source copies of data students may download
 
 The goal is not to teach coding — it is to teach students how to **use AI to create data science artifacts**. Once students are past the infrastructure tutorials, they should mostly interact with an AI agent that edits their files, renders their Quarto document, and helps them debug. They should learn to steer analysis, inspect output, notice problems, and ask for refinements.
 
-- These are data science tutorials. They should follow an exploratory path through data toward a useful published artifact.
+- These are data science tutorials. They should follow an exploratory path through data toward a useful artifact (usually a published page or website, but sometimes just a polished local document).
 - Show students **results** (plots, printed tibbles, summary statistics, rendered pages), not just the code that produced them.
 - Questions ask students to prompt AI for file edits, render, inspect output, and compare their output to ours.
 - Prefer many small exercises that form a data analysis path over one large prompt that solves the whole section.
@@ -135,7 +135,7 @@ Showing our code *and* its result, via `echo = TRUE`, is the **default for every
 
 **The two question kinds.** Setting aside the yes-answer conceptual question — a checked-answer *type*, not an evidence form (see *Question types*) — every working question is one of two:
 
-1. **Edit the QMD → render → `show_file("analysis.qmd", chunk = "Last")`, CP/CR** — the default (the canonical shape above), for *everything done in the QMD*: plots, printed tibbles, summaries, a single collected number — all identical. The student submits the chunk's code; our `echo = TRUE` answer shows our code and its result. Whole-file `show_file("analysis.qmd")` (final state) and `show_file(".gitignore")` (file contents) are variants of this kind.
+1. **Edit the QMD → render → `show_file("analysis.qmd", chunk = "Last")`, CP/CR** — the default (the canonical shape above), for *everything done in the QMD*: plots, printed tibbles, summaries, a single collected number — all identical. The student submits the chunk's code; our `echo = TRUE` answer shows our code and its result. The whole-file check (`show_file("analysis.qmd")`, or `show_file("index.qmd")` for a website) (final state) and `show_file(".gitignore")` (file contents) are variants of this kind.
 2. **Run a bash Terminal command → CP/CR** — when the exercise is operational or mostly changes the **set of files**: `ls` after creating `data/` or after a cache directory appears, plus `quarto render`, `quarto publish gh-pages`, `git add/commit/push`, `pwd`. The student runs the one command in the bash Terminal and pastes the command and its response; follow with the faked expected output (see *Submission evidence*).
 
 Both submit via CP/CR — kind 1 from the R Terminal, kind 2 from the bash Terminal. "Copy the printed result from the HTML" is **not** a submission form.
@@ -174,7 +174,7 @@ Every tutorial follows this order:
 
 1. **Introduction** — overview of packages/functions covered; exercises to set up the repo, QMD, and libraries.
 2. **Topic sections** — the *topics* are project-defined (see §7, *Choosing topics*, and your project's guide): `misc.tutorials` picks a data source / storage technology per tutorial; the Primer uses a fixed set — the Cardinal Virtues — the same in every tutorial. Either way, each section starts from data, follows an exploratory path, and usually ends with a useful plot or table plus a short interpretation.
-3. **Summary** — mirrors the Introduction in past tense; finishes with `quarto publish gh-pages` and a GitHub URL.
+3. **Summary** — mirrors the Introduction in past tense; if the tutorial publishes a result to the web, it finishes with the publish step and the resulting URL (and, for GitHub-based tutorials, a final commit/push).
 
 **Don't quiz concepts the student hasn't reached.** In a sequenced tutorial set — especially one paired with a book — a tutorial's questions may only ask about concepts introduced in its own chapter or an earlier one. Never build an exercise on a concept the curriculum introduces later. (Light forward-pointers in knowledge-drop prose — "you will see this again when we reach X" — are a separate judgment call; keep them rare, per *no road signs*.) Which concept is introduced where is project-specific; consult the project's guide for the schedule.
 
@@ -199,7 +199,7 @@ Keep introductions short. Avoid repeating details that the exercises will teach.
 - Render after every meaningful edit. The rendered HTML is the student's feedback loop.
 - Somewhere in the topic sections, include the **caching exercise** (see §2, *Caching*): turn on `#| cache: true` for an expensive chunk and, in the same or the next exercise, add the cache directory to `.gitignore`. Every tutorial does this at least once.
 - Use several linked exercises to build an analysis path: inspect the data, notice a pattern or problem, refine the data, make a rough plot, improve the plot, add interpretation.
-- The final section should make the rendered page look good enough to publish.
+- The final section should make the rendered artifact look good enough to publish (whether or not the tutorial actually publishes it).
 - Before including a visualization exercise, ask what it shows that the preceding table or exercise did not. If the answer is nothing new — the same finding in a different form — cut the exercise and communicate the finding in the table's knowledge drop instead.
 
 ### Git commit exercises
@@ -212,7 +212,7 @@ The exercise asks students to commit `analysis.qmd` with a specific descriptive 
 - **VS Code Source Control panel**: click the branch icon in the sidebar, stage the file, enter the message, and sync.
 - **Command line**: `git add analysis.qmd && git commit -m "Add X analysis" && git push` in a bash Terminal.
 
-The Summary commit exercise (sequence step 3) should say "commit any remaining changes" — by that point the main content is already committed section by section.
+For GitHub-based tutorials (almost all of them), the Summary commit exercise (sequence step 3) should say "commit any remaining changes" — by that point the main content is already committed section by section.
 
 Exception: if the tutorial has only one or two topic sections and the Summary's commit would cover all outstanding work, the final topic-section commit may be omitted to avoid asking students to commit twice in quick succession.
 
@@ -236,15 +236,17 @@ Build topic sections from linked exercise units. A typical path:
 
 **The most teachable datasets hide a discoverable anomaly.** The strongest analysis paths are the ones where a naive first look seems fine, but a clue hints that something is off, and a further step — very often a plot — reveals the mystery and then explains it. (The canonical example: a time-series plot of weekly chart rankings exposes a sharp discontinuity that the summary statistics completely hide.) When a dataset has this property, build the path so students *discover* the problem themselves rather than being told about it. Such structure is far more common in rich, sizable datasets than in small clean ones — a reason to favor richer data when the choice is open (topic/data selection itself is project-specific; see §7, *Choosing topics*, and the project guide).
 
-The final artifact should be a published page with a meaningful result about the world, not just a completed worksheet.
+The final artifact should be a finished product with a meaningful result about the world, not just a completed worksheet — a published page or website for the common case, or simply the rendered local document when the tutorial puts nothing on the web.
 
 For histograms and other distribution plots, usually include the number of observations used in the plot, especially when missing values or filters may exclude rows. Put `n` in the subtitle, caption, or nearby knowledge drop so readers know whether they are seeing the full dataset or only available values.
 
 ### Summary exercises (standard sequence)
 
-1. Final `quarto render`, `show_file("analysis.qmd")`, submit evidence.
-2. `quarto publish gh-pages analysis.qmd` in bash Terminal; paste resulting URL.
-3. Commit and push any remaining changes; paste GitHub repo URL.
+1. **Final local test of the finished product**, then submit evidence — but the evidence matches what the tutorial builds. A single rendered page: final `quarto render`, then `show_file("analysis.qmd")` for the whole QMD, so we keep a record of what it looked like. A **website** (a Quarto project with `_quarto.yml`): render the site, then `show_file("index.qmd")` (whatever the landing file is). The point is a last look at the real finished artifact before it goes out.
+2. **Publish the final version to the web — only if the tutorial puts a result there.** Match the command to what the tutorial builds: a single page uses `quarto publish gh-pages analysis.qmd`; a website publishes the whole project (e.g. `quarto publish gh-pages` from the project root, or the host-specific command). The accompanying question is always about the **URL of the published product**. **Omit this step entirely** for tutorials that produce nothing on the web.
+3. **Commit and push — only for GitHub-based tutorials.** By this point everything is usually committed already, so this just sweeps up any remaining changes; the question asks for the **GitHub repo URL**. **Omit** for tutorials that don't use GitHub.
+
+Most tutorials build a single page, publish it to Quarto Pages on GitHub, and use a GitHub repo — so most include all three steps in that form. But none of the three is automatic: choose step 1's evidence by what the artifact is, and treat 2 and 3 as conditional on whether the tutorial publishes to the web and whether it lives on GitHub.
 
 ---
 
@@ -296,7 +298,7 @@ CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or 
 **The evidence forms — just two.** A QMD-edit question submits code via `show_file()` (R Terminal); an operational/file-set step is a bash command (bash Terminal). Both are CP/CR. **There is no copy-from-HTML form.** Pick by whether the exercise edits the QMD or touches the shell:
 
 - **Anything done in the QMD → `show_file("analysis.qmd", chunk = "Last")`** (CP/CR) — the default, and by far the most common. The student edits the working chunk, renders to see the result in the HTML, then submits the chunk's *code*; we answer with the `echo = TRUE` chunk that shows our code and runs it to display the result. This holds **whatever the chunk produces** — a plot, a printed tibble, a `summary()`, a `dbListTables()`, a lazy-table preview, a single collected value. A printed result is submitted exactly like a plot; do **not** ask the student to copy output from the HTML, and do **not** treat "printed data" as a separate form. (R Terminal.)
-- **File contents / final state → `show_file()`** (CP/CR) — `show_file(".gitignore")`, the whole-file `show_file("analysis.qmd")` final check. A variant of the above. (R Terminal.)
+- **File contents / final state → `show_file()`** (CP/CR) — `show_file(".gitignore")`, the whole-file final check (`show_file("analysis.qmd")`, or `show_file("index.qmd")` for a website). A variant of the above. (R Terminal.)
 - **File-set change or operational step → bash Terminal command → CP/CR.** When the exercise mostly changes the set of files (or is best examined from the shell): `ls` after creating `data/` or after a cache directory appears, plus `quarto render`, `quarto publish gh-pages`, `git add/commit/push`, `pwd`. The student runs the one command in the bash Terminal; the command and its response are the evidence.
 
 **Showing our answer.** Almost every exercise should be followed — as the *first* thing after the student submits and clicks Continue — by **our answer**. Present it as a single chunk with `echo = TRUE` (the §3 pattern), which both shows our code and runs it to display the result, so the student can compare our code *and* our output against their own. Do not reproduce the student's submission, and — for any `show_file()` exercise (plot, printed result, or file) — do not show the `show_file()` call itself; just show the analysis code we expect, computed on the fly. Give it **no label** — no "Our plot:" or "Our code:" heading; after Continue it is obviously ours. A plain three-backtick block (code only) is an acceptable fallback, and the right choice when the code would take more than ~5 seconds to run, but the live `echo = TRUE` chunk is preferred.
@@ -306,7 +308,7 @@ CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or 
 **The two `show_file()` usages — and why whole-file answers strip the fences.** `show_file()` is called one of two ways, and our faked answer differs by which:
 
 - **`show_file("analysis.qmd", chunk = "Last")`** — returns only the *inner lines* of the last code chunk (its `#|` options and code), with no ` ```{r} ` fence and no `> show_file(...)` prompt. Our answer is exactly those inner lines, nothing else. Because the text carries no chunk fence, nothing trips knitr and it displays without trouble — this is the default working-chunk evidence and already works across the tutorials.
-- **`show_file("analysis.qmd")`** (no `chunk` argument) — returns the *entire file*: YAML, prose, and every code chunk with its ` ```{r} … ``` ` fences. This is the whole-QMD check in the Summary; `show_file(".gitignore")` and other single-file checks are the same no-argument form on a different file. **Here is the trap.** Our faked answer must reproduce the file's *content*, but it **must not contain literal ` ```{r} ` or ` ``` ` fence lines** — because knitr scans the document line by line, and a fence on its own line is detected and **executed as a real chunk even inside `<pre><code>`**. (`<pre><code>` does *not* protect an own-line fence; it only protects a fence glued to other text on the same physical line. A whole-file answer that keeps the fences will *run* its code — and a tutorial that pulls live data will hit the network and the render dies.) So **strip the fences**: show the YAML, the prose, and each chunk's `#|` options and code separated by blank lines — the single-chunk style, extended to the whole file — wrapped in `<pre><code>` to display it verbatim and to let you escape `&lt;your name&gt;`. (A file with no chunks — `.gitignore`, plain text — has no fences to strip and is safe in any block.)
+- **`show_file("analysis.qmd")`** (no `chunk` argument) — returns the *entire file*: YAML, prose, and every code chunk with its ` ```{r} … ``` ` fences. This is the whole-QMD check in the Summary (`analysis.qmd`, or `index.qmd` for a website); `show_file(".gitignore")` and other single-file checks are the same no-argument form on a different file. **Here is the trap.** Our faked answer must reproduce the file's *content*, but it **must not contain literal ` ```{r} ` or ` ``` ` fence lines** — because knitr scans the document line by line, and a fence on its own line is detected and **executed as a real chunk even inside `<pre><code>`**. (`<pre><code>` does *not* protect an own-line fence; it only protects a fence glued to other text on the same physical line. A whole-file answer that keeps the fences will *run* its code — and a tutorial that pulls live data will hit the network and the render dies.) So **strip the fences**: show the YAML, the prose, and each chunk's `#|` options and code separated by blank lines — the single-chunk style, extended to the whole file — wrapped in `<pre><code>` to display it verbatim and to let you escape `&lt;your name&gt;`. (A file with no chunks — `.gitignore`, plain text — has no fences to strip and is safe in any block.)
 
 **Two non-negotiables for the faked answer, especially for `show_file()` results:**
 
