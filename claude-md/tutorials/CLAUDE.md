@@ -33,9 +33,8 @@ Almost everything below is **universal** — true of any normal tutorial regardl
 ```
 inst/tutorials/<name>/
   tutorial.Rmd       # main tutorial file
+  data/              # source copies of the data students download (read as data/<file>)
   images/            # images included via include_graphics()
-
-inst/extdata/<name>/ # stable source copies of data students may download
 ```
 
 ---
@@ -392,7 +391,7 @@ Test chunk output should be scannable in a few seconds. If it scrolls, it is too
 **CSV column-spec messages** — `read_csv()` prints a column-spec block (one line per column) before the tibble. Suppress it with `show_col_types = FALSE`:
 
 ```r
-read_csv("../../extdata/r4ds-1/music.csv", show_col_types = FALSE)
+read_csv("data/music.csv", show_col_types = FALSE)
 ```
 
 **Long model or computation output** — wrap with `suppressMessages()` or redirect progress with `refresh = 0, silent = 2` (for **brms**). Only show the final object students need to check.
@@ -404,10 +403,11 @@ read_csv("../../extdata/r4ds-1/music.csv", show_col_types = FALSE)
 ### Data handling
 
 - Never depend on a fragile third-party URL at tutorial run time.
-- Keep stable source copies for student downloads under `inst/extdata/<tutorial>/` when practical, and document the original source.
+- **A tutorial's own source data lives in a `data/` directory inside the tutorial folder** — `inst/tutorials/<name>/data/<file>`, next to `tutorial.Rmd` and alongside `images/`. The package's setup and test chunks read it with the *same relative path a student writes* — `read_csv("data/music.csv")`, not `../../extdata/...` — because a tutorial knits with its own folder as the working directory. Putting the data where the student puts it makes our answer code identical to the student's code. Document each file's provenance in a short `data/README.txt` — and add that README to `.Rbuildignore` so the note stays in the repo but is not installed with the package (the data itself under `data/` still ships).
+- **Student-facing download URLs point at that same in-tutorial location on GitHub** (`.../raw/refs/heads/main/inst/tutorials/<name>/data/<file>`). Students download into their own project's `data/` directory and read `data/<file>`.
 - Students usually create their own `data/` directory inside their project and download or copy data there.
-- **Do not give students an explicit `download.file()` command.** Tell them to download the file — give the stable URL — and save it in their `data/` directory; they will typically ask AI to do it, which is fine. Confirm with `ls data` and show that the file is now present. (The lone exception is a tutorial where the download *mechanics* are themselves the lesson — rare in post-infrastructure tutorials.)
-- Avoid `inst/tutorials/<name>/data/` for new post-infrastructure tutorials unless there is a specific learnr runtime reason.
+- **Match the download instruction to where the tutorial sits in the sequence.** In a student's *earliest* data-science tutorials, an explicit, working command — `download.file("<url>", "data/<file>")` — is a helpful scaffold; giving it is fine. In later tutorials, just tell them to download the file from the stable URL into their `data/` directory and let them choose whether to run `download.file()` themselves or ask AI to fetch it — they will usually ask AI, which is fine. Either way, confirm with `ls data` and show that the file is now present. (A tutorial where the download *mechanics* are themselves the lesson always spells out the command.)
+- Shipping data inside `inst/tutorials/<name>/data/` means it is built into the package, which can push a data-heavy package over CRAN's size limit. That is an accepted trade-off for having the package's code match the student's; a project records how it handles distribution (CRAN or not) in its own guide.
 - Do not download from the web during tutorial compile/run. If a test chunk needs data, load a small stable copy from the package.
 - For large data, create smaller teaching files and use lightweight evidence submissions rather than heavy test computations.
 - If a teaching dataset is incomplete, sampled, capped, or otherwise artificial, do not hide that fact. Build an exercise path that lets students discover the limitation and reason about how it affects interpretation.
