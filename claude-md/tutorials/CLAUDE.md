@@ -304,15 +304,15 @@ CP/CR means **Copy/Paste the Command/Response**. Use CP/CR only for terminal or 
 
 **Fake the output of terminal commands you can't run in a chunk.** We almost *always* follow a question with our best guess at what the student will — or at least should — see. For R code that is the `echo = TRUE` answer chunk. For a bash/R-Terminal command whose result you cannot reproduce in a live chunk (`ls data`, `pwd`, render messages), you still show the answer: a plain code block with your best guess at what the command prints — e.g., the file(s) `ls data` would list. Do not leave it as prose ("Your `data` directory should now include `X`"); show the faked output instead. Follow our answer with a `###` so the student presses Continue again before the knowledge drop. Keep our code concise and modern — always `|>`, never `%>%` — because the whole point is that the student studies it and compares it with their own.
 
-**The two `show_file()` usages — and why whole-file answers strip the fences.** `show_file()` is called one of two ways, and our faked answer differs by which:
+**The two `show_file()` usages — and how the faked answer differs.** `show_file()` is called one of two ways, and our faked answer differs by which:
 
-- **`show_file("analysis.qmd", chunk = "Last")`** — returns only the *inner lines* of the last code chunk (its `#|` options and code), with no ` ```{r} ` fence and no `> show_file(...)` prompt. Our answer is exactly those inner lines, nothing else. Because the text carries no chunk fence, nothing trips knitr and it displays without trouble — this is the default working-chunk evidence and already works across the tutorials.
-- **`show_file("analysis.qmd")`** (no `chunk` argument) — returns the *entire file*: YAML, prose, and every code chunk with its ` ```{r} … ``` ` fences. This is the whole-QMD check in the Summary (`analysis.qmd`, or `index.qmd` for a website); `show_file(".gitignore")` and other single-file checks are the same no-argument form on a different file. **Here is the trap.** Our faked answer must reproduce the file's *content*, but it **must not contain literal ` ```{r} ` or ` ``` ` fence lines** — because knitr scans the document line by line, and a fence on its own line is detected and **executed as a real chunk even inside `<pre><code>`**. (`<pre><code>` does *not* protect an own-line fence; it only protects a fence glued to other text on the same physical line. A whole-file answer that keeps the fences will *run* its code — and a tutorial that pulls live data will hit the network and the render dies.) So **strip the fences**: show the YAML, the prose, and each chunk's `#|` options and code separated by blank lines — the single-chunk style, extended to the whole file — wrapped in `<pre><code>` to display it verbatim and to let you escape `&lt;your name&gt;`. (A file with no chunks — `.gitignore`, plain text — has no fences to strip and is safe in any block.)
+- **`show_file("analysis.qmd", chunk = "Last")`** — returns only the *inner lines* of the last code chunk (its `#|` options and code), with no ` ```{r} ` fence and no `> show_file(...)` prompt. Our answer is exactly those inner lines, nothing else. Because the text carries no chunk fence, nothing trips knitr — this is the default working-chunk evidence and already works across the tutorials.
+- **`show_file("analysis.qmd")`** (no `chunk` argument) — returns the *entire file*: YAML, prose, and every code chunk **with** its ` ```{r} … ``` ` fences. This is the whole-QMD check in the Summary (`analysis.qmd`, or `index.qmd` for a website); `show_file(".gitignore")` and other single-file checks are the same no-argument form on a different file. Our faked answer must reproduce the file **faithfully — fences included** — so it matches what the student actually sees when they run the command. **The catch:** knitr scans the document line by line and *executes* a ` ```{r} ` fence on its own line **even inside `<pre><code>`** (verified — the wrapper does *not* protect an own-line fence; a fence left as literal backticks runs the code, and a tutorial that pulls live data hits the network and the render dies). **The fix is not to delete the fences but to escape their backticks: write each fence as `&#96;&#96;&#96;{r}` and `&#96;&#96;&#96;`.** The browser renders `&#96;` as a literal backtick, so the reader sees the exact ` ```{r} ` / ` ``` ` fences `show_file` printed, while knitr — which matches literal backticks, not the HTML entity — sees no chunk and runs nothing. Wrap the whole reproduction in `<pre><code>` (which also lets you escape `&lt;your name&gt;`). (A file with no chunks — `.gitignore`, plain text — has no fences and needs no escaping.)
 
 **Two non-negotiables for the faked answer, especially for `show_file()` results:**
 
-1. **Never include literal ` ```{r} ` or ` ``` ` fence lines — strip them, and wrap the result in `<pre><code>…</code></pre>`.** knitr detects a fence on its own line and *executes* it, even inside `<pre><code>` — so an answer that keeps the fences runs your code (or hits the network, or errors) instead of displaying it. Removing the fences is what makes the answer safe; the `<pre><code>` wrapper then renders the fence-less code verbatim. Single-chunk answers are safe by construction (`show_file(..., chunk = "Last")` returns only the inner lines, no fence); the trap is the whole-file answer, where you must delete every ` ```{r} ` opener and ` ``` ` closer. (When the content contains tag-like `<` characters — `&lt;your name&gt;`, `&lt;your-github-username&gt;` — HTML-escape them so the browser doesn't parse them as tags.)
-2. **Strip the chunk wrapper *and* the command line.** `show_file()`'s literal output reproduces the QMD source — the `> show_file(...)` prompt the student typed, plus the ` ```{r} ` opening and ` ``` ` closing of every chunk. Our canonical answer never echoes any of that. Just the code *inside* the chunk (and, for `show_file("analysis.qmd")` of the whole file, YAML and prose between chunks), nothing else. The student's paste includes the noise; ours doesn't.
+1. **Never leave a *literal* own-line ` ```{r} ` or ` ``` ` fence in the answer — knitr executes it even inside `<pre><code>`.** For a **whole-file** answer, reproduce every fence but escape its backticks as `&#96;&#96;&#96;`, so the reader sees the fence while knitr does not detect a chunk. For a **`chunk = "Last"`** answer there is no fence to reproduce at all (`show_file` returns the inner lines only), so the question never arises. Either way, wrap the result in `<pre><code>…</code></pre>` and HTML-escape any tag-like `<` (`&lt;your name&gt;`, `&lt;your-github-username&gt;`) so the browser doesn't parse it as a tag.
+2. **Strip the `> show_file(...)` command line.** `show_file()`'s literal output is preceded by the `> show_file(...)` prompt the student typed at the R Terminal. Our canonical answer never echoes that prompt — it begins with the file's first line (the YAML `---` for a whole file, or the first `#|`/code line for a `chunk = "Last"` answer). The student's paste includes the prompt; ours doesn't.
 
 So for a question whose evidence is `show_file("analysis.qmd", chunk = "Last")` on the chunk containing `#| message: false` and `library(tidyverse)`, our answer is:
 
@@ -430,7 +430,28 @@ library(tidyverse)
 </code></pre>
 ```
 
-When the content is a **whole QMD file** (our answer for a `show_file("analysis.qmd")` question with no `chunk` argument), apply the same rule across the entire file: show the YAML, the prose, and each chunk's `#|` options and code separated by blank lines, and **strip every ` ```{r} ` opener and ` ``` ` closer**. You must remove the fences, not keep them: knitr scans line by line and *executes* a fence on its own line **even inside `<pre><code>`** (the wrapper does not protect an own-line fence), so a whole-file answer that keeps its fences will run — and a tutorial that pulls live data will hit the network and the render dies. The fence-less content then goes inside `<pre><code>` for verbatim display and `<` escaping. (A file with no chunk fences — `.gitignore`, plain text — has nothing to strip.)
+When the content is a **whole QMD file** (our answer for a `show_file("analysis.qmd")` question with no `chunk` argument), reproduce the file **faithfully — fences and all** — so the answer matches what `show_file` prints: the YAML, the prose, and every chunk with its ` ```{r} … ``` ` fences. The one adjustment is that you must **escape the fence backticks as `&#96;&#96;&#96;`**, never leave them literal: knitr scans line by line and *executes* a literal own-line fence **even inside `<pre><code>`** (the wrapper does not protect it), so a whole-file answer that keeps literal fences will run — and a tutorial that pulls live data will hit the network and the render dies. The browser renders `&#96;` as a backtick, so the reader still sees real ` ```{r} ` / ` ``` ` fences, while knitr sees no chunk. Example — a two-chunk `index.qmd`:
+
+```
+<pre><code>---
+title: "Baseball"
+---
+
+&#96;&#96;&#96;{r}
+#| message: false
+library(tidyverse)
+&#96;&#96;&#96;
+
+## Home runs over time
+
+&#96;&#96;&#96;{r}
+#| echo: false
+plot(hr_per_game)
+&#96;&#96;&#96;
+</code></pre>
+```
+
+(A file with no chunk fences — `.gitignore`, plain text — has nothing to escape.)
 
 HTML-escape any tag-like `<` placeholders inside the block (`&lt;your name&gt;`, `&lt;your-github-username&gt;`) so the browser doesn't parse them as opening tags. `<-` and `|>` in R code are fine — they don't look like tag starts and browsers display them as text.
 
