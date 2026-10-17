@@ -39,6 +39,23 @@ inst/tutorials/<name>/
   images/            # images included via include_graphics()
 ```
 
+### Sources: the tutorial.helpers articles
+
+This guide distills three articles from the **tutorial.helpers** package website. They were written at different times and **disagree in places**; where they do, this guide's rule wins, and the table below records which way it went.
+
+- **[Instructions for Writing R Tutorials](https://ppbds.github.io/tutorial.helpers/articles/instructions.html)** (the classic, pre-AI guide). Tutorials are "not challenging. They are confidence-building": build "the shallowest possible learning curve," so that 95% of students can answer 95% of the questions. "Every word matters. Never waste a student's time." Tutorials are a "pit of success": "If you complete the tutorials, you will learn the material." Write every exercise as if giving a private lesson. Knowledge drops are "rarely more than two sentences," because students "won't read more than two sentences without a break"; the sentence or two *before* a question is read most closely, so it is a prime place to teach. No rhetorical questions and no road signs. Each topic opens with a sentence or two on its purpose and closes, after its last exercise, with a short drop that takes a broader view. Link to high-quality sources (Posit, *R for Data Science*), never to ad-supported sites.
+- **[Tutorials for Books](https://web.archive.org/web/20251008195807/https://ppbds.github.io/tutorial.helpers/articles/books.html)** (archived; the book-companion layer). The Introduction's first sentence links the exact chapter and the book, with its authors, then says what students will learn. The Summary repeats that paragraph in the past tense ("covers" becomes "covered") and adds one or two pointers to the best further reading, ideally items the book itself cites and that appeared in an earlier knowledge drop. Give each library and each dataset its own exercise. Regularly have students look up a help page and paste part of it. If the book's license allows, quote its text; otherwise restate its key points. Either way, knowledge drops cover the chapter's most important ideas.
+- **[Tutorials in the Age of AI](https://ppbds.github.io/tutorial.helpers/articles/ai.html)** (the current philosophy, and the one this guide follows). "Our purpose is no longer to teach students how to code. Our purpose is to teach students how to use AI to create." "Students no longer code. They check." A tutorial is an Introduction (repo and QMD setup), one or two topics, and a Summary that publishes the result; a one-hour AI tutorial has "at most, two Topics." Topics end with a plot, built and then improved over several exercises, with a subtitle that states the takeaway. Knowledge drops map the package infrastructure and teach concepts, not functions.
+
+| Question | instructions | books | ai | This guide |
+|---|---|---|---|---|
+| Who writes the code? | Students, in exercise chunks, built line by line with hints | Students type at least 90% of the book's code | The AI; students check its output | **The AI** (§2) |
+| Concept questions | Written questions with a model answer | — | Written questions, so students can check the AI's work | **None as quizzes**: no multiple-choice or quiz questions; concepts go in knowledge drops (§3) |
+| Libraries | One exercise per library | One exercise per library and per dataset | One chunk, optionally split | One chunk (§4); a project may split them on the record |
+| Topics per tutorial | Many short ones (about 10 minutes each) | — | At most two | Project-defined (§7) |
+| Our answer | Hidden test chunk | — | Output shown; code optional | Code and output, `echo = TRUE` (§3) |
+| Knowledge-drop placement | Best before the question | — | Best before the question | After our answer, before the question only when context is needed (§5) |
+
 ---
 
 ## 2. The model
@@ -94,7 +111,7 @@ Most exercises should follow this rhythm:
 2. **Render** — students run `quarto render analysis.qmd` in a bash Terminal and inspect the rendered HTML.
 3. **Verify** — students submit evidence that they completed the exercise. Use CP/CR only for terminal command-and-response evidence.
 4. **Show the expected output** — after students submit and press Continue, show our expected output, answer, plot, tibble, or representative paste. **The author (Claude) is responsible for writing the text inside the backticks that shows students what they should see at the bottom of their rendered HTML.** Because an exercise almost always evolves the topic's *working* chunk (the last chunk in the document), this expected-output block must match that chunk's current result. Keep it accurate: when the data or analysis upstream changes, the displayed expected output has to change with it.
-5. **Knowledge drop** — insert another `###` separator so students press Continue again before seeing the knowledge drop. Then provide a short paragraph that tells students what to notice, teaches domain knowledge, or foreshadows the next exercise.
+5. **Knowledge drop** — insert another `###` separator so students press Continue again before seeing the knowledge drop. Then provide one or two sentences (never more without a reason; see *Knowledge drops*) that tell students what to notice, teaches domain knowledge, or foreshadows the next exercise.
 
 The canonical loop is:
 
@@ -145,6 +162,8 @@ The one further exception is an **interpretation/explanation question**: the stu
 
 ### Question types
 
+**Students only code, using AI.** Every exercise has the student *do* something (prompt AI to change the QMD and render, or run a command) and submit evidence. There are **no multiple-choice or quiz questions**, and no questions that test recall of a definition. A concept is taught by an exercise whose output displays it, then named in the knowledge drop. Variable types, for example, are taught by having the student compute an average of a numerical variable and count the levels of a categorical one, not by asking "what type is this variable?" Looking up a help page and pasting part of it is a legitimate exercise, because it is something analysts do.
+
 **No-answer questions (default).** Used for evidence-submission questions. Set `rows` to match expected output length.
 
 ```r
@@ -156,7 +175,7 @@ question_text(NULL,
   rows = 5)
 ```
 
-**Yes-answer questions.** Used when providing the correct answer (definitional or conceptual recall). Set `allow_retry = FALSE`.
+**Yes-answer questions.** Used when the student writes something that has a model answer to compare against. Under *Students only code, using AI* (above), never use them for definitional or conceptual recall. Set `allow_retry = FALSE`.
 
 ```r
 question_text(NULL,
@@ -181,7 +200,7 @@ Every tutorial follows this order:
 
 ### Introduction exercises (standard sequence)
 
-1. Open with the **standard repo line**, verbatim: *"You should be connected to a repo named `whatever`. If you are not, create one and connect to it."* — where `whatever` is the tutorial's id (`r4ds-3`, `census`, …). Then create `analysis.qmd` with a **Title-Case** document title (see *Formatting conventions*), render it (this first render is the one place you spell out `quarto render analysis.qmd`), open `analysis.html` with Live Server, and **establish the "Render" shorthand** here — *"Open `analysis.html` with Live Server and keep the tab open. It refreshes on every render. Going forward, we will just tell you to 'Render' when we want you to take these steps."* Then create `.gitignore` with `analysis_files`, commit and push, and submit `show_file(".gitignore")` — followed by the standing note *"If that fails, it is probably because you have not yet loaded `library(tutorial.helpers)` in the R Terminal."* Our answer is the file's one line, `analysis_files`. Keep this lean — students past the infrastructure tutorials know how to make a repo, so don't re-walk that. **Do not name a specific environment.** These tutorials can be done locally just as well as in the cloud, so the intro must not mention Codespaces or the `codespace-starter` template; "create one and connect to it" deliberately covers both cases.
+1. Open with the **standard repo line**, verbatim: *"You should be doing this tutorial in a repo named `whatever`. If you are not, create one and then connect to it. You may need to restart this tutorial after you do so."* — where `whatever` is the tutorial's id (`r4ds-3`, `census`, …). The closing sentence is load-bearing: learnr holds per-tutorial state, so a student who connects to the repo mid-tutorial may have to restart before the exercises behave. Then create `analysis.qmd` with a **Title-Case** document title (see *Formatting conventions*), render it (this first render is the one place you spell out `quarto render analysis.qmd`), open `analysis.html` with Live Server, and **establish the "Render" shorthand** here — *"Open `analysis.html` with Live Server and keep the tab open. It refreshes on every render. Going forward, we will just tell you to 'Render' when we want you to take these steps."* Then create `.gitignore` with `analysis_files`, commit and push, and submit `show_file(".gitignore")` — followed by the standing note *"If that fails, it is probably because you have not yet loaded `library(tutorial.helpers)` in the R Terminal."* Our answer is the file's one line, `analysis_files`. Keep this lean — students past the infrastructure tutorials know how to make a repo, so don't re-walk that. **Do not name a specific environment.** These tutorials can be done locally just as well as in the cloud, so the intro must not mention Codespaces or the `codespace-starter` template; "create one and connect to it" deliberately covers both cases.
 2. Add the libraries the tutorial needs in one chunk with `#| message: false`, add `execute: echo: false` to the YAML, render, and submit `show_file("analysis.qmd", chunk = "Last")`. Show our answer — the chunk — in a `<pre><code>` block (it contains `#|`, so four backticks would mangle it).
 3. **Only if the tutorial downloads data to a local `data/` directory:** ask the student to **create a `data/` directory at the top level of the repo** — *state the goal, not the command* (they will usually have AI do it; that's fine). Confirm it with `ls` in the **bash Terminal**; CP/CR. Our answer is the faked `ls` output showing `data` now present. (Use the bash Terminal, **not** R-Terminal `dir.create()` — students should rarely issue R-Terminal commands directly, and bash fluency is itself worth building.) The canonical wording: *"Create a data directory at the top level of the `whatever` repo. In the bash Terminal, run `ls`."* then `CP/CR.` A live-API tutorial like `census` skips this step; its intro is just steps 1–2. **Exception — introductory scaffolding:** in a student's earliest data-science tutorials (`r4ds-1` and `r4ds-2` in `misc.tutorials`), spell out the specific commands instead — `getwd()`, `dir.create("data")`, `list.files()` in the R Terminal — so students see exactly what is happening; the second warns that we will soon stop giving the commands and just have AI do it. From `r4ds-3` on, tutorials use the goal-stated form above. This mirrors the download-instruction sequencing rule in §6 (*Data handling*).
 
@@ -277,7 +296,7 @@ If a drop isn't doing one of these three, cut it. Do **not** reach for a canned 
 **The third kind is the most common.** Most knowledge drops are simply an observation about the result the student has just displayed — something interesting in the plot or table that she may not have noticed. Very often that observation leads directly into the next question, so the drop doubles as the setup for what comes next.
 
 - Every exercise must have a knowledge drop after submission, and it must be one of the three kinds above. This holds even when the exercise is mostly setup, committing, publishing, or verification — for those, pull a key point from the chapter or say something about the data, rather than narrating the mechanics.
-- Usually one short paragraph; one or two sentences is often enough.
+- **At most two sentences.** Students will not read a paragraph of prose; if you are lucky, they read two sentences. A third sentence is a rare exception that needs a reason, and a second paragraph is never acceptable. When a drop has more to say, keep the single most important point and cut the rest.
 - Keep drops **brief in word count, but they may be richer visually**: a small concrete example — a five-line sample of the raw file format, a tiny named list, a one-line snippet — often teaches a concept far better than prose. Show the example and stop; do not follow it with discussion.
 - Teach what something **is**, with a simple example, rather than narrating what a package *can do* with it. The reader assumes the package works ("would be surprised if it couldn't"); the concept is what they need to carry away. Prefer *"a named list labels each element — `list(name = ..., year = ...)`"* over *"`tidyr` can unnest a named list-column."*
 - Place after students submit an exercise and after the expected output/answer. The usual pattern is question chunk, `###`, expected output/answer, `###`, knowledge drop.

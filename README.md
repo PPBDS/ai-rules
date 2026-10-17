@@ -26,11 +26,11 @@ which of the three guides applies to which package — start there.
 
 | File | Scope | What it covers |
 |------|-------|----------------|
-| [`claude-md/tutorials/CLAUDE.md`](claude-md/tutorials/CLAUDE.md) | General — any `learnr` data science tutorial | The base authoring guide for "normal" (post-infrastructure) tutorials: the AI-era philosophy, tutorial structure, the render + Live Server workflow, exercise rhythm, question types, knowledge drops, code-chunk conventions, the setup chunk, data handling, and formatting. Originated in [vscode.tutorials](https://github.com/PPBDS/vscode.tutorials); not specific to it. It applies to every tutorial **except** those in the `vscode.tutorials` and `tutorial.helpers` packages (which teach the tools and mechanics themselves); `misc.tutorials`, the Primer, and any future package follow it by default. |
+| [`claude-md/tutorials/CLAUDE.md`](claude-md/tutorials/CLAUDE.md) | General — any `learnr` data science tutorial | The base authoring guide for "normal" (post-infrastructure) tutorials: the AI-era philosophy, tutorial structure, the render + Live Server workflow, exercise rhythm, question types, knowledge drops, code-chunk conventions, the setup chunk, data handling, and formatting. Originated in [vscode.tutorials](https://github.com/PPBDS/vscode.tutorials); not specific to it. It is the default contract for every tutorial: `misc.tutorials`, the Primer, and any future package follow it outright, and the infrastructure packages (`vscode.tutorials`, `tutorial.helpers`) follow it with two recorded departures (no analysis arc; an early-tutorials mechanics exception). |
 
 **The other two guides live in their own repos, not here** — each is specific to one project and builds on the base guide above:
 
-- **`vscode.tutorials`** — the infrastructure / mechanics tutorials that teach the tools the base guide *assumes* (the exception it does not govern): <https://github.com/PPBDS/vscode.tutorials/blob/main/CLAUDE.md>
+- **`vscode.tutorials`** — the infrastructure / mechanics tutorials that teach the tools the base guide *assumes*; its guide reads in the base guide and records its two departures: <https://github.com/PPBDS/vscode.tutorials/blob/main/CLAUDE.md>
 - **Preceptor's Primer** — its chapters (`book/`) and tutorials (`primer.tutorials/`), as a root index plus `guide/` parts read on demand: <https://github.com/PPBDS/primer/blob/main/CLAUDE.md>
 
 Only the shared **base tutorial guide** (the table above) lives in this repo; the [overview map](claude-md/CLAUDE.md) routes to all three.
